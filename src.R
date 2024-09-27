@@ -7,17 +7,21 @@ library(sf)
 PDE <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
   st_set_crs("epsg:31983") 
 
-# https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais/26565-malhas-de-setores-censitarios-divisoes-intramunicipais.html?edicao=39501&t=acesso-ao-produto
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
   filter(CD_MUN == "3550308") |> 
-  st_transform("epsg:31983") |> 
-  select(id_setor = CD_SETOR)
+  st_transform("epsg:31983")  |>
+  select(id_setor = CD_SETOR, moradores = v0001)
+
 
 # https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais/26565-malhas-de-setores-censitarios-divisoes-intramunicipais.html?edicao=26589&t=acesso-ao-produto
 censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |> 
   filter(CD_GEOCODM == "3550308") |> 
   st_transform("epsg:31983") |> 
-  select(id_setor = CD_GEOCODI)
+  select(id_setor = CD_GEOCODI) |> 
+  left_join(readxl::read_excel("dados/censo/2010/Basico_SP1.XLS") |> 
+              select(id_setor = Cod_setor, moradores = V002) |> 
+              mutate(id_setor = as.character(id_setor)))
+
 
 ## Visualização mapas ----
 mapa2010 <- ggplot() +
@@ -188,4 +192,98 @@ mapa2010.6015 <- ggplot() +
 ggsave("output/mapa2010-cut6015.pdf", mapa2010.6015, width = 30, height = 40)
 
 
+# Construção da running variable ----
+
+## 2010 ----
+censo2022.grupos <-  censo2022.cut |> 
+  mutate(grupo = case_when(eixo_percent < .15 ~ "Controle",
+                           eixo_percent > .6  ~ "Tratamento",
+                           TRUE               ~ "Fora")) |> 
+  left_join(censo2022 |> st_centroid()) |> st_as_sf() |> 
+  filter(st_distance(geometry, st_union(PDE) |> st_simplify()) |> as.numeric() < 1000)
+
+geometrias.controle <- censo2022.grupos |> 
+  filter(grupo == "Controle") |> 
+  pull(geometry)
+
+geometrias.tratamento <- censo2022.grupos |> 
+  filter(grupo == "Tratamento") |> 
+  pull(geometry)
+
+censo2022.distancias <- bind_rows(
+  #Distância entre cada unidade de controle a mais próxima do tratamento
+  censo2022.grupos |> 
+    filter(grupo == "Controle") |> 
+    rowwise() |> 
+    mutate(distancia = st_distance(geometry, geometrias.tratamento[st_nearest_feature(geometry, geometrias.tratamento)])[1]),
+  censo2022.grupos |> 
+    filter(grupo == "Tratamento") |> 
+    rowwise() |> 
+    mutate(distancia = st_distance(geometry, geometrias.controle[st_nearest_feature(geometry, geometrias.controle)])[1])
+)
+
+
+censo2022.distancias |> 
+  mutate(distancia = ifelse(grupo == "Controle", -as.numeric(distancia), as.numeric(distancia))) |> 
+  ggplot(aes(x = distancia, y = moradores, color = grupo)) +
+  geom_point(alpha = .025) +
+  geom_smooth(method = "lm") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  xlim(c(-1000, 1000)) +
+  theme_classic()
+
+censo2022.distancias |> 
+  st_drop_geometry() |> 
+  mutate(distancia = ifelse(grupo == "Controle", -as.numeric(distancia), as.numeric(distancia)) |> 
+           cut(breaks = c(-Inf, -(0:10*10), (1:10*10), Inf)) |> as.factor() |> as.numeric()- 10) |> 
+  group_by(distancia, grupo) |> 
+  summarize(moradores = mean(moradores)) |> 
+  ggplot(aes(x = distancia, y = moradores, color = grupo)) +
+  geom_point(alpha = 1) +
+  geom_smooth(method = "lm") +
+  # geom_vline(xintercept = 0, linetype = "dashed") +
+  # xlim(c(-1000, 1000)) +
+  theme_classic()
+
+ggsave("output/rdd2022.pdf", width = 8, height = 5)  
+
+## 2010 ----
+censo2010.grupos <-  censo2010.cut |> 
+  mutate(grupo = case_when(eixo_percent < .15 ~ "Controle",
+                           eixo_percent > .6  ~ "Tratamento",
+                           TRUE               ~ "Fora")) |> 
+  left_join(censo2010 |> st_centroid()) |> st_as_sf() |> 
+  filter(st_distance(geometry, st_union(PDE) |> st_simplify()) |> as.numeric() < 1000)
+
+geometrias.controle <- censo2010.grupos |> 
+  filter(grupo == "Controle") |> 
+  pull(geometry)
+
+geometrias.tratamento <- censo2010.grupos |> 
+  filter(grupo == "Tratamento") |> 
+  pull(geometry)
+
+censo2010.distancias <- bind_rows(
+  #Distância entre cada unidade de controle a mais próxima do tratamento
+  censo2010.grupos |> 
+    filter(grupo == "Controle") |> 
+    rowwise() |> 
+    mutate(distancia = st_distance(geometry, geometrias.tratamento[st_nearest_feature(geometry, geometrias.tratamento)])[1]),
+  censo2010.grupos |> 
+    filter(grupo == "Tratamento") |> 
+    rowwise() |> 
+    mutate(distancia = st_distance(geometry, geometrias.controle[st_nearest_feature(geometry, geometrias.controle)])[1])
+)
+
+
+censo2010.distancias |> 
+  mutate(distancia = ifelse(grupo == "Controle", -as.numeric(distancia), as.numeric(distancia))) |> 
+  ggplot(aes(x = distancia, y = moradores, color = grupo)) +
+  geom_point(alpha = .025) +
+  geom_smooth(method = "lm") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  xlim(c(-1000, 1000)) +
+  theme_classic()
+
+ggsave("output/rdd2010.pdf", width = 8, height = 5)  
 
