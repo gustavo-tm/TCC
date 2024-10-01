@@ -3,14 +3,30 @@ library(sf)
 
 # Import dados ----
 
-# https://geosampa.prefeitura.sp.gov.br/
+## PDE ----
 PDE <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
   st_set_crs("epsg:31983") 
 
+# Simplificar geometria para aumentar velocidade das operações
+PDE.buffersimples <- PDE |> 
+  st_buffer(1000) |> 
+  st_union() |> 
+  st_simplify(dTolerance = 100)
+
+lapply(c(PDE |> st_union(), PDE.buffersimples), object.size)
+
+(ggplot()+
+    geom_sf(data = , fill = "grey", color = NA) +
+    geom_sf(data = PDE, fill = "black", color = NA) +
+    theme_void())|> 
+  ggsave("output/PDE.pdf", plot = _, width = 20, height = 20)
+
+## Censo ----
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
   filter(CD_MUN == "3550308") |> 
   st_transform("epsg:31983")  |>
-  select(id_setor = CD_SETOR, moradores = v0001)
+  select(id_setor = CD_SETOR, moradores = v0001) |> 
+  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) # Apenas valores perto dos EETUs
 
 
 # https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais/26565-malhas-de-setores-censitarios-divisoes-intramunicipais.html?edicao=26589&t=acesso-ao-produto
@@ -20,7 +36,8 @@ censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |>
   select(id_setor = CD_GEOCODI) |> 
   left_join(readxl::read_excel("dados/censo/2010/Basico_SP1.XLS") |> 
               select(id_setor = Cod_setor, moradores = V002) |> 
-              mutate(id_setor = as.character(id_setor)))
+              mutate(id_setor = as.character(id_setor))) |> 
+  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical())
 
 
 ## Visualização mapas ----
@@ -36,6 +53,26 @@ mapa2022 <- ggplot() +
 
 ggsave("output/mapa2010.pdf", mapa2010, width = 30, height = 40)
 ggsave("output/mapa2022.pdf", mapa2022, width = 30, height = 40)
+
+# Intersecção setor censitário e quadras fiscais ----
+
+lotes <- list.files(path = "dados/lotes/unzip", full.names = FALSE) |>
+  (\(bairro) paste("dados/lotes/unzip/", bairro, "/", bairro, ".shp", sep = ""))() |>
+  lapply(read_sf) |>
+  bind_rows() |>
+  st_set_crs("epsg:31983") |> 
+  filter(lo_tp_lote == "F")
+
+lotes.unificado <- lotes |> 
+  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) |> 
+  summarize(geometria = st_union(geometry))
+
+
+(ggplot()+
+    geom_sf(data = lotes.unificado, fill = "grey", color = NA) +
+    theme_void()) |> 
+  ggsave("output/lotes.pdf", plot = _, width = 20, height = 20)
+
 
 # Definição de corte ----
 
@@ -224,10 +261,11 @@ censo2022.distancias <- bind_rows(
 
 
 censo2022.distancias |> 
+  filter(moradores > 0) |> 
   mutate(distancia = ifelse(grupo == "Controle", -as.numeric(distancia), as.numeric(distancia))) |> 
   ggplot(aes(x = distancia, y = moradores, color = grupo)) +
-  geom_point(alpha = .025) +
-  geom_smooth(method = "lm") +
+  geom_point(alpha = .1) +
+  geom_smooth() +
   geom_vline(xintercept = 0, linetype = "dashed") +
   xlim(c(-1000, 1000)) +
   theme_classic()
