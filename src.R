@@ -73,6 +73,11 @@ lotes.unificado <- lotes |>
     theme_void()) |> 
   ggsave("output/lotes.pdf", plot = _, width = 20, height = 20)
 
+censo2010.intersec <- censo2010 |> 
+  st_intersection(lotes.unificado)
+
+lotes.unificado |> st_s
+print(object.size(x=lapply(ls(), get)), units="Mb")
 
 # Definição de corte ----
 
@@ -119,7 +124,7 @@ gg <- censo2022.cut |>
 ggsave("output/proporcao2022-cut.pdf", gg, width = 6, height = 4)
 
 ## 2010 ----
-censo2010.cut <- censo2010 |> 
+censo2010.cut <- censo2010.intersec |> 
   mutate(area_precut = st_area(geometry) |> ceiling()) |> 
   st_difference(PDE |> st_union()) |> 
   mutate(area_postcut = st_area(geometry)|> floor(),
@@ -129,11 +134,11 @@ censo2010.cut <- censo2010 |>
 
 
 mapa2010.cut <- ggplot() +
-  geom_sf(data = censo2010 |> 
+  geom_sf(data = censo2010.intersec |> 
             left_join(censo2010.cut |> select(id_setor, eixo_percent)) |> 
             mutate(eixo_percent = cut(eixo_percent, breaks = 0:10/10)),
           aes(geometry = geometry, fill = eixo_percent), color = NA) +
-  geom_sf(data = PDE, colour = "white", fill = NA, alpha = .5) +
+  geom_sf(data = PDE, colour = "red", fill = NA, alpha = .5) +
   theme_void() +
   scale_fill_viridis_d()
 ggsave("output/mapa2010-cut.pdf", mapa2010.cut, width = 30, height = 40)
@@ -198,30 +203,31 @@ ggsave("output/mapa2022-cut6015.pdf", mapa2022.6015, width = 30, height = 40)
 ## 2010 80-20 ----
 
 mapa2010.8020 <- ggplot() +
-  geom_sf(data = censo2022 |> 
+  geom_sf(data = censo2010.intersec |> 
             left_join(censo2010.cut |> select(id_setor, eixo_percent)) |> 
             mutate(situacao = case_when(eixo_percent <= .2 ~ "Não Eixo",
                                         eixo_percent >= .8 ~ "Eixo",
                                         TRUE ~ "Fora da análise")),
           aes(geometry = geometry, fill = situacao), color = NA) +
-  geom_sf(data = PDE, colour = "white", fill = NA, alpha = .5) +
-  scale_fill_manual(values = c("Não Eixo" = "lightblue",
-                               "Eixo" = "darkgreen",
-                               "Fora da análise" = "red")) +
+  geom_sf(data = censo2010, colour = "black", fill = NA, alpha = .5) +
+  # geom_sf(data = PDE, colour = "black", fill = NA, alpha = .5) +
+  scale_fill_manual(values = c("Não Eixo" = "#68BBFF",
+                               "Eixo" = "#0051A1",
+                               "Fora da análise" = "#B21F00")) +
   theme_void()
 ggsave("output/mapa2010-cut8020.pdf", mapa2010.8020, width = 30, height = 40)
 
 ## 2022 60-15 ----
 
 mapa2010.6015 <- ggplot() +
-  geom_sf(data = censo2010 |> 
+  geom_sf(data = censo2010.intersec |> 
             left_join(censo2010.cut |> select(id_setor, eixo_percent)) |> 
             mutate(situacao = case_when(eixo_percent <= .15 ~ "Não Eixo",
                                         eixo_percent >= .6 ~ "Eixo",
                                         TRUE ~ "Fora da análise")),
           aes(geometry = geometry, fill = situacao), 
           color = "darkgrey", lwd = .1) +
-  geom_sf(data = PDE, colour = "white", fill = NA, alpha = .5) +
+  geom_sf(data = PDE, colour = "#FFF468", fill = NA, alpha = .5) +
   scale_fill_manual(values = c("Não Eixo" = "lightblue",
                                "Eixo" = "darkgreen",
                                "Fora da análise" = "red")) +
