@@ -72,30 +72,41 @@ censo2010.cut <- censo2010.intersec |>
   st_drop_geometry()
 
 mapa2010.cut <- ggplot() +
-  # geom_sf(data = censo2010.intersec |> 
-  #                   left_join(censo2010.cut |> select(id_setor, eixo_percent)) |> 
-  #                   mutate(eixo_percent = cut(eixo_percent, breaks = 0:10/10)),
-  #                 aes(geometry = geometry, fill = eixo_percent), 
-  #                 color = NA) +
-  ggpattern::geom_sf_pattern(data = PDE |> st_simplify(dTolerance = 50), colour = NA, fill = "black", alpha = .75) +
-  # geom_sf(data = PDE |> st_simplify(dTolerance = 50), colour = NA, fill = "black", alpha = .75) +
+  geom_sf(data = censo2010.intersec |>
+                    left_join(censo2010.cut |> select(id_setor, eixo_percent)) |>
+                    mutate(eixo_percent = cut(eixo_percent, breaks = 0:5/5)),
+                  aes(geometry = geometry, fill = eixo_percent),
+                  color = NA) +
+  geom_sf(data = censo2010, fill = NA, colour = "#313638", alpha = .3) +
+  geom_sf(data = st_make_grid(PDE |> st_union(), 
+                              what = "corners", 
+                              square = T,
+                              cellsize = 30) |> as_tibble() |> 
+            filter(st_intersects(geometry, PDE |> st_union()) |> as.logical()),
+          aes(geometry = geometry), size = .25, stroke = 0) + #AREA HACHURADA
   theme_void() +
-  scale_fill_viridis_d()
-
-ggsave("output/mapa_percent_eixo.pdf", mapa2010.cut, width = 3, height = 4)
-
-mapa2010.cut <- ggplot() +
-  ggpattern::geom_sf_pattern(data = censo2010.intersec |> 
-                               left_join(censo2010.cut |> select(id_setor, eixo_percent)) |> 
-                               mutate(eixo_percent = cut(eixo_percent, breaks = 0:10/10)),
-                             aes(geometry = geometry, fill = eixo_percent), 
-                             color = NA, pattern = "circle") +
-  geom_sf(data = PDE, colour = "red", fill = NA, alpha = .5) +
-  theme_void() +
-  scale_fill_viridis_d()
+  scale_fill_brewer()
 
 ggsave("output/mapa_percent_eixo.pdf", mapa2010.cut, width = 30, height = 40)
 
-
+mapa2010.8020 <- ggplot() +
+  geom_sf(data = censo2010.intersec |> 
+            left_join(censo2010.cut |> select(id_setor, eixo_percent)) |> 
+            mutate(situacao = case_when(eixo_percent <= .2 ~ "Não Eixo",
+                                        eixo_percent >= .8 ~ "Eixo",
+                                        TRUE ~ "Fora da análise")),
+          aes(geometry = geometry, fill = situacao), color = NA) +
+  geom_sf(data = censo2010, colour = "#313638", fill = NA, alpha = .5) +
+  geom_sf(data = st_make_grid(PDE |> st_union(), 
+                              what = "corners", 
+                              square = T,
+                              cellsize = 30) |> as_tibble() |> 
+            filter(st_intersects(geometry, PDE |> st_union()) |> as.logical()),
+          aes(geometry = geometry), size = .25, stroke = 0) + #AREA HACHURADA
+  scale_fill_manual(values = c("Não Eixo" = "#68BBFF",
+                               "Eixo" = "#0051A1",
+                               "Fora da análise" = "#B21F00")) +
+  theme_void()
+ggsave("output/mapa2010-cut8020.pdf", mapa2010.8020, width = 30, height = 40)
 
 
