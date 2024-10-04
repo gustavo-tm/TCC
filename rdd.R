@@ -109,4 +109,47 @@ mapa2010.8020 <- ggplot() +
   theme_void()
 ggsave("output/mapa2010-cut8020.pdf", mapa2010.8020, width = 30, height = 40)
 
+# Construção da running variable ----
+
+censo2010.grupos <-  censo2010.cut |> 
+  mutate(grupo = case_when(eixo_percent <= .2 ~ "Controle",
+                           eixo_percent >= .8  ~ "Tratamento",
+                           TRUE               ~ "Fora")) |> 
+  left_join(censo2010) |> st_as_sf() |> 
+  mutate(centroide = st_centroid(geometry))
+
+geometrias.controle <- censo2010.grupos |> 
+  filter(grupo == "Controle") |> 
+  select(geometry, centroide) |> 
+  pull(centroide)
+
+geometrias.tratamento <- censo2010.grupos |> 
+  filter(grupo == "Tratamento") |> 
+  select(geometry, centroide) |> 
+  pull(centroide)
+
+censo2010.distancias <- bind_rows(
+  #Distância entre cada unidade de controle a mais próxima do tratamento
+  censo2010.grupos |> 
+    filter(grupo == "Controle") |> 
+    rowwise() |> 
+    mutate(distancia = st_distance(geometry, geometrias.tratamento[st_nearest_feature(geometry, geometrias.tratamento)])[1]),
+  censo2010.grupos |> 
+    filter(grupo == "Tratamento") |> 
+    rowwise() |> 
+    mutate(distancia = st_distance(geometry, geometrias.controle[st_nearest_feature(geometry, geometrias.controle)])[1])
+)
+
+
+censo2010.distancias |> 
+  mutate(distancia = ifelse(grupo == "Controle", -as.numeric(distancia), as.numeric(distancia))) |> 
+  ggplot(aes(x = distancia, y = moradores, color = grupo)) +
+  geom_point(alpha = .025) +
+  geom_smooth() +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  xlim(c(-500, 500)) +
+  theme_classic()
+
+ggsave("output/rdd2010.pdf", width = 8, height = 5)  
+
 
