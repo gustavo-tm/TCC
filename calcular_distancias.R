@@ -56,6 +56,7 @@ prepara.dados <- function(dados, ano){
   dados.intersec <- dados |> 
     st_intersection(zoneamento)
   print("Setor censitário cortado no formato dos lotes")
+  saveRDS(dados.intersec, str_glue("cache/{ano}intersec.RDS"))
   
   dados.cut <- dados.intersec |> 
     mutate(area_precut = st_area(geometry) |> ceiling()) |> 
@@ -64,6 +65,7 @@ prepara.dados <- function(dados, ano){
            eixo_percent = as.numeric((area_precut - area_postcut) / area_precut)) |> 
     st_drop_geometry()
   print("Percentual do setor censitário coberto por eixo calculado")
+  saveRDS(dados.cut, str_glue("cache/{ano}-cut.RDS"))
   
   mapa.cut <- ggplot() +
     geom_sf(data = dados.intersec |>
@@ -112,6 +114,7 @@ prepara.dados <- function(dados, ano){
     left_join(dados) |> st_as_sf() |> 
     mutate(centroide = st_centroid(geometry))
   print("Controle e tratamento definidos")
+  saveRDS(dados.grupos, str_glue("cache/{ano}grupos.RDS"))
   
   geometrias.controle <- dados.grupos |> 
     filter(grupo == "Controle") |> 
@@ -135,7 +138,7 @@ prepara.dados <- function(dados, ano){
              distancia_geometria = as.numeric(st_distance(geometry, geometrias.controle$geometry[st_nearest_feature(geometry, geometrias.controle$geometry)])[1]))
   )
   print("Distâncias calculadas")
-  
+  saveRDS(dados.distancias, str_glue("cache/{ano}-distancias.RDS"))
   # 
   # dados.distancias |>
   #   ggplot(aes(x = distancia, y = moradores, color = grupo)) +
