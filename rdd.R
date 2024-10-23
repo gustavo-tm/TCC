@@ -2,32 +2,53 @@ library(tidyverse)
 library(rdrobust)
 library(sf)
 
-distancias.2022 |> 
-  filter(abs(distancia_geometria) < 100) |> 
-  summarize(controle = sum(distancia_centroide < 0),
-            tratamento = sum(distancia_centroide > 0))
+# RDPLOT ----
 
-
-
-rdd.2010 <- distancias.2010 |> 
+readRDS("cache/2010-distancias.RDS") |> 
   st_drop_geometry() |>
   mutate(densidade = moradores / as.numeric(area_postcut)) |> 
   drop_na() |>
   filter(abs(distancia_geometria) < 500, as.numeric(area_postcut) > 10) |>
   (\(df) rdplot(as.numeric(df$densidade), df$distancia_geometria, 
-                binselect = "es", nbins = c(10, 10), ci = .99))(df = _) 
-rdd.2010
-rdd.2010$rdplot
+                binselect = "qs", ci = .99, p = 1))(df = _) 
 
-rdd.2022 <- distancias.2022 |> 
+readRDS("cache/2022-distancias.RDS") |> 
   st_drop_geometry() |> 
   mutate(densidade = moradores / as.numeric(area_postcut)) |> 
   drop_na() |>
   filter(abs(distancia_geometria) < 500, as.numeric(area_postcut) > 10) |>
   (\(df) rdplot(as.numeric(df$densidade), df$distancia_geometria, 
-                binselect = "es", nbins = c(10, 10), ci = .99))(df = _)
+                binselect = "qs", ci = .99, p = 1))(df = _)
 
-rdd.2022
-rdd.2022$rdplot
+# RDROBUST -----
+
+
+readRDS("cache/2010-distancias.RDS") |> 
+  st_drop_geometry() |>
+  mutate(densidade = moradores / as.numeric(area_postcut)) |> 
+  drop_na() |>
+  filter(abs(distancia_geometria) < 500, as.numeric(area_postcut) > 100) |>
+  (\(df) rdrobust(as.numeric(df$densidade), df$distancia_geometria, 
+                kernel = "tri", p = 1))(df = _) |> 
+  summary()
+
+
+readRDS("cache/2022-distancias.RDS") |> 
+  st_drop_geometry() |> 
+  mutate(densidade = moradores / as.numeric(area_postcut)) |> 
+  drop_na() |>
+  filter(abs(distancia_geometria) < 500, as.numeric(area_postcut) > 100) |> 
+  (\(df) rdrobust(as.numeric(df$densidade), df$distancia_geometria, 
+                  kernel = "tri", p = 1))(df = _) |> 
+  summary()
+
+
+
+distancias.2022 |> 
+  filter(abs(distancia_centroide) <= 43,
+         as.numeric(area_postcut) > 100) |> 
+  st_drop_geometry() |> 
+  group_by(grupo) |> 
+  summarize(n = n())
 
 

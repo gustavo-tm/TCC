@@ -4,7 +4,7 @@ library(sf)
 
 
 # Main mapview layer with situacao coloring
-map <- mapview(readRDS("cache/2022grupos.RDS"), zcol = "grupo")
+map <- mapview(readRDS("cache/2010-intersec.RDS"))
 map.pde <- mapview(PDE, col.regions = "black")
 
 (map + map.pde) |> 

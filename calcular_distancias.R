@@ -53,23 +53,27 @@ remove(gg)
 
 
 prepara.dados <- function(dados, ano){
-  dados.intersec <- dados |> 
-    st_intersection(zoneamento)
-  print("Setor censitário cortado no formato dos lotes")
-  saveRDS(dados.intersec, str_glue("cache/{ano}intersec.RDS"))
   
-  dados.cut <- dados.intersec |> 
-    mutate(area_precut = st_area(geometry) |> ceiling()) |> 
-    st_difference(PDE |> st_union()) |> 
-    mutate(area_postcut = st_area(geometry)|> floor(),
-           eixo_percent = as.numeric((area_precut - area_postcut) / area_precut)) |> 
-    st_drop_geometry()
-  print("Percentual do setor censitário coberto por eixo calculado")
-  saveRDS(dados.cut, str_glue("cache/{ano}-cut.RDS"))
+  if (!file.exists(str_glue("cache/{ano}-intersec.RDS"))) {
+    dados.intersec <- dados |> 
+      st_intersection(zoneamento)
+    print("Setor censitário cortado no formato dos lotes")
+    saveRDS(dados.intersec, str_glue("cache/{ano}-intersec.RDS"))
+  }else{dados.intersec <- readRDS(str_glue("cache/{ano}-intersec.RDS"))}
+  
+  if (!file.exists(str_glue("cache/{ano}-cut.RDS"))) {
+    dados.cut <- dados.intersec |> 
+      mutate(area_precut = st_area(geometry) |> ceiling()) |> 
+      st_difference(st_union(PDE)) |> 
+      mutate(area_postcut = st_area(geometry)|> floor(),
+             eixo_percent = as.numeric((area_precut - area_postcut) / area_precut))
+    print("Percentual do setor censitário coberto por eixo calculado")
+    saveRDS(dados.cut, str_glue("cache/{ano}-cut.RDS"))
+  }else{dados.cut <- readRDS(str_glue("cache/{ano}-cut.RDS"))}
   
   mapa.cut <- ggplot() +
     geom_sf(data = dados.intersec |>
-              left_join(dados.cut |> select(id_setor, eixo_percent)) |>
+              left_join(dados.cut |> select(id_setor, eixo_percent) |> st_drop_geometry()) |>
               mutate(eixo_percent = cut(eixo_percent, breaks = 0:5/5)),
             aes(geometry = geometry, fill = eixo_percent),
             color = NA) +
@@ -85,11 +89,11 @@ prepara.dados <- function(dados, ano){
   
   ggsave(str_glue("output/{ano}mapa_percent_eixo.pdf"), mapa.cut, width = 30, height = 40)
   
-  mapa.8020 <- ggplot() +
+  mapa.recortado <- ggplot() +
     geom_sf(data = dados.intersec |> 
-              left_join(dados.cut |> select(id_setor, eixo_percent)) |> 
-              mutate(situacao = case_when(eixo_percent <= .2 ~ "Não Eixo",
-                                          eixo_percent >= .8 ~ "Eixo",
+              left_join(dados.cut |> select(id_setor, eixo_percent) |> st_drop_geometry()) |> 
+              mutate(situacao = case_when(eixo_percent <= .1 ~ "Não Eixo",
+                                          eixo_percent >= .5 ~ "Eixo",
                                           TRUE ~ "Fora da análise")),
             aes(geometry = geometry, fill = situacao), color = NA) +
     geom_sf(data = dados, colour = "#313638", fill = NA, alpha = .5) +
@@ -103,18 +107,22 @@ prepara.dados <- function(dados, ano){
                                  "Eixo" = "#0051A1",
                                  "Fora da análise" = "#B21F00")) +
     theme_void()
-  ggsave(str_glue("output/{ano}mapa-cut8020.pdf"), mapa.8020, width = 30, height = 40)
+  ggsave(str_glue("output/{ano}mapa-cutted.pdf"), mapa.recortado, width = 30, height = 40)
   
   # Construção da running variable ----
   
-  dados.grupos <-  dados.cut |> 
-    mutate(grupo = case_when(eixo_percent <= .2 ~ "Controle",
-                             eixo_percent >= .8  ~ "Tratamento",
-                             TRUE               ~ "Fora")) |> 
-    left_join(dados) |> st_as_sf() |> 
-    mutate(centroide = st_centroid(geometry))
-  print("Controle e tratamento definidos")
-  saveRDS(dados.grupos, str_glue("cache/{ano}grupos.RDS"))
+  if (!file.exists(str_glue("cache/{ano}-grupos.RDS"))) {
+    dados.grupos <-  dados.cut |> 
+      st_drop_geometry() |> 
+      mutate(grupo = case_when(eixo_percent <= .1 ~ "Controle",
+                               eixo_percent >= .5  ~ "Tratamento",
+                               TRUE               ~ "Fora")) |> 
+      left_join(dados.intersec) |> st_as_sf() |> 
+      st_simplify(dTolerance = 10) |> 
+      mutate(centroide = st_centroid(geometry))
+    print("Controle e tratamento definidos")
+    saveRDS(dados.grupos, str_glue("cache/{ano}-grupos.RDS"))
+  }else{dados.grupos <- readRDS(str_glue("cache/{ano}-grupos.RDS"))}
   
   geometrias.controle <- dados.grupos |> 
     filter(grupo == "Controle") |> 
@@ -124,21 +132,23 @@ prepara.dados <- function(dados, ano){
     filter(grupo == "Tratamento") |> 
     select(geometry, centroide)
   
-  dados.distancias <- bind_rows(
-    #Distância entre cada unidade de controle a mais próxima do tratamento
-    dados.grupos |> 
-      filter(grupo == "Controle") |> 
-      rowwise() |> 
-      mutate(distancia_centroide = -as.numeric(st_distance(geometry, geometrias.tratamento$centroide[st_nearest_feature(geometry, geometrias.tratamento$centroide)])[1]),
-             distancia_geometria = -as.numeric(st_distance(geometry, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1])),
-    dados.grupos |> 
-      filter(grupo == "Tratamento") |> 
-      rowwise() |> 
-      mutate(distancia_centroide = as.numeric(st_distance(geometry, geometrias.controle$centroide[st_nearest_feature(geometry, geometrias.controle$centroide)])[1]),
-             distancia_geometria = as.numeric(st_distance(geometry, geometrias.controle$geometry[st_nearest_feature(geometry, geometrias.controle$geometry)])[1]))
-  )
-  print("Distâncias calculadas")
-  saveRDS(dados.distancias, str_glue("cache/{ano}-distancias.RDS"))
+  if (!file.exists(str_glue("cache/{ano}-distancias.RDS"))) {
+    dados.distancias <- bind_rows(
+      #Distância entre cada unidade de controle a mais próxima do tratamento
+      dados.grupos |> 
+        filter(grupo == "Controle") |> 
+        rowwise() |> 
+        mutate(distancia_centroide = -as.numeric(st_distance(centroide, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1]),
+               distancia_geometria = -as.numeric(st_distance(geometry, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1])),
+      dados.grupos |> 
+        filter(grupo == "Tratamento") |> 
+        rowwise() |> 
+        mutate(distancia_centroide = as.numeric(st_distance(centroide, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1]),
+               distancia_geometria = as.numeric(st_distance(geometry, geometrias.controle$geometry[st_nearest_feature(geometry, geometrias.controle$geometry)])[1]))
+    )
+    print("Distâncias calculadas")
+    saveRDS(dados.distancias, str_glue("cache/{ano}-distancias.RDS"))
+  }else{dados.distancias <- readRDS(str_glue("cache/{ano}-distancias.RDS"))}
   # 
   # dados.distancias |>
   #   ggplot(aes(x = distancia, y = moradores, color = grupo)) +
