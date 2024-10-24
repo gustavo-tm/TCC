@@ -93,7 +93,7 @@ prepara.dados <- function(dados, ano){
     geom_sf(data = dados.intersec |> 
               left_join(dados.cut |> select(id_setor, eixo_percent) |> st_drop_geometry()) |> 
               mutate(situacao = case_when(eixo_percent <= .1 ~ "Não Eixo",
-                                          eixo_percent >= .5 ~ "Eixo",
+                                          eixo_percent >= .9 ~ "Eixo",
                                           TRUE ~ "Fora da análise")),
             aes(geometry = geometry, fill = situacao), color = NA) +
     geom_sf(data = dados, colour = "#313638", fill = NA, alpha = .5) +
@@ -115,7 +115,7 @@ prepara.dados <- function(dados, ano){
     dados.grupos <-  dados.cut |> 
       st_drop_geometry() |> 
       mutate(grupo = case_when(eixo_percent <= .1 ~ "Controle",
-                               eixo_percent >= .5  ~ "Tratamento",
+                               eixo_percent >= .9  ~ "Tratamento",
                                TRUE               ~ "Fora")) |> 
       left_join(dados.intersec) |> st_as_sf() |> 
       st_simplify(dTolerance = 10) |> 
@@ -137,28 +137,16 @@ prepara.dados <- function(dados, ano){
       #Distância entre cada unidade de controle a mais próxima do tratamento
       dados.grupos |> 
         filter(grupo == "Controle") |> 
-        rowwise() |> 
-        mutate(distancia_centroide = -as.numeric(st_distance(centroide, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1]),
-               distancia_geometria = -as.numeric(st_distance(geometry, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1])),
+        mutate(nearest = st_nearest_feature(geometry, geometrias.tratamento$geometry),
+               distancia = -as.numeric(st_distance(geometry, geometrias.tratamento$geometry[nearest], by_element = TRUE))),
       dados.grupos |> 
         filter(grupo == "Tratamento") |> 
-        rowwise() |> 
-        mutate(distancia_centroide = as.numeric(st_distance(centroide, geometrias.tratamento$geometry[st_nearest_feature(geometry, geometrias.tratamento$geometry)])[1]),
-               distancia_geometria = as.numeric(st_distance(geometry, geometrias.controle$geometry[st_nearest_feature(geometry, geometrias.controle$geometry)])[1]))
-    )
+        mutate(nearest = st_nearest_feature(geometry, geometrias.controle$geometry),
+               distancia = as.numeric(st_distance(geometry, geometrias.controle$geometry[nearest], by_element = TRUE))))
     print("Distâncias calculadas")
     saveRDS(dados.distancias, str_glue("cache/{ano}-distancias.RDS"))
   }else{dados.distancias <- readRDS(str_glue("cache/{ano}-distancias.RDS"))}
-  # 
-  # dados.distancias |>
-  #   ggplot(aes(x = distancia, y = moradores, color = grupo)) +
-  #   geom_point(alpha = .025) +
-  #   geom_smooth() +
-  #   geom_vline(xintercept = 0, linetype = "dashed") +
-  #   xlim(c(-500, 500)) +
-  #   theme_classic()
-  # 
-  # ggsave(str_glue("output/{ano}rdd.pdf"), width = 8, height = 5)
+
   
   return(dados.distancias)
 }
@@ -174,7 +162,7 @@ censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |>
   filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical())
 
 distancias.2010 <- prepara.dados(censo2010, 2010)
-remove(censo2010)
+# remove(censo2010)
 gc()
 
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
@@ -184,5 +172,5 @@ censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |>
   filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) # Apenas valores perto dos EETUs
 
 distancias.2022 <- prepara.dados(censo2022, 2022)
-remove(censo2022)
+# remove(censo2022)
 gc()
