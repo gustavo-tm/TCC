@@ -1,0 +1,120 @@
+---
+title: "src"
+author: "Gustavo Theil"
+date: "2024-10-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(sf)
+library(mapview)
+setwd("C:/git/TCC")
+```
+
+
+```{r figura_mapa_ativadores_eixo, cache = TRUE}
+read_sf("dados/macroareas/SIRGAS_SHP_MACROAREAS.shp") |> 
+  st_set_crs("epsg:31983") |> 
+  (\(macroareas) mapview(macroareas, zcol = "mc_sigla"))() +
+read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
+  st_set_crs("epsg:31983") |> 
+  select(geometry) |> 
+  (\(EETU) mapview(EETU))() + 
+read_sf("dados/geradores-eixo/corredor-onibus/SIRGAS_SHP_corredoronibus_line.shp") |> 
+  mutate(tipo = "onibus") |> select(tipo, geometry) |> st_set_crs("epsg:31983") |> 
+  (\(onibus) mapview(onibus))() + 
+read_sf("dados/geradores-eixo/estacao-metro/SIRGAS_SHP_estacaometro_point.shp") |> 
+  mutate(tipo = "metro") |> select(tipo, geometry) |> st_set_crs("epsg:31983")  |> 
+  (\(metro) mapview(metro))() + 
+read_sf("dados/geradores-eixo/estacao-trem/SIRGAS_SHP_estacaotrem.shp") |> 
+  mutate(tipo = "trem") |> select(tipo, geometry) |> st_set_crs("epsg:31983") |> 
+  (\(trem) mapview(trem))() 
+```
+
+
+```{r data_import_ativadores_eixo, cache = TRUE}
+
+distrito <- read_sf("dados/distrito/SIRGAS_SHP_distrito.shp") |> st_set_crs("epsg:31983")
+
+# Ativadores de eixo
+ativadores_eixo <- bind_rows(list(
+  read_sf("dados/geradores-eixo/corredor-onibus/SIRGAS_SHP_corredoronibus_line.shp") |> 
+    mutate(tipo = "onibus") |> select(tipo, geometry) |> st_set_crs("epsg:31983"),
+  read_sf("dados/geradores-eixo/estacao-metro/SIRGAS_SHP_estacaometro_point.shp") |> 
+    mutate(tipo = "metro") |> select(tipo, geometry) |> st_set_crs("epsg:31983"),
+  read_sf("dados/geradores-eixo/estacao-trem/SIRGAS_SHP_estacaotrem.shp") |> 
+    mutate(tipo = "trem") |> select(tipo, geometry) |> st_set_crs("epsg:31983") 
+)) |> 
+  filter(st_covered_by(geometry, distrito) |> as.logical())
+```
+
+```{r}
+speedbuffer <- ativadores_eixo |> 
+  st_buffer(1500) |> 
+  st_union() |> 
+  st_simplify(dTolerance = 50)
+```
+
+
+
+```{r data_import_censo, cache = TRUE}
+censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
+  filter(CD_MUN == "3550308") |> 
+  st_transform("epsg:31983")  |>
+  select(id_setor = CD_SETOR, moradores = v0001) |> 
+  filter(st_covered_by(geometry, speedbuffer) |> as.logical())
+
+censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |> 
+  filter(CD_GEOCODM == "3550308") |> 
+  st_transform("epsg:31983") |> 
+  select(id_setor = CD_GEOCODI) |> 
+  left_join(readxl::read_excel("dados/censo/2010/Basico_SP1.XLS") |> 
+              select(id_setor = Cod_setor, moradores = V002) |> 
+              mutate(id_setor = as.character(id_setor)),
+            by = join_by(id_setor))
+```
+
+
+
+```{r}
+zoneamento <- list.files(path = "dados/zoneamento/", full.names = T) |> 
+  (\(arquivos) arquivos[grepl(pattern = "\\.shp$", x = arquivos)])(arquivos = _) |> 
+  (\(arquivos) arquivos[-3])(arquivos = _) |> # Tirar quadras públicas
+  lapply(read_sf) |>
+  bind_rows() |>
+  st_set_crs("epsg:5533") |> 
+  st_transform("epsg:31983") |> 
+  st_simplify(dTolerance = 10) |> 
+  summarize(geometria = st_union(geometry))
+```
+
+```{r}
+censo2022.intersec <- censo2022 |> 
+  st_intersection(zoneamento)
+```
+
+```{r}
+distancias2022 <- censo2022 |> 
+  mutate(nearest = st_nearest_feature(geometry, ativadores_eixo),
+         distancia = st_distance(geometry, pull(ativadores_eixo, geometry)[nearest], by_element = TRUE))
+```
+
+```{r}
+mapview(distancias2022, zcol = "distancia") + mapview(ativadores_eixo) + mapview(PDE)
+```
+
+```{r}
+distancias2022 |> 
+  mutate(distancia = as.numeric(distancia),
+         area = st_area(geometry) |> as.numeric(),
+         densidade = moradores / area) |> 
+  st_drop_geometry() |> 
+  ggplot(aes(x = distancia, y = densidade)) +
+  geom_point(alpha = .5) +
+  geom_smooth() +
+  xlim(c(0,1000)) +
+  ylim(c(0,.5))
+```
+
