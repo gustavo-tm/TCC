@@ -18,41 +18,18 @@ setwd("C:/git/TCC")
 ```
 
 
-```{r "dados/import/zoneamento", cache = TRUE}
-## PDE ----
-PDE <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
+```{r "dados/eixos", cache = TRUE}
+## eixos ----
+eixos <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
   st_set_crs("epsg:31983") |> 
   select(geometry)
 
-PDE.buffersimples <- PDE |> 
+eixos.buffersimples <- eixos |> 
   st_buffer(1000) |> 
   st_union() |> 
   st_simplify(dTolerance = 100)
 
-zonas <- list.files(path = "dados/zoneamento/", full.names = T) |> 
-  (\(arquivos) arquivos[grepl(pattern = "\\.shp$", x = arquivos)])(arquivos = _) |> 
-  (\(arquivos) arquivos[-3])(arquivos = _) |> # Tirar quadras públicas
-  lapply(read_sf) |>
-  bind_rows() |>
-  select(geometry) |> 
-  st_set_crs("epsg:5533") |> 
-  st_transform("epsg:31983") |> 
-  filter(st_intersects(geometry, PDE.buffersimples) |> as.logical()) |> 
-  mutate(eixo = st_intersects(geometry |> st_buffer(-10), PDE |> st_union()) |> as.logical() |> replace_na(0))
-
-gg <- ggplot(zonas) +
-  geom_sf(data = PDE.buffersimples, color = NA, fill = "grey", alpha = .5) +
-  geom_sf(color = NA, fill = "darkgrey") +
-  geom_sf(data = PDE, fill = "black", color = NA) +
-  theme_void()
-
-ggsave("output/zoneamento_PDE.pdf", gg, width = 30, height = 40)
-remove(gg)
-
-mapview(PDE.buffersimples) + mapview(zonas) + mapview(PDE)
-```
-```{r "dados/tratados/contorno", cache = TRUE}
-PDE.contorno <- PDE |> 
+eixos.contorno <- eixos |> 
   st_buffer(50) |> 
   st_union() |> 
   st_buffer(-50) |> 
@@ -60,11 +37,64 @@ PDE.contorno <- PDE |>
   st_cast("MULTILINESTRING") |> 
   st_as_sf()
 
-mapview(PDE.contorno) + mapview(PDE)
+mapview(eixos.contorno) + mapview(eixos)
 ```
 
 
-```{r "dados/import/censo", cache = TRUE}
+```{r "dados/lotes", cache = TRUE}
+IPTU <- read.csv("dados/IPTU/IPTU_2024.csv", sep=";", encoding = "latin1") |>  
+    as_tibble() |>  
+    select(sql = "NUMERO.DO.CONTRIBUINTE", 
+           condominio = "NUMERO.DO.CONDOMINIO",
+           area_terreno = "AREA.DO.TERRENO",
+           area_construida = "AREA.CONSTRUIDA",
+           area_ocupada = "AREA.OCUPADA",
+           pavimentos = "QUANTIDADE.DE.PAVIMENTOS",
+           ano_construcao = "ANO.DA.CONSTRUCAO.CORRIGIDO",
+           tipo = "TIPO.DE.PADRAO.DA.CONSTRUCAO") |>  
+    # Separação do número de contribuinte (SQL) em setor quadra e lote
+    mutate(setor =  str_sub(sql, 1, 3),
+           quadra = str_sub(sql, 4, 6),
+           # Quando o lote é um condomínio, haverá vários SQLs no mesmo lote. CD = Condomínio
+           lote = str_sub(sql, 7, 10) |>  
+             ifelse(condominio == "00-0", yes = _, paste("CD", str_sub(condominio, 1, 2), sep = "")),
+           # Tipo de uso
+           residencial = str_detect(tipo, "Residencial")) |> 
+  # Agregar por SQL
+  group_by(setor, quadra, lote) |>  
+  summarize(unidades = n(),
+            area_terreno = median(area_terreno), 
+            area_construida = sum(area_construida), 
+            area_ocupada = median(area_ocupada),
+            pavimentos = median(pavimentos),
+            ano_construcao = median(ano_construcao),
+            residencial = median(residencial)) |>  
+  ungroup() |>  
+  mutate(densidade_construtiva = area_construida / area_terreno,
+         densidade_habitacional = unidades / area_terreno,
+         verticalizacao = area_construida / area_ocupada)
+
+lotes <- list.files(path="dados/lotes/unzip", full.names = FALSE) |>  
+  (\(.) paste("dados/lotes/unzip/", ., "/", ., ".shp", sep = ""))() |>  
+  lapply(read_sf) |>  
+  bind_rows() |>  
+  st_set_crs("epsg:31983") |> 
+  filter(lo_tp_lote == "F") |>  # Seleção apenas de lotes fiscais
+  mutate(lo_lote = ifelse(lo_lote == "0000", paste("CD", lo_condomi, sep = ""), lo_lote)) |>  
+  select(setor = lo_setor, quadra = lo_quadra, lote = lo_lote)
+  filter(st_centroid(geometry) |> st_covered_by(eixos.buffersimples) |> as.logical())
+  
+IPTU.lote <- lotes |>  
+  left_join(IPTU, by = join_by(setor, quadra, lote)) |>  
+  ungroup()
+
+remove(IPTU, lotes)
+```
+
+
+
+
+```{r "dados/censo", cache = TRUE}
 censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |> 
   filter(CD_GEOCODM == "3550308") |> 
   st_transform("epsg:31983") |> 
@@ -73,14 +103,14 @@ censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |>
               select(id_setor = Cod_setor, moradores = V002) |> 
               mutate(id_setor = as.character(id_setor)),
             by = join_by(id_setor)) |> 
-  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) |> 
+  filter(st_covered_by(geometry, eixos.buffersimples) |> as.logical()) |> 
   mutate(ano = 2010)
 
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
   filter(CD_MUN == "3550308") |> 
   st_transform("epsg:31983")  |>
   select(id_setor = CD_SETOR, moradores = v0001) |> 
-  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) |> 
+  filter(st_covered_by(geometry, eixos.buffersimples) |> as.logical()) |> 
   mutate(ano = 2022)
 
 censo <- bind_rows(list(censo2010, censo2022)) |> 
@@ -89,7 +119,7 @@ censo <- bind_rows(list(censo2010, censo2022)) |>
 
 ```{r "dados/tratados/censo", cache = TRUE}
 censo <- censo |> 
-  st_intersection(zonas |> st_union()) |> 
+  st_intersection(IPTU.lote |> st_union()) |> 
   mutate(area_cut = st_area(geometry))
 ```
 
@@ -119,7 +149,7 @@ censo <- censo |>
          distancia_fora = as.numeric(st_distance(centroid, zonas |> filter(!eixo))[,1])) |> 
   as_tibble() |> 
   left_join(censo |> 
-              st_intersection(PDE |> st_union()) |> 
+              st_intersection(eixos |> st_union()) |> 
               select(id_setor, geometry_eixo = geometry) |> 
               as_tibble()) |> 
   mutate(area_eixo = st_area(geometry_eixo),
@@ -155,7 +185,7 @@ censo <- censo |>
 
 mapview(censo |> filter(ano == 2022) |> st_set_geometry("geometry"), zcol = "grupo") + 
   mapview(censo |> filter(ano == 2022) |> st_set_geometry("centroid"), zcol = "grupo") +
-  mapview(PDE)
+  mapview(eixos)
 ```
 
 ```{r}
