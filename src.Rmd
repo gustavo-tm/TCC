@@ -1,0 +1,223 @@
+---
+title: 'TCC'
+author: "Gustavo Theil"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(sf)
+library(mapview)
+library(rdrobust)
+library(units)
+setwd("C:/git/TCC")
+```
+
+
+```{r "dados/import/zoneamento", cache = TRUE}
+## PDE ----
+PDE <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
+  st_set_crs("epsg:31983") |> 
+  select(geometry)
+
+PDE.buffersimples <- PDE |> 
+  st_buffer(800) |> 
+  st_union() |> 
+  st_simplify(dTolerance = 100)
+
+zonas <- list.files(path = "dados/zoneamento/", full.names = T) |> 
+  (\(arquivos) arquivos[grepl(pattern = "\\.shp$", x = arquivos)])(arquivos = _) |> 
+  (\(arquivos) arquivos[-3])(arquivos = _) |> # Tirar quadras públicas
+  lapply(read_sf) |>
+  bind_rows() |>
+  select(geometry) |> 
+  st_set_crs("epsg:5533") |> 
+  st_transform("epsg:31983") |> 
+  filter(st_intersects(geometry, PDE.buffersimples) |> as.logical()) |> 
+  mutate(eixo = st_intersects(geometry |> st_buffer(-10), PDE |> st_union()) |> as.logical() |> replace_na(0))
+
+gg <- ggplot(zonas) +
+  geom_sf(data = PDE.buffersimples, color = NA, fill = "grey", alpha = .5) +
+  geom_sf(color = NA, fill = "darkgrey") +
+  geom_sf(data = PDE, fill = "black", color = NA) +
+  theme_void()
+
+ggsave("output/zoneamento_PDE.pdf", gg, width = 30, height = 40)
+remove(gg)
+
+mapview(PDE.buffersimples) + mapview(zonas) + mapview(PDE)
+```
+
+
+
+```{r "dados/import/censo", cache = TRUE}
+censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |> 
+  filter(CD_GEOCODM == "3550308") |> 
+  st_transform("epsg:31983") |> 
+  select(id_setor = CD_GEOCODI) |> 
+  left_join(readxl::read_excel("dados/censo/2010/Basico_SP1.XLS") |> 
+              select(id_setor = Cod_setor, moradores = V002) |> 
+              mutate(id_setor = as.character(id_setor)),
+            by = join_by(id_setor)) |> 
+  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) |> 
+  mutate(ano = 2010)
+
+censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
+  filter(CD_MUN == "3550308") |> 
+  st_transform("epsg:31983")  |>
+  select(id_setor = CD_SETOR, moradores = v0001) |> 
+  filter(st_covered_by(geometry, PDE.buffersimples) |> as.logical()) |> 
+  mutate(ano = 2022)
+
+censo <- bind_rows(list(censo2010, censo2022)) |> 
+  mutate(area = st_area(geometry)) 
+```
+
+```{r "dados/tratados/censo", cache = TRUE}
+censo <- censo |> 
+  st_intersection(zonas |> st_union()) |> 
+  mutate(area_cut = st_area(geometry))
+```
+
+
+```{r "dados/tratados/distancias", cache = TRUE}
+zonas <- zonas |> 
+  group_by(eixo) |> 
+  summarize(geometry = st_union(geometry))
+
+# censo <- censo |> 
+#   mutate(distancia_eixo = as.numeric(st_distance(geometry, zonas |> filter( eixo))[,1]),
+#          distancia_fora = as.numeric(st_distance(geometry, zonas |> filter(!eixo))[,1]),
+#          grupo = case_when(distancia_eixo == 0 & distancia_fora == 0 ~ "Fora",
+#                            distancia_eixo != 0 & distancia_fora == 0 ~ "Controle",
+#                            distancia_eixo == 0 & distancia_fora != 0 ~ "Tratamento",
+#                            TRUE ~ "ERRO"),
+#          distancia = case_when(grupo == "Controle"   ~ -distancia_eixo,
+#                                grupo == "Tratamento" ~  distancia_fora,
+#                                grupo == "Fora"       ~  NA,
+#                                TRUE                  ~  NA))
+
+
+
+censo <- censo |> 
+  mutate(centroid = st_centroid(geometry),
+         distancia_eixo = as.numeric(st_distance(centroid, zonas |> filter( eixo))[,1]),
+         distancia_fora = as.numeric(st_distance(centroid, zonas |> filter(!eixo))[,1])) |> 
+  as_tibble() |> 
+  left_join(censo |> 
+              st_intersection(PDE |> st_union()) |> 
+              select(id_setor, geometry_eixo = geometry) |> 
+              as_tibble()) |> 
+  mutate(area_eixo = st_area(geometry_eixo),
+         percent_eixo = as.numeric(area_eixo / area_cut),
+         posicao_centroide = ifelse(distancia_eixo > distancia_fora, "fora", "eixo"))
+
+censo |> 
+  st_drop_geometry() |> 
+  ggplot(aes(x = posicao_centroide, y = percent_eixo)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = .0, ymax = .05, fill = "darkred", alpha = .05) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = .75, ymax = 1, fill = "darkgreen", alpha = .05) +
+  geom_violin(fill = "darkblue") +
+  facet_wrap(~ano) +
+  geom_hline(yintercept = .75, linetype = "dotted") +
+  geom_hline(yintercept = .05, linetype = "dotted") +
+  theme_bw() +
+  labs(x = "Região mais próxima ao centroide", y = "Percentual da área em eixo")
+
+```
+
+```{r "dados/tratados/grupos", cache = TRUE}
+censo <- censo |> 
+  mutate(grupo = case_when(posicao_centroide == "eixo" & percent_eixo >= .75 ~ "Tratamento",
+                           posicao_centroide == "fora" & percent_eixo <=  .1 ~ "Controle",
+                           .default = "Descartado"),
+         distancia = case_when(grupo == "Tratamento" ~ distancia_fora,
+                               grupo == "Controle" ~  -distancia_eixo,
+                               .default = NA))
+
+# distancia = case_when(grupo == "Tratamento" ~ as.numeric(st_distance(geometry |> st_buffer(-20), zonas |> filter(!eixo))[,1]),
+#                                grupo == "Controle" ~  -as.numeric(st_distance(geometry |> st_buffer(-20), zonas |> filter( eixo))[,1]),
+#                                .default = NA)
+
+mapview(censo |> filter(ano == 2022) |> st_set_geometry("geometry"), zcol = "grupo") + 
+  mapview(censo |> filter(ano == 2022) |> st_set_geometry("centroid"), zcol = "grupo") +
+  mapview(PDE)
+```
+
+```{r}
+censo |> 
+  filter(distancia == 0, ano == 2022) |> 
+  st_set_geometry("geometry") |> 
+  mapview() + mapview(zonas)
+```
+
+```{r}
+censo |> 
+  group_by(grupo) |> 
+  summarize(area = mean(area),
+            distancia = mean(distancia))
+
+
+```
+
+
+```{r "analise/rdd/graficos", cache = TRUE}
+censo |> 
+  st_drop_geometry() |>
+  filter(ano == 2022, grupo != "Descartado", abs(distancia) < 500) |> 
+  mutate(densidade = moradores / as.numeric(area)) |> 
+  drop_na() |>
+  (\(df) rdplot(as.numeric(df$densidade), df$distancia, 
+                binselect = "qs", ci = .99, p = 1, c = 0))(df = _) 
+
+censo |> 
+  st_drop_geometry() |>
+  filter(ano == 2010, grupo != "Descartado", abs(distancia) < 500) |> 
+  mutate(densidade = moradores / as.numeric(area)) |> 
+  drop_na() |>
+  (\(df) rdplot(as.numeric(df$densidade), df$distancia, 
+                binselect = "qs", ci = .99, p = 1, c = 0))(df = _)
+```
+
+
+
+```{r "analise/rdd/regressao", cache = TRUE}
+censo |> 
+  st_drop_geometry() |>
+  filter(ano == 2022, grupo != "Descartado") |> 
+  mutate(densidade = moradores / as.numeric(area)) |> 
+  drop_na() |>
+  (\(df) rdrobust(as.numeric(df$densidade), df$distancia, 
+                  kernel = "tri", p = 1))(df = _) |> 
+  summary()
+
+censo |> 
+  st_drop_geometry() |>
+  filter(ano == 2010, grupo != "Descartado") |> 
+  mutate(densidade = moradores / as.numeric(area)) |> 
+  drop_na() |>
+  (\(df) rdrobust(as.numeric(df$densidade), df$distancia, 
+                  kernel = "tri", p = 1))(df = _) |> 
+  summary()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
