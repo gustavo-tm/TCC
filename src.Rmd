@@ -12,6 +12,8 @@ library(sf)
 library(mapview)
 library(rdrobust)
 library(units)
+
+mapviewOptions(basemaps = "CartoDB.Positron")
 setwd("C:/git/TCC")
 ```
 
@@ -23,7 +25,7 @@ PDE <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
   select(geometry)
 
 PDE.buffersimples <- PDE |> 
-  st_buffer(800) |> 
+  st_buffer(1000) |> 
   st_union() |> 
   st_simplify(dTolerance = 100)
 
@@ -49,7 +51,17 @@ remove(gg)
 
 mapview(PDE.buffersimples) + mapview(zonas) + mapview(PDE)
 ```
+```{r "dados/tratados/contorno", cache = TRUE}
+PDE.contorno <- PDE |> 
+  st_buffer(50) |> 
+  st_union() |> 
+  st_buffer(-50) |> 
+  nngeo::st_remove_holes() |> 
+  st_cast("MULTILINESTRING") |> 
+  st_as_sf()
 
+mapview(PDE.contorno) + mapview(PDE)
+```
 
 
 ```{r "dados/import/censo", cache = TRUE}
@@ -147,17 +159,17 @@ mapview(censo |> filter(ano == 2022) |> st_set_geometry("geometry"), zcol = "gru
 ```
 
 ```{r}
-censo |> 
-  filter(distancia == 0, ano == 2022) |> 
-  st_set_geometry("geometry") |> 
-  mapview() + mapview(zonas)
+# censo |> 
+#   filter(distancia == 0, ano == 2022) |> 
+#   st_set_geometry("geometry") |> 
+#   mapview() + mapview(zonas)
 ```
 
 ```{r}
-censo |> 
-  group_by(grupo) |> 
-  summarize(area = mean(area),
-            distancia = mean(distancia))
+# censo |> 
+#   group_by(grupo) |> 
+#   summarize(area = mean(area),
+#             distancia = mean(distancia))
 
 
 ```
