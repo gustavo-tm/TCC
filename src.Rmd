@@ -463,6 +463,143 @@ bind_rows(
 ggsave("output/event_study.pdf", height = 10, width = 7)
 ```
 
+
+```{r}
+bind_rows(
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 1) |> 
+    drop_na() |> 
+    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Densidade Construtiva"),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 1) |> 
+    drop_na() |> 
+    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Densidade Habitacional"),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 1) |> 
+    drop_na() |> 
+    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Pavimentos")
+) |> 
+  filter(endsWith(nome, "Tratamento")) |>
+  mutate(ano = str_sub(nome, 27,28), 
+         coef = as.numeric(coef),
+         se = as.numeric(se)) |> 
+  bind_rows(data.frame(ano = "14", coef = 0, se = 0, nome = "", 
+                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"))) |> 
+  ggplot(aes(x = ano, y = coef)) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = "14", linetype = "dotted") +
+  geom_point() +
+  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
+  facet_grid(rows = "variavel", scales = "free_y") +
+  theme_minimal()
+
+ggsave("output/event_study.pdf", height = 10, width = 7)
+```
+```{r}
+bind_rows(
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 1) |> 
+    drop_na() |> 
+    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Densidade Construtiva", residencial = TRUE),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 1) |> 
+    drop_na() |> 
+    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Densidade Habitacional", residencial = TRUE),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 1) |> 
+    drop_na() |> 
+    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Pavimentos", residencial = TRUE),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 0) |> 
+    drop_na() |> 
+    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Densidade Construtiva", residencial = FALSE),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 0) |> 
+    drop_na() |> 
+    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Densidade Habitacional", residencial = FALSE),
+  IPTU.did |> 
+    filter(grupo != "Descartado", residencial == 0) |> 
+    drop_na() |> 
+    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
+    summary() |> 
+    (\(summ) cbind(summ$coefficients |> names(),
+                       unname(summ$coefficients),
+                       unname(summ$se)) |> as.data.frame() |> 
+       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
+    mutate(variavel = "Pavimentos", residencial = FALSE)
+) |> 
+  filter(endsWith(nome, "Tratamento")) |>
+  mutate(ano = str_sub(nome, 27,28), 
+         coef = as.numeric(coef),
+         se = as.numeric(se)) |> 
+  bind_rows(data.frame(ano = "14", coef = 0, se = 0, nome = "", 
+                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"),
+                       residencial = 1:6>3)) |> 
+  ggplot(aes(x = ano, y = coef, colour = residencial)) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = "14", linetype = "dotted") +
+  geom_point() +
+  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
+  facet_grid(rows = "variavel", scales = "free_y") +
+  theme_minimal() +
+  scale_colour_viridis_d(option = "G", begin = .25, end = .75)
+
+ggsave("output/event_study_residencial.pdf", height = 10, width = 7)
+```
+
+
+
+
+
+
 ```{r}
 IPTU.lote |> 
   st_drop_geometry() |>
