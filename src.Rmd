@@ -21,9 +21,10 @@ mapviewOptions(basemaps = "CartoDB.Positron")
 setwd("C:/git/TCC")
 ```
 
+# Import dados
 
 ```{r "dados/eixos", cache = TRUE}
-## eixos ----
+## Eixos ----
 eixos <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
   st_set_crs("epsg:31983") |> 
   select(geometry)
@@ -68,6 +69,7 @@ list(
 
 
 ```{r "dados/lotes", cache = TRUE}
+# IPTU ----
 IPTU <- read.csv("dados/IPTU/IPTU_2024.csv", sep=";", encoding = "latin1") |>  
     as_tibble() |>  
     select(sql = "NUMERO.DO.CONTRIBUINTE", 
@@ -109,7 +111,7 @@ lotes <- list.files(path="dados/lotes/unzip", full.names = FALSE) |>
   mutate(lo_lote = ifelse(lo_lote == "0000", paste("CD", lo_condomi, sep = ""), lo_lote)) |>  
   select(setor = lo_setor, quadra = lo_quadra, lote = lo_lote) |> 
   filter(st_centroid(geometry) |> st_covered_by(eixos.buffersimples) |> as.logical())
-  
+
 IPTU.lote <- lotes |>  
   left_join(IPTU, by = join_by(setor, quadra, lote)) |>  
   ungroup()
@@ -121,6 +123,7 @@ remove(IPTU, lotes)
 
 
 ```{r "dados/censo", cache = TRUE}
+# Censo ----- 
 censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |> 
   filter(CD_GEOCODM == "3550308") |> 
   st_transform("epsg:31983") |> 
@@ -156,10 +159,12 @@ censo <- censo |>
   mutate(area_cut_residencial = st_area(geometria_residencial))
 ```
 
+# Preparação dados
 
 ```{r "dados/distancias", cache = TRUE}
 # load("C:/git/TCC/l.RData")
 
+# Cálculo distâncias -----
 censo <- censo |> 
   mutate(centroid = st_centroid(geometria_residencial),
          posicao_centroide = ifelse(centroid |> 
@@ -204,6 +209,7 @@ censo |>
 
 
 ```{r "dados/grupos", cache = TRUE}
+# Definição dos grupos -----
 censo <- censo |> 
   mutate(grupo = case_when(posicao_centroide == "eixo" & percent_eixo_residencial >= .95 ~ "Tratamento",
                            posicao_centroide == "fora" & percent_eixo_residencial <=  .05 ~ "Controle",
@@ -218,14 +224,13 @@ censo <- censo |>
 #                                .default = NA)
 
 (list(
-  # "Recorte no formato dos lotes" = censo |> 
+  "Recorte no formato dos lotes" = censo |>
+    filter(ano == 2022) |>
+    st_set_geometry("geometry"),
+  # "Recorte apenas residencial" = censo |> 
   #   filter(ano == 2022) |> 
-  #   st_set_geometry("geometry") |> 
+  #   st_set_geometry("geometria_residencial") |> 
   #   st_simplify(dTolerance = 10),
-  "Recorte apenas residencial" = censo |> 
-    filter(ano == 2022) |> 
-    st_set_geometry("geometria_residencial") |> 
-    st_simplify(dTolerance = 10),
   "Centroide" = censo |> filter(ano == 2022) |> st_set_geometry("centroid")) |> 
   mapview(zcol = "grupo") + mapview(eixos.contorno)) |> 
   mapshot(url = "output/mapview/grupos.html")
@@ -259,8 +264,27 @@ censo |>
   facet_wrap(~ano) +
   theme_classic()
 ```
+```{r}
+# Mesmo procedimento para IPTU ----
+IPTU.lote <- IPTU.lote |> 
+  mutate(centroid = st_centroid(geometry),
+         posicao_centroide = ifelse(centroid |> 
+                                      st_intersects(eixos.miolo |> st_union()) |> 
+                                      as.logical() |> 
+                                      replace_na(0), 
+                                    "eixo", "fora"),
+         distancia = as.numeric(st_distance(centroid, eixos.contorno)[,1]),
+         grupo = case_when(posicao_centroide == "eixo" ~ "Tratamento",
+                           posicao_centroide == "fora" ~ "Controle",
+                           .default = "Descartado"),
+         distancia = ifelse(grupo == "Controle", -distancia, distancia))
+```
+
+# Análise
 
 ```{r}
+
+# DiD Censo -----
 censo.did <- censo |> 
   mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(100)) |> as.logical() |> replace_na(FALSE)) |> 
   filter(intersec)
@@ -281,6 +305,14 @@ censo.did |>
   filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
   lm(densidade_residencial ~ factor(grupo) * factor(ano), data = _) |> 
   summary()
+
+censo.did |> 
+  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
+  group_by(grupo, ano) |> 
+  summarize(populacao = sum(moradores, na.rm = T)) |>
+  mutate(ano = paste("a", ano, sep = "")) |> 
+  pivot_wider(id_cols = grupo, names_from = ano, values_from = populacao) |> 
+  mutate(mudanca = (a2022 / a2010) - 1)
 ```
 
 
@@ -290,6 +322,7 @@ Análise de densidade de observações perto do cutoff, analisa se há diferenç
 Hipótese nula: Não há diferença entre os grupos. Caso a hipótese seja rejeitada, há problemas.
 
 ```{r "analise/densidade", cache = TRUE}
+# Balanceamento RDD censo -----
 censo |> 
   st_drop_geometry() |>
   filter(ano == 2022, grupo != "Descartado", abs(distancia) < 600, 
@@ -322,6 +355,7 @@ censo |>
 
 
 ```{r "analise/rdplot_censo", cache = TRUE}
+# RDD censo -----
 censo |> 
   st_drop_geometry() |>
   filter(ano == 2022, grupo != "Descartado", abs(distancia) < 600, 
@@ -363,25 +397,11 @@ censo |>
 ```
 
 
-```{r "dados/IPTU", cache = TRUE}
-IPTU.lote <- IPTU.lote |> 
-  mutate(centroid = st_centroid(geometry),
-         posicao_centroide = ifelse(centroid |> 
-                                      st_intersects(eixos.miolo |> st_union()) |> 
-                                      as.logical() |> 
-                                      replace_na(0), 
-                                    "eixo", "fora"),
-         distancia = as.numeric(st_distance(centroid, eixos.contorno)[,1]),
-         grupo = case_when(posicao_centroide == "eixo" ~ "Tratamento",
-                           posicao_centroide == "fora" ~ "Controle",
-                           .default = "Descartado"),
-         distancia = ifelse(grupo == "Controle", -distancia, distancia))
 
-IPTU.lote
-```
 
 
 ```{r}
+# IPTU DiD----
 IPTU.did <- IPTU.lote |> 
   filter(ano_construcao >= 2004, ano_construcao < 2023) |> 
   mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(150)) |> as.logical() |> replace_na(FALSE),
@@ -443,63 +463,6 @@ bind_rows(
 ggsave("output/event_study.pdf", height = 10, width = 7)
 ```
 
-
-
-```{r}
-
-
-teste
-
-
-  
-IPTU.did |> 
-  filter(grupo != "Descartado") |> 
-  drop_na() |> 
-  feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-  summary() |> 
-  (\(summ) summ[["coefficients"]] |> bind_rows() |> pivot_longer(everything()))() |> 
-  filter(endsWith(name, "Tratamento")) |> 
-  mutate(ano = str_sub(name, 25,28)) |> 
-  bind_rows(data.frame(ano = "2014", value = 0, name = "")) |> 
-  ggplot() +
-  geom_point(aes(x = ano, y = value))
-
-IPTU.did |> 
-  filter(grupo != "Descartado") |> 
-  drop_na() |> 
-  feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-  summary() |> 
-  (\(summ) summ[["coefficients"]] |> bind_rows() |> pivot_longer(everything()))() |> 
-  filter(endsWith(name, "Tratamento")) |> 
-  mutate(ano = str_sub(name, 25,28)) |> 
-  bind_rows(data.frame(ano = "2014", value = 0, name = "")) |> 
-  ggplot() +
-  geom_point(aes(x = ano, y = value))
-
-IPTU.did |> 
-  filter(grupo != "Descartado") |> 
-  drop_na() |> 
-  feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-  summary() |> 
-  (\(summ) cbind(summ$coefficients |> names(),
-                     unname(summ$coefficients),
-                     unname(summ$se)) |> as.data.frame() |> 
-     rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-  mutate(variavel = "Densidade Construtiva")
-  filter(endsWith(nome, "Tratamento")) |>
-  mutate(ano = str_sub(nome, 25,28), 
-         coef = as.numeric(coef),
-         se = as.numeric(se)) |> 
-  bind_rows(data.frame(ano = "14", coef = 0, se = 0, nome = "")) |> 
-  ggplot(aes(x = ano, y = coef)) +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = "14", linetype = "dotted") +
-  geom_point() +
-  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
-  theme_minimal()
-```
-
-
 ```{r}
 IPTU.lote |> 
   st_drop_geometry() |>
@@ -510,6 +473,7 @@ IPTU.lote |>
 
 
 ```{r "analise/rdplot_IPTU", cache = TRUE}
+# IPTU RDD ----
 IPTU.lote |> 
   st_drop_geometry() |>
   filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
@@ -554,7 +518,32 @@ IPTU.lote |>
   
 ```
 
+```{r "analise/rdrobust_IPTU", cache = TRUE}
+IPTU.lote |> 
+  st_drop_geometry() |>
+  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1,
+         ano_construcao > 2014) |> 
+  drop_na() |>
+  (\(df) rdrobust(as.numeric(df$densidade_construtiva), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
+  summary()
 
+IPTU.lote |> 
+  st_drop_geometry() |>
+  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1,
+         ano_construcao > 2014) |> 
+  drop_na() |>
+  (\(df) rdrobust(as.numeric(df$densidade_habitacional), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
+  summary()
+
+IPTU.lote |> 
+  st_drop_geometry() |>
+  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1,
+         ano_construcao > 2014) |> 
+  drop_na() |>
+  (\(df) rdrobust(as.numeric(df$pavimentos), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
+  summary()
+  
+```
 
 
 
