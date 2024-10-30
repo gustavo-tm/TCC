@@ -148,6 +148,46 @@ censo <- bind_rows(list(censo2010, censo2022)) |>
 remove(censo2010, censo2022)
 ```
 
+censo.IPTU |> 
+  filter(id_setor == "355030801000019") |>
+  st_set_geometry("geometria_lote") |> 
+  mapview()+censo.IPTU |> 
+  filter(id_setor == "355030801000019") |>
+  st_set_geometry("geometry") |> 
+  (\(a) mapview(a))()
+
+
+
+
+```{r}
+censo.IPTU <- censo |> 
+  st_set_geometry("geometry") |> 
+  st_join(IPTU.lote) |> as_tibble() |> 
+  left_join(IPTU.lote |> rename(geometria_lote = geometry) |> as_tibble())
+
+
+censo.IPTU <- censo.IPTU |> 
+  filter(residencial == 1) |>
+  mutate(intersec = ifelse(st_intersects(geometria_lote, eixos.miolo) |> as.logical() |> replace_na(FALSE),
+                           "eixo", "fora")) |> 
+  st_drop_geometry() |> 
+  mutate(ano_construcao = as.integer(ano_construcao),
+         posPDE = case_when(ano_construcao > 2014 ~ "pos",
+                            ano_construcao <= 2014 ~ "pre",
+                            TRUE ~ NA))
+censo.IPTU |> 
+  st_drop_geometry() |> 
+  group_by(id_setor, posPDE, intersec) |> 
+  summarize(area_terreno = sum(area_terreno)) |> 
+  pivot_wider(names_from = posPDE, values_from = area_terreno, id_cols = c(id_setor, intersec)) |> 
+  mutate(across(c(pos, pre), ~ replace_na(.x, 0)),
+         percent_novo = pos / (pos + pre)) |> 
+  ggplot(aes(x = percent_novo)) +
+  geom_histogram(bins = 100) +
+  facet_wrap(~intersec)
+```
+
+
 ```{r "dados/censo_intersec", cache = TRUE}
 censo <- censo |> 
   st_intersection(IPTU.lote |> st_union()) |> 
@@ -280,13 +320,25 @@ IPTU.lote <- IPTU.lote |>
          distancia = ifelse(grupo == "Controle", -distancia, distancia))
 ```
 
+```{r}
+censo <- censo |> 
+  left_join(censo.IPTU |> 
+                group_by(id_setor, posPDE) |> 
+                summarize(area_terreno = sum(area_terreno)) |> 
+                pivot_wider(names_from = posPDE, values_from = area_terreno, id_cols = id_setor) |> 
+                mutate(across(c(pos, pre), ~ replace_na(.x, 0)),
+                       percent_novo = pos / (pos + pre)) |> 
+                select(id_setor, percent_novo))
+```
+
+
 # Análise
 
 ```{r}
 
 # DiD Censo -----
 censo.did <- censo |> 
-  mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(100)) |> as.logical() |> replace_na(FALSE)) |> 
+  mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(150)) |> as.logical() |> replace_na(FALSE)) |> 
   filter(intersec)
 
 censo.did |> 
@@ -302,6 +354,11 @@ censo.did |>
   summary()
 
 censo.did |> 
+  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1, percent_novo > .5) |> 
+  lm(densidade ~ factor(grupo) * factor(ano), data = _) |> 
+  summary()
+
+censo.did |> 
   filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
   lm(densidade_residencial ~ factor(grupo) * factor(ano), data = _) |> 
   summary()
@@ -313,6 +370,13 @@ censo.did |>
   mutate(ano = paste("a", ano, sep = "")) |> 
   pivot_wider(id_cols = grupo, names_from = ano, values_from = populacao) |> 
   mutate(mudanca = (a2022 / a2010) - 1)
+
+
+censo.did |> 
+  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .6, as.numeric(percent_residencial) > .5) |> 
+  lm(densidade_residencial ~ factor(grupo) * factor(ano) * percent_novo, data = _) |> 
+  summary()
+
 ```
 
 
@@ -379,7 +443,7 @@ censo |>
 ```{r  "analise/rdrobust_censo", cache = TRUE}
 censo |> 
   st_drop_geometry() |>
-  filter(ano == 2022, grupo != "Descartado", 
+  filter(ano == 2022, grupo != "Descartado", percent_novo > .1,
          as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .25) |>     
   drop_na() |>
   (\(df) rdrobust(as.numeric(df$densidade), df$distancia, 
@@ -388,7 +452,7 @@ censo |>
 
 censo |> 
   st_drop_geometry() |>
-  filter(ano == 2010, grupo != "Descartado",
+  filter(ano == 2010, grupo != "Descartado", percent_novo > .1,
          as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .25) |>     
   drop_na() |>
   (\(df) rdrobust(as.numeric(df$densidade), df$distancia, 
