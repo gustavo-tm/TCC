@@ -144,14 +144,14 @@ censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |>
               select(id_setor = Cod_setor, moradores = V002) |> 
               mutate(id_setor = as.character(id_setor)),
             by = join_by(id_setor)) |> 
-  filter(st_covered_by(geometry, eixos.buffersimples) |> as.logical()) |> 
+  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-100)) |> as.logical()) |> 
   mutate(ano = 2010)
 
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
   filter(CD_MUN == "3550308") |> 
   st_transform("epsg:31983")  |>
   select(id_setor = CD_SETOR, moradores = v0001) |> 
-  filter(st_covered_by(geometry, eixos.buffersimples) |> as.logical()) |> 
+  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-100)) |> as.logical()) |> 
   mutate(ano = 2022)
 
 censo <- bind_rows(list(censo2010, censo2022)) |> 
@@ -164,90 +164,93 @@ saveRDS(censo2022, "rdata/censo2022.rds")
 remove(censo2010, censo2022)
 ```
 
-```{r}
+```{r "dados/areas_uso", cache = TRUE}
+
 censo.areas <- censo |> 
   st_intersection(IPTU.lote) |> 
-  rename(geometry_lote = geometry) |> 
-  group_by(id_setor, tipo_lote, uso_predominante) |> 
-  summarize(area_cortada = st_union(geometry_lote) |> st_area() |> as.numeric()) |> 
-  mutate(uso_predominante = replace_na(uso_predominante, ""), 
-         uso = paste("area", tipo_lote, uso_predominante, sep = "_")) |> 
-  ungroup() |> st_drop_geometry() |> 
-  group_by(id_setor, uso) |> 
-  summarize(area = sum(area_cortada)) |> 
-  # pivot_wider(id_cols = id_setor, names_from = uso, values_from = area) |>
-  # mutate(across(everything(), ~ replace_na(.x, 0))) |> 
+  group_by(id_setor, tipo_lote, uso_predominante, posPDE = ano_construcao > 2014) |> 
+  summarize(area = st_union(geometry) |> st_area() |> as.numeric()) |> 
+  st_drop_geometry() |> 
   bind_rows(censo |> 
               st_drop_geometry() |> 
               select(id_setor, area) |> 
               mutate(area = as.numeric(area)) |> 
-              pivot_longer(area, names_to = "uso", values_to = "area"))
-
+              pivot_longer(area, names_to = "uso_predominante", values_to = "area") |> 
+              mutate(uso_predominante = NA)) 
 
 saveRDS(censo.areas, "rdata/censo-areas.rds")
 
-# DIMINUIR BUFFER DO CENSO E AUMENTAR DO IPTU (200M?) 
-
 censo.areas |> 
-  group_by(uso) |> 
+  group_by(tipo_lote, uso_predominante, posPDE) |> 
   summarize(area = sum(area)) |> 
-  separate_wider_delim(uso, delim = "_", names_sep = "_", too_few = "align_start") |> 
-  mutate(uso_1 = "Área do setor \n censitário",
-         uso_2 = case_when(uso_2 == "F" ~ "Fiscal",
-                           uso_2 == "M" ~ "Espaço Livre",
-                           uso_2 == "V" ~ "Vias de Acesso",
+  ungroup() |> 
+  mutate(total = "Área do setor\n censitário",
+         area = ifelse(is.na(tipo_lote) & is.na(uso_predominante), max(area) - (sum(area) - max(area)), area),
+         percent = area / sum(area),
+         tipo_lote = case_when(tipo_lote == "F" ~ "Fiscal",
+                           tipo_lote == "M" ~ "Espaço Livre",
+                           tipo_lote == "V" ~ "Vias de Acesso",
                            TRUE ~ "Não lote"),
-         uso_3 = case_when(uso_3 == "" ~ "outros",
-                           is.na(uso_3)~ "outros",
-                           TRUE ~ uso_3)) |>
-  make_long(uso_1, uso_2, uso_3, value = area) |> 
+         uso_predominante = case_when(uso_predominante == "" ~ "outros",
+                           is.na(uso_predominante)~ "outros",
+                           TRUE ~ uso_predominante) |> str_to_title(),
+         posPDE = case_when(posPDE == TRUE ~ "Pós PDE",
+                            posPDE == FALSE ~ "Pré PDE",
+                            TRUE ~ NA)) |> 
+  group_by(total) |> mutate(total = paste(total, "\n", round(sum(percent) * 100), "%", sep = "")) |> ungroup() |> 
+  group_by(tipo_lote) |> mutate(tipo_lote = paste(tipo_lote, "\n", round(sum(percent) * 100, 2), "%", sep = "")) |> ungroup() |> 
+  group_by(uso_predominante) |> mutate(uso_predominante = paste(uso_predominante, "\n", round(sum(percent) * 100, 2), "%", sep = "")) |> ungroup() |> 
+  group_by(posPDE) |> mutate(posPDE = ifelse(is.na(posPDE), NA, paste(posPDE, "\n", round(sum(percent) * 100, 2), "%", sep = ""))) |> ungroup() |> 
+  make_long(total, tipo_lote, uso_predominante, posPDE,value = area) |> 
+  mutate(order = ifelse(str_detect(node, "outros|Não lote"), 1, 0)) |> 
   ggplot(aes(x = x, 
-               next_x = next_x, 
-               node = node, 
-               next_node = next_node,
-               fill = factor(node),
-             value = value,
-             label = node)) +
-  geom_sankey(flow.alpha = 0.75, colour = "black") +
+             next_x = next_x, 
+             node = reorder(node, order), 
+             next_node = reorder(next_node, order),
+             fill = factor(node),
+           value = value,
+           label = node)) +
+  geom_sankey(flow.alpha = 0.75, na.rm = T) +
   geom_sankey_label(size = 3.5, color = "black", fill = "white", alpha = .9) +
   theme_sankey() +
   scale_fill_viridis_d(option ="G") +
-  scale_x_discrete(name = "", position = "top", labels = c("uso_1" = "Setor censitário",
-                                                           "uso_2" = "Tipo de lote",
-                                                           "uso_3" = "Qualificação no IPTU")) +
+    scale_x_discrete(name = "", position = "top", labels = c("total" = "Setor censitário",
+                                                           "tipo_lote" = "Tipo de lote",
+                                                           "uso_predominante" = "Qualificação no IPTU",
+                                                           "posPDE" = "Ano da construção")) +
   theme(legend.position = "none")
 
 ggsave("output/area_setor.pdf", width = 10, height = 5)
+
 ```
 
 
-```{r}
-censo.IPTU <- censo |> 
-  st_set_geometry("geometry") |> 
-  st_join(IPTU.lote) |> as_tibble() |> 
-  left_join(IPTU.lote |> rename(geometria_lote = geometry) |> as_tibble()) |> 
-  filter(residencial == 1) |>
-  mutate(intersec = ifelse(st_intersects(geometria_lote, eixos.miolo) |> as.logical() |> replace_na(FALSE),
-                           "eixo", "fora")) |> 
-  st_drop_geometry() |> 
-  mutate(ano_construcao = as.integer(ano_construcao),
-         posPDE = case_when(ano_construcao > 2014 ~ "pos",
-                            ano_construcao <= 2014 ~ "pre",
-                            TRUE ~ NA))
-censo.IPTU |> 
-  st_drop_geometry() |> 
-  group_by(id_setor, posPDE, intersec) |> 
-  summarize(area_terreno = sum(area_terreno)) |> 
-  pivot_wider(names_from = posPDE, values_from = area_terreno, id_cols = c(id_setor, intersec)) |> 
-  mutate(across(c(pos, pre), ~ replace_na(.x, 0)),
-         percent_novo = pos / (pos + pre)) |> 
-  ggplot(aes(x = percent_novo)) +
-  geom_histogram(bins = 100) +
-  facet_wrap(~intersec)
+```{r "dados/censo-areas", cache = TRUE}
+censo <- censo.areas |> 
+  mutate(posPDE = ifelse(posPDE, "posPDE", "prePDE"), 
+         uso_predominante = case_when(tipo_lote != "F" ~ NA,
+                                      uso_predominante == "residencial" ~ "residencial",
+                                      TRUE ~ "outros")) |> 
+  drop_na() |> 
+  group_by(id_setor, uso_predominante, posPDE) |> 
+  summarize(area = sum(area)) |>   
+  group_by(id_setor) |> 
+  mutate(area_lote = sum(area)) |> 
+  filter(uso_predominante == "residencial") |> 
+  mutate(area_residencial = sum(area)) |> 
+  pivot_wider(id_cols = c(id_setor, area_lote, area_residencial), names_from = posPDE, values_from = area, names_prefix = "area_residencial_") |> 
+  mutate(across(c(area_residencial_posPDE, area_residencial_prePDE), ~ replace_na(.x, 0))) |> 
+  right_join(censo) |> 
+  mutate(area = as.numeric(area),
+         area_residencial = area_residencial / area_lote,
+         area_residencial_novo_percent = area_residencial_posPDE / area_lote,
+         area_lote = area_lote / area) |> 
+  select(id_setor, ano, moradores, area_lote, area_residencial, area_residencial_novo_percent, geometry)
+
+saveRDS(censo, "rdata/censo-areas.rds")
+
 ```
-```{r}
-censo.IPTU
-```
+
 
 
 ```{r "dados/censo_intersec", cache = TRUE}
