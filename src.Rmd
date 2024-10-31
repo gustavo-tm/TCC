@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(ggsankey)
 
 library(sf)
 library(mapview)
@@ -49,6 +50,7 @@ eixos.contorno <- eixos |>
   st_cast("MULTILINESTRING") |> 
   st_as_sf()
 
+# Mapa eixo, geradores de eixo
 list(
   eixos = bind_rows(eixos.miolo,
                     read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
@@ -87,7 +89,12 @@ IPTU <- read.csv("dados/IPTU/IPTU_2024.csv", sep=";", encoding = "latin1") |>
            lote = str_sub(sql, 7, 10) |>  
              ifelse(condominio == "00-0", yes = _, paste("CD", str_sub(condominio, 1, 2), sep = "")),
            # Tipo de uso
-           residencial = str_detect(tipo, "Residencial")) |> 
+           uso = case_when(str_detect(tipo, "Residencial") ~ "residencial",
+                         str_detect(tipo, "Comercial") ~ "comercial",
+                         str_detect(tipo, "Oficina") ~ "industrial",
+                         str_detect(tipo, "TERRENO") ~ "terreno",
+                         str_detect(tipo, "Clube") ~ "entretenimento",
+                         .default = "outros")) |> 
   # Agregar por SQL
   group_by(setor, quadra, lote) |>  
   summarize(unidades = n(),
@@ -96,7 +103,7 @@ IPTU <- read.csv("dados/IPTU/IPTU_2024.csv", sep=";", encoding = "latin1") |>
             area_ocupada = median(area_ocupada),
             pavimentos = median(pavimentos),
             ano_construcao = median(ano_construcao),
-            residencial = median(residencial)) |>  
+            uso_predominante = fct_infreq(uso) |> levels() |> first()) |>  
   ungroup() |>  
   mutate(densidade_construtiva = area_construida / area_terreno,
          densidade_habitacional = unidades / area_terreno,
@@ -107,14 +114,19 @@ lotes <- list.files(path="dados/lotes/unzip", full.names = FALSE) |>
   lapply(read_sf) |>  
   bind_rows() |>  
   st_set_crs("epsg:31983") |> 
-  filter(lo_tp_lote == "F") |>  # Seleção apenas de lotes fiscais
-  mutate(lo_lote = ifelse(lo_lote == "0000", paste("CD", lo_condomi, sep = ""), lo_lote)) |>  
-  select(setor = lo_setor, quadra = lo_quadra, lote = lo_lote) |> 
-  filter(st_centroid(geometry) |> st_covered_by(eixos.buffersimples) |> as.logical())
+  # filter(lo_tp_lote == "F") |>  # Seleção apenas de lotes fiscais
+  filter(st_centroid(geometry) |> st_covered_by(eixos.buffersimples) |> as.logical()) |> 
+  mutate(lo_lote = ifelse(lo_lote == "0000", paste("CD", lo_condomi, sep = ""), lo_lote),
+         lo_lote = ifelse(lo_tp_lote != "F", paste(lo_tp_lote, lo_lote, sep = ""), lo_lote)) |>  
+  select(setor = lo_setor, quadra = lo_quadra, lote = lo_lote, tipo_lote = lo_tp_lote)
 
 IPTU.lote <- lotes |>  
   left_join(IPTU, by = join_by(setor, quadra, lote)) |>  
   ungroup()
+
+saveRDS(IPTU.lote, "rdata/IPTU-lote.rds")
+saveRDS(lotes, "rdata/lotes.rds")
+saveRDS(IPTU, "rdata/IPTU.rds")
 
 remove(IPTU, lotes)
 ```
@@ -145,28 +157,75 @@ censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |>
 censo <- bind_rows(list(censo2010, censo2022)) |> 
   mutate(area = st_area(geometry)) 
 
+saveRDS(censo, "rdata/censo.rds")
+saveRDS(censo2010, "rdata/censo2010.rds")
+saveRDS(censo2022, "rdata/censo2022.rds")
+
 remove(censo2010, censo2022)
 ```
 
-censo.IPTU |> 
-  filter(id_setor == "355030801000019") |>
-  st_set_geometry("geometria_lote") |> 
-  mapview()+censo.IPTU |> 
-  filter(id_setor == "355030801000019") |>
-  st_set_geometry("geometry") |> 
-  (\(a) mapview(a))()
+```{r}
+censo.areas <- censo |> 
+  st_intersection(IPTU.lote) |> 
+  rename(geometry_lote = geometry) |> 
+  group_by(id_setor, tipo_lote, uso_predominante) |> 
+  summarize(area_cortada = st_union(geometry_lote) |> st_area() |> as.numeric()) |> 
+  mutate(uso_predominante = replace_na(uso_predominante, ""), 
+         uso = paste("area", tipo_lote, uso_predominante, sep = "_")) |> 
+  ungroup() |> st_drop_geometry() |> 
+  group_by(id_setor, uso) |> 
+  summarize(area = sum(area_cortada)) |> 
+  # pivot_wider(id_cols = id_setor, names_from = uso, values_from = area) |>
+  # mutate(across(everything(), ~ replace_na(.x, 0))) |> 
+  bind_rows(censo |> 
+              st_drop_geometry() |> 
+              select(id_setor, area) |> 
+              mutate(area = as.numeric(area)) |> 
+              pivot_longer(area, names_to = "uso", values_to = "area"))
 
 
+saveRDS(censo.areas, "rdata/censo-areas.rds")
+
+# DIMINUIR BUFFER DO CENSO E AUMENTAR DO IPTU (200M?) 
+
+censo.areas |> 
+  group_by(uso) |> 
+  summarize(area = sum(area)) |> 
+  separate_wider_delim(uso, delim = "_", names_sep = "_", too_few = "align_start") |> 
+  mutate(uso_1 = "Área do setor \n censitário",
+         uso_2 = case_when(uso_2 == "F" ~ "Fiscal",
+                           uso_2 == "M" ~ "Espaço Livre",
+                           uso_2 == "V" ~ "Vias de Acesso",
+                           TRUE ~ "Não lote"),
+         uso_3 = case_when(uso_3 == "" ~ "outros",
+                           is.na(uso_3)~ "outros",
+                           TRUE ~ uso_3)) |>
+  make_long(uso_1, uso_2, uso_3, value = area) |> 
+  ggplot(aes(x = x, 
+               next_x = next_x, 
+               node = node, 
+               next_node = next_node,
+               fill = factor(node),
+             value = value,
+             label = node)) +
+  geom_sankey(flow.alpha = 0.75, colour = "black") +
+  geom_sankey_label(size = 3.5, color = "black", fill = "white", alpha = .9) +
+  theme_sankey() +
+  scale_fill_viridis_d(option ="G") +
+  scale_x_discrete(name = "", position = "top", labels = c("uso_1" = "Setor censitário",
+                                                           "uso_2" = "Tipo de lote",
+                                                           "uso_3" = "Qualificação no IPTU")) +
+  theme(legend.position = "none")
+
+ggsave("output/area_setor.pdf", width = 10, height = 5)
+```
 
 
 ```{r}
 censo.IPTU <- censo |> 
   st_set_geometry("geometry") |> 
   st_join(IPTU.lote) |> as_tibble() |> 
-  left_join(IPTU.lote |> rename(geometria_lote = geometry) |> as_tibble())
-
-
-censo.IPTU <- censo.IPTU |> 
+  left_join(IPTU.lote |> rename(geometria_lote = geometry) |> as_tibble()) |> 
   filter(residencial == 1) |>
   mutate(intersec = ifelse(st_intersects(geometria_lote, eixos.miolo) |> as.logical() |> replace_na(FALSE),
                            "eixo", "fora")) |> 
@@ -186,6 +245,9 @@ censo.IPTU |>
   geom_histogram(bins = 100) +
   facet_wrap(~intersec)
 ```
+```{r}
+censo.IPTU
+```
 
 
 ```{r "dados/censo_intersec", cache = TRUE}
@@ -197,6 +259,8 @@ censo <- censo |>
   st_set_geometry("geometria_residencial") |> 
   st_intersection(IPTU.lote |> filter(residencial == 1) |> st_union()) |> 
   mutate(area_cut_residencial = st_area(geometria_residencial))
+
+censo
 ```
 
 # Preparação dados
@@ -219,7 +283,6 @@ censo <- censo |>
               st_intersection(eixos |> st_union()) |> 
               select(id_setor, geometry_eixo = geometry) |> 
               as_tibble()) |> 
-  as_tibble() |> 
   left_join(censo |> 
               st_set_geometry("geometria_residencial") |> 
               st_intersection(eixos |> st_union()) |> 
@@ -335,7 +398,6 @@ censo <- censo |>
 # Análise
 
 ```{r}
-
 # DiD Censo -----
 censo.did <- censo |> 
   mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(150)) |> as.logical() |> replace_na(FALSE)) |> 
@@ -660,6 +722,59 @@ ggsave("output/event_study_residencial.pdf", height = 10, width = 7)
 ```
 
 
+```{r}
+# Função auxiliar para aplicar modelos e extrair coeficientes
+extrair_coeficientes <- function(data, formula, variavel_nome, residencial) {
+  data %>%
+    feols(formula, data = .) %>%
+    summary() %>%
+    (\(summ) {
+      data.frame(
+        nome = names(summ$coefficients),
+        coef = unname(summ$coefficients),
+        se = unname(summ$se)
+      )
+    })() %>%
+    mutate(variavel = variavel_nome, residencial = residencial)
+}
+
+# Filtragem inicial e aplicação dos modelos
+dados_modelos <- IPTU.did %>%
+  filter(grupo != "Descartado") %>% 
+  drop_na() %>%
+  bind_rows(
+    extrair_coeficientes(., densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Construtiva", residencial = TRUE),
+    extrair_coeficientes(., densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Habitacional", residencial = TRUE),
+    extrair_coeficientes(., pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Pavimentos", residencial = TRUE),
+    extrair_coeficientes(., densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Construtiva", residencial = FALSE),
+    extrair_coeficientes(., densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Habitacional", residencial = FALSE),
+    extrair_coeficientes(., pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Pavimentos", residencial = FALSE)
+  )
+
+# Processamento final e ajuste para visualização
+dados_plot <- dados_modelos %>%
+  filter(endsWith(nome, "Tratamento")) %>%
+  mutate(
+    ano = str_sub(nome, 27, 28),
+    coef = as.numeric(coef),
+    se = as.numeric(se)
+  ) %>%
+  bind_rows(data.frame(
+    ano = "14", coef = 0, se = 0, nome = "", 
+    variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"),
+    residencial = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
+  ))
+
+# Plotagem
+ggplot(dados_plot, aes(x = ano, y = coef, colour = residencial)) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = "14", linetype = "dotted") +
+  geom_point() +
+  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
+  facet_grid(rows = vars(variavel), scales = "free_y") +
+  theme_minimal() +
+  scale_colour_viridis_d(option = "G", begin = .25, end = .75)
+```
 
 
 
