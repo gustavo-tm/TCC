@@ -639,56 +639,116 @@ censo.distancias |&gt;
 
 
 saveRDS(IPTU.distancias, &quot;rdata/IPTU-distancias.rds&quot;)</code></pre>
-<pre class="r"><code>IPTU.distancias |&gt; 
-  filter(tipo_lote == &quot;F&quot;, ano_construcao &gt;= 2002, ano_construcao &lt;= 2022) |&gt; 
+<pre class="r"><code>df.IPTU &lt;- IPTU.distancias |&gt; 
+  # filter(tipo_lote == &quot;F&quot;, ano_construcao &gt;= 2002, ano_construcao &lt;= 2022) |&gt; 
   mutate(posPDE = ano_construcao &gt; 2014,
          residencial = uso_predominante == &quot;residencial&quot;,
          grupo = case_when(posicao_centroide == &quot;eixo&quot; ~ &quot;tratamento&quot;,
                            posicao_centroide == &quot;fora&quot; ~ &quot;controle&quot;,
-                           TRUE ~ NA),
+                           TRUE ~ &quot;descartado&quot;),
          distancia = case_when(grupo == &quot;controle&quot; ~ -distancia,
                                grupo == &quot;tratamento&quot; ~ distancia,
                                TRUE ~ NA)) |&gt; 
-  select(distancia, grupo, pavimentos, densidade_construtiva, densidade_habitacional, ano_construcao, posPDE, uso_predominante, posPDE)</code></pre>
-<pre><code>## # A tibble: 73,248 × 8
-##    distancia grupo    pavimentos densidade_construtiva densidade_habitacional
-##        &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;                 &lt;dbl&gt;                  &lt;dbl&gt;
-##  1     -581. controle          1                 0.8                  0.002  
-##  2     -533. controle          2                 1.2                  0.0133 
-##  3     -652. controle          2                 1.06                 0.00658
-##  4     -427. controle          2                 1.25                 0.01   
-##  5     -117. controle          2                 1.15                 0.00463
-##  6     -506. controle          2                 1.51                 0.00685
-##  7     -376. controle          2                 0.985                0.0146 
-##  8     -945. controle          2                 2.09                 0.00312
-##  9     -604. controle          1                 1                    0.002  
-## 10     -451. controle          1                 0.121                0.00379
-## # ℹ 73,238 more rows
-## # ℹ 3 more variables: ano_construcao &lt;dbl&gt;, posPDE &lt;lgl&gt;,
-## #   uso_predominante &lt;chr&gt;</code></pre>
-<pre class="r"><code>censo.distancias |&gt; 
+  select(setor, quadra, lote, 
+         distancia, grupo, 
+         pavimentos, densidade_construtiva, densidade_habitacional, 
+         ano_construcao, posPDE, uso_predominante, posPDE) 
+
+
+df.censo &lt;- censo.distancias |&gt;
+  mutate(grupo = case_when(posicao_centroide == &quot;eixo&quot; &amp; area_eixo_lote &gt; .9 ~ &quot;tratamento&quot;,
+                           posicao_centroide == &quot;fora&quot; &amp; area_eixo_lote &lt; .05 ~ &quot;controle&quot;,
+                           TRUE ~ &quot;descartado&quot;)) |&gt; 
   mutate(densidade = moradores / area,
          densidade_lote = moradores / (area * area_lote),
-         densidade_residencial = moradores / (area * area_lote * area_residencial))</code></pre>
-<pre><code>## # A tibble: 20,180 × 16
-## # Groups:   id_setor [20,180]
-##    id_setor           ano moradores   area area_lote area_residencial
-##    &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;            &lt;dbl&gt;
-##  1 355030801000018   2010       719 80493.     0.743            0.592
-##  2 355030801000018P  2022       551 80870.     0.740            0.591
-##  3 355030801000019   2010       834 59566.     0.619            0.693
-##  4 355030801000019P  2022       654 62186.     0.594            0.693
-##  5 355030801000020   2010       736 68525.     0.657            0.358
-##  6 355030801000020P  2022       397 63199.     0.713            0.358
-##  7 355030801000021   2010       775 90193.     0.668            0.759
-##  8 355030801000021P  2022       638 91336.     0.660            0.760
-##  9 355030801000039   2010       888 72398.     0.580            0.658
-## 10 355030801000039P  2022       674 72953.     0.576            0.658
-## # ℹ 20,170 more rows
-## # ℹ 10 more variables: area_residencial_novo_percent &lt;dbl&gt;, area_eixo &lt;dbl&gt;,
-## #   area_eixo_lote &lt;dbl&gt;, geometry &lt;MULTIPOLYGON [m]&gt;, centroid &lt;POINT [m]&gt;,
-## #   posicao_centroide &lt;chr&gt;, distancia &lt;dbl&gt;, densidade &lt;dbl&gt;,
-## #   densidade_lote &lt;dbl&gt;, densidade_residencial &lt;dbl&gt;</code></pre>
+         densidade_residencial = moradores / (area * area_lote * area_residencial)) |&gt; 
+  select(id_setor, ano, grupo, starts_with(&quot;densidade&quot;), area_residencial_novo_percent)
+
+saveRDS(df.censo, &quot;rdata/censo-final.rds&quot;)
+saveRDS(df.IPTU, &quot;rdata/IPTU-final.rds&quot;)
+
+
+
+distrito &lt;- read_sf(&quot;dados/distrito/SIRGAS_SHP_distrito.shp&quot;) |&gt; 
+  filter(ds_nome == &quot;VILA MARIANA&quot;) |&gt; 
+  select()
+
+metro &lt;- read_sf(&quot;dados/geradores-eixo/estacao-metro/SIRGAS_SHP_estacaometro_point.shp&quot;) |&gt; 
+  st_set_crs(&quot;epsg:31983&quot;) |&gt; 
+  st_crop(distrito) |&gt; 
+  (\(pontos) bind_cols(pontos, st_coordinates(pontos)))() |&gt; 
+  st_drop_geometry() |&gt; 
+  group_by(emt_nome) |&gt; 
+  summarize(x = mean(X), y = mean(Y))</code></pre>
+<pre><code>## Warning: attribute variables are assumed to be spatially constant throughout
+## all geometries</code></pre>
+<pre class="r"><code>gg.dados &lt;- df.IPTU |&gt; 
+  right_join(IPTU.lote |&gt; select(setor, quadra, lote) |&gt; st_crop(distrito)) |&gt; 
+  mutate(cor = case_when(grupo == &quot;tratamento&quot; &amp; uso_predominante == &quot;residencial&quot; &amp; posPDE == TRUE  ~ &quot;Tratamento residencial novo&quot;,
+                         grupo == &quot;tratamento&quot; &amp; uso_predominante == &quot;residencial&quot; &amp; posPDE == FALSE ~ &quot;Tratamento residencial antigo&quot;,
+                         grupo == &quot;tratamento&quot; &amp; uso_predominante != &quot;residencial&quot;                   ~ &quot;Tratamento não residencial&quot;,
+                         grupo == &quot;controle&quot; &amp; uso_predominante == &quot;residencial&quot; &amp; posPDE == TRUE    ~ &quot;Controle residencial novo&quot;,
+                         grupo == &quot;controle&quot; &amp; uso_predominante == &quot;residencial&quot; &amp; posPDE == FALSE   ~ &quot;Controle residencial antigo&quot;,
+                         grupo == &quot;controle&quot; &amp; uso_predominante != &quot;residencial&quot;                     ~ &quot;Controle não residencial&quot;,
+                         TRUE ~ &quot;Outros&quot;))</code></pre>
+<pre><code>## Warning: attribute variables are assumed to be spatially constant throughout
+## all geometries</code></pre>
+<pre><code>## Joining with `by = join_by(setor, quadra, lote)`</code></pre>
+<pre><code>## Warning in right_join(df.IPTU, st_crop(select(IPTU.lote, setor, quadra, : Detected an unexpected many-to-many relationship between `x` and `y`.
+## ℹ Row 29767 of `x` matches multiple rows in `y`.
+## ℹ Row 602 of `y` matches multiple rows in `x`.
+## ℹ If a many-to-many relationship is expected, set `relationship =
+##   &quot;many-to-many&quot;` to silence this warning.</code></pre>
+<pre class="r"><code>gg &lt;- ggplot() +
+  geom_sf(data = gg.dados,
+          aes(geometry = geometry, fill = cor),
+          lwd = .1, stroke = 0, colour = NA) + 
+  theme_void() +
+   scale_fill_manual(values = c(&quot;Outros&quot; = &quot;lightgrey&quot;,
+                               &quot;Tratamento residencial novo&quot;  = &quot;#1BB6AFFF&quot;,
+                               &quot;Tratamento residencial antigo&quot;= &quot;#0076BBFF&quot;,
+                               &quot;Tratamento não residencial&quot;   = &quot;#172869FF&quot;,
+                               &quot;Controle residencial novo&quot;    = &quot;#FF3200FF&quot;,
+                               &quot;Controle residencial antigo&quot;  = &quot;#E9A17CFF&quot;,
+                               &quot;Controle não residencial&quot;     = &quot;#E9E4A6FF&quot;),
+                     name = &quot;Grupo do lote&quot;) +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(.85, .8))
+
+
+ggsave(&quot;output/mapa-lotes.pdf&quot;, gg, height = 10, width = 10)
+ggsave(&quot;output/mapa-lotes-metro.pdf&quot;, height = 10, width = 10,
+       plot = gg +   
+         geom_point(data = metro, aes(x = x, y = y), 
+                    size = 8, shape = 15, colour = &quot;white&quot;, fill = &quot;white&quot;) +
+         geom_image(data = metro, aes(x = x, y = y, image = &quot;output/icone_metro.png&quot;), size = .025) +
+         geom_label(data = metro, aes(x = x, y = y, label = emt_nome), nudge_y = 80, size = 1.5))
+
+gg &lt;- ggplot() +
+  geom_sf(data = df.censo |&gt;
+            filter(ano == 2022) |&gt;
+            right_join(censo |&gt; filter(ano == 2022) |&gt; select(id_setor) |&gt; st_crop(distrito)),
+          aes(geometry = geometry, fill = grupo),
+          colour = &quot;#313638&quot;) +
+  geom_sf(data = st_make_grid(eixos |&gt; st_union() |&gt; st_crop(distrito), 
+                              what = &quot;corners&quot;, 
+                              square = T,
+                              cellsize = 10) |&gt; as_tibble() |&gt; 
+            filter(st_intersects(geometry, eixos |&gt; st_crop(distrito) |&gt; st_union()) |&gt; as.logical()),
+          aes(geometry = geometry), size = .25, stroke = 0, colour = &quot;black&quot;) +
+  scale_fill_manual(values = c(&quot;controle&quot; = &quot;#89973DFF&quot;,
+                               &quot;tratamento&quot; = &quot;#E8B92FFF&quot;,
+                               &quot;descartado&quot; = &quot;#A45E41FF&quot;),
+                    labels = c(&quot;controle&quot; = &quot;Controle&quot;,
+                               &quot;tratamento&quot; = &quot;Tratamento&quot;,
+                               &quot;descartado&quot; = &quot;Removido da\n análise&quot;)) +
+  theme_void() +
+  theme(legend.position = &quot;inside&quot;,
+      legend.position.inside = c(.85, .8))</code></pre>
+<pre><code>## Warning: attribute variables are assumed to be spatially constant throughout
+## all geometries</code></pre>
+<pre><code>## Joining with `by = join_by(id_setor)`</code></pre>
+<pre class="r"><code>ggsave(&quot;output/mapa-censo.pdf&quot;, height = 10, width = 10)</code></pre>
 </div>
 
 

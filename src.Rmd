@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggsankey)
-library(ggnewscale)
+library(ggimage)
 
 library(sf)
 library(mapview)
@@ -18,6 +18,7 @@ library(units)
 library(rdrobust)
 library(rddensity)
 library(fixest)
+library(modelsummary)
 
 mapviewOptions(basemaps = "CartoDB.Positron")
 setwd("C:/git/TCC")
@@ -308,7 +309,7 @@ saveRDS(IPTU.distancias, "rdata/IPTU-distancias.rds")
 
 
 
-```{r}
+```{r "dados/finais", cache = TRUE}
 df.IPTU <- IPTU.distancias |> 
   # filter(tipo_lote == "F", ano_construcao >= 2002, ano_construcao <= 2022) |> 
   mutate(posPDE = ano_construcao > 2014,
@@ -332,55 +333,181 @@ df.censo <- censo.distancias |>
   mutate(densidade = moradores / area,
          densidade_lote = moradores / (area * area_lote),
          densidade_residencial = moradores / (area * area_lote * area_residencial)) |> 
-  select(id_setor, ano, grupo, starts_with("densidade"), area_residencial_novo_percent)
+  select(id_setor, ano, distancia, grupo, starts_with("densidade"), area_residencial_novo_percent)
+
+saveRDS(df.censo, "rdata/censo-final.rds")
+saveRDS(df.IPTU, "rdata/IPTU-final.rds")
+
 
 
 distrito <- read_sf("dados/distrito/SIRGAS_SHP_distrito.shp") |> 
   filter(ds_nome == "VILA MARIANA") |> 
   select()
 
+metro <- read_sf("dados/geradores-eixo/estacao-metro/SIRGAS_SHP_estacaometro_point.shp") |> 
+  st_set_crs("epsg:31983") |> 
+  st_crop(distrito) |> 
+  (\(pontos) bind_cols(pontos, st_coordinates(pontos)))() |> 
+  st_drop_geometry() |> 
+  group_by(emt_nome) |> 
+  summarize(x = mean(X), y = mean(Y))
+
+gg.dados <- df.IPTU |> 
+  right_join(IPTU.lote |> select(setor, quadra, lote) |> st_crop(distrito)) |> 
+  mutate(cor = case_when(grupo == "tratamento" & uso_predominante == "residencial" & posPDE == TRUE  ~ "Tratamento residencial novo",
+                         grupo == "tratamento" & uso_predominante == "residencial" & posPDE == FALSE ~ "Tratamento residencial antigo",
+                         grupo == "tratamento" & uso_predominante != "residencial"                   ~ "Tratamento não residencial",
+                         grupo == "controle" & uso_predominante == "residencial" & posPDE == TRUE    ~ "Controle residencial novo",
+                         grupo == "controle" & uso_predominante == "residencial" & posPDE == FALSE   ~ "Controle residencial antigo",
+                         grupo == "controle" & uso_predominante != "residencial"                     ~ "Controle não residencial",
+                         TRUE ~ "Outros"))
 gg <- ggplot() +
-  # geom_sf(data = df.censo |>
-  #           filter(ano == 2022) |>
-  #           right_join(censo |> select(id_setor) |> st_crop(distrito)),
-  #         aes(geometry = geometry, fill = grupo),
-  #         color = NA) +
-  # geom_sf(data = censo |> filter(ano == 2022) |> st_crop(distrito), fill = NA, colour = "#313638", alpha = .3) +
-  geom_sf(data = df.IPTU |> 
-            right_join(IPTU.lote |> select(setor, quadra, lote) |> st_crop(distrito)) |> 
-            mutate(cor = case_when(grupo == "tratamento" & uso_predominante == "residencial" & posPDE == TRUE  ~ "tratamento residencial novo",
-                                   grupo == "tratamento" & uso_predominante == "residencial" & posPDE == FALSE ~ "tratamento residencial antigo",
-                                   grupo == "tratamento" & uso_predominante != "residencial"                   ~ "tratamento não residencial",
-                                   grupo == "controle" & uso_predominante == "residencial" & posPDE == TRUE    ~ "controle residencial novo",
-                                   grupo == "controle" & uso_predominante == "residencial" & posPDE == FALSE   ~ "controle residencial antigo",
-                                   grupo == "controle" & uso_predominante != "residencial"                     ~ "controle não residencial",
-                                   TRUE ~ "outros")),
+  geom_sf(data = gg.dados,
           aes(geometry = geometry, fill = cor),
-          lwd = .1, stroke = 0) + 
+          lwd = .1, stroke = 0, colour = NA) + 
   theme_void() +
-  # scale_fill_brewer() +
-  # scale_fill_manual(name = "Controle", labels = c""
-  #   values = c("outros" = "white",
-  #              "tratamento residencial novo"  = "#1BB6AFFF",
-  #              "tratamento residencial antigo"= "#0076BBFF",
-  #              "tratamento não residencial"   = "#172869FF",
-  #              "controle residencial novo"    = "#FF3200FF",
-  #                              "controle residencial antigo"  = "#E9A17CFF",
-  #                              "controle não residencial"     = "#E9E4A6FF")) +
-   scale_fill_manual(values = c("outros" = "white",
-                               "tratamento residencial novo"  = "#1BB6AFFF",
-                               "tratamento residencial antigo"= "#0076BBFF",
-                               "tratamento não residencial"   = "#172869FF",
-                               "controle residencial novo"    = "#FF3200FF",
-                               "controle residencial antigo"  = "#E9A17CFF",
-                               "controle não residencial"     = "#E9E4A6FF")) +
+   scale_fill_manual(values = c("Outros" = "lightgrey",
+                               "Tratamento residencial novo"  = "#1BB6AFFF",
+                               "Tratamento residencial antigo"= "#0076BBFF",
+                               "Tratamento não residencial"   = "#172869FF",
+                               "Controle residencial novo"    = "#FF3200FF",
+                               "Controle residencial antigo"  = "#E9A17CFF",
+                               "Controle não residencial"     = "#E9E4A6FF"),
+                     name = "Grupo do lote") +
   theme(legend.position = "inside",
         legend.position.inside = c(.85, .8))
 
 
+ggsave("output/mapa-lotes.pdf", gg, height = 10, width = 10)
+ggsave("output/mapa-lotes-metro.pdf", height = 10, width = 10,
+       plot = gg +   
+         geom_point(data = metro, aes(x = x, y = y), 
+                    size = 8, shape = 15, colour = "white", fill = "white") +
+         geom_image(data = metro, aes(x = x, y = y, image = "output/icone_metro.png"), size = .025) +
+         geom_label(data = metro, aes(x = x, y = y, label = emt_nome), nudge_y = 80, size = 1.5))
+
+gg <- ggplot() +
+  geom_sf(data = df.censo |>
+            filter(ano == 2022) |>
+            right_join(censo |> filter(ano == 2022) |> select(id_setor) |> st_crop(distrito)),
+          aes(geometry = geometry, fill = grupo),
+          colour = "#313638") +
+  geom_sf(data = st_make_grid(eixos |> st_union() |> st_crop(distrito), 
+                              what = "corners", 
+                              square = T,
+                              cellsize = 10) |> as_tibble() |> 
+            filter(st_intersects(geometry, eixos |> st_crop(distrito) |> st_union()) |> as.logical()),
+          aes(geometry = geometry), size = .25, stroke = 0, colour = "black") +
+  scale_fill_manual(values = c("controle" = "#89973DFF",
+                               "tratamento" = "#E8B92FFF",
+                               "descartado" = "#A45E41FF"),
+                    labels = c("controle" = "Controle",
+                               "tratamento" = "Tratamento",
+                               "descartado" = "Removido da\n análise")) +
+  theme_void() +
+  theme(legend.position = "inside",
+      legend.position.inside = c(.85, .8))
+
+  
 ggsave("output/mapa-censo.pdf", height = 10, width = 10)
 
 ```
+
+#Análise
+
+```{r "analise/did-censo"}
+banda <- 100
+
+data <- df.censo |> 
+  filter(abs(distancia) <= banda, grupo != "descartado")
+
+modelsummary(list(
+  "A" = lm(densidade ~ factor(grupo) * factor(ano), data = data),
+  "B" = lm(densidade_lote ~ factor(grupo) * factor(ano), data = data),
+  "C" = lm(densidade_residencial ~ factor(grupo) * factor(ano), data = data),
+  "D" = lm(densidade ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data),
+  "E" = lm(densidade_lote ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data),
+  "F" = lm(densidade_residencial ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data)
+), stars = TRUE, statistic = NULL)
+
+```
+
+
+```{r "analise/did-IPTU"}
+data <- df.IPTU |> 
+  filter(abs(distancia) <= 50)
+
+modelsummary(list(
+  "densidade_construtiva" = lm(densidade_construtiva ~ factor(grupo) * factor(posPDE), data = data),
+  "densidade_habitacional" = lm(densidade_habitacional ~ factor(grupo) * factor(posPDE), data = data),
+  "pavimentos" = lm(pavimentos ~ factor(grupo) * factor(posPDE), data = data)), 
+  stars = TRUE, statistic = NULL)
+
+```
+
+
+```{r "analise/rdd-IPTU"}
+data <- df.IPTU |> 
+  mutate(ano_construcao = as.integer(ano_construcao)) |> 
+  filter(abs(distancia) <= 50, grupo != "descartado", ano_construcao >= 2002, ano_construcao <= 2022)
+
+extrair.coefs <- function(regressao){
+  summ <- summary(regressao)
+  cbind(summ$coefficients |> names(),
+        unname(summ$coefficients),
+        unname(summ$se)) |> as.data.frame() |> 
+    rename("nome" = 1, "coef" = 2, "se" = 3)
+}
+
+bind_rows(
+  # Três instrumentos p/ lotes residenciais
+  feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
+        data = data |> filter(uso_predominante == "residencial")) |> 
+    extrair.coefs() |> mutate(variavel = "Densidade Construtiva", residencial = T),
+  feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
+        data = data |> filter(uso_predominante == "residencial")) |> 
+    extrair.coefs() |> mutate(variavel = "Densidade Habitacional", residencial = T),
+  feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
+        data = data |> filter(uso_predominante == "residencial")) |> 
+    extrair.coefs() |> mutate(variavel = "Pavimentos", residencial = T),
+  
+  # Três instrumentos p/ lotes NÃO residenciais
+  feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
+        data = data |> filter(uso_predominante != "residencial")) |> 
+    extrair.coefs() |> mutate(variavel = "Densidade Construtiva", residencial = F),
+  feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
+        data = data |> filter(uso_predominante != "residencial")) |> 
+    extrair.coefs() |> mutate(variavel = "Densidade Habitacional", residencial = F),
+  feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
+        data = data |> filter(uso_predominante != "residencial")) |> 
+    extrair.coefs() |> mutate(variavel = "Pavimentos", residencial = F)) |> 
+  
+  filter(endsWith(nome, "tratamento")) |>
+  mutate(ano = str_sub(nome, 27,28), 
+         coef = as.numeric(coef),
+         se = as.numeric(se)) |> 
+  bind_rows(data.frame(ano = "14", coef = 0, se = 0, residencial = 1:6<=3, 
+                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"))) |> 
+  ggplot(aes(x = as.numeric(ano) + 2000, y = coef, colour = residencial)) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 2014, linetype = "dotted") +
+  geom_point() +
+  geom_line(alpha = .5) +
+  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se), width = .2) +
+  facet_grid(rows = "variavel", scales = "free_y") +
+  scale_colour_manual(name = "",
+                      values = c("TRUE" = "darkblue", "FALSE" = "darkgreen"),
+                      labels = c("TRUE" = "Residencial", "FALSE" = "Não Residencial")) +
+  scale_x_continuous(breaks = 2002 + 0:5*4) +
+  labs(x = "", y = "Coeficiente do DiD") +
+  theme_bw() 
+
+ggsave("output/event-study.pdf", width = 8, height = 6)
+```
+
+
+
+
 
 
 
