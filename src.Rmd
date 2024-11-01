@@ -25,7 +25,6 @@ setwd("C:/git/TCC")
 # Import dados
 
 ```{r "dados/eixos", cache = TRUE}
-## Eixos ----
 eixos <- read_sf("dados/PDE/sirgas_PDE_3-Eixos-EETU.shp") |>
   st_set_crs("epsg:31983") |> 
   select(geometry)
@@ -71,7 +70,6 @@ list(
 
 
 ```{r "dados/lotes", cache = TRUE}
-# IPTU ----
 IPTU <- read.csv("dados/IPTU/IPTU_2024.csv", sep=";", encoding = "latin1") |>  
     as_tibble() |>  
     select(sql = "NUMERO.DO.CONTRIBUINTE", 
@@ -114,7 +112,6 @@ lotes <- list.files(path="dados/lotes/unzip", full.names = FALSE) |>
   lapply(read_sf) |>  
   bind_rows() |>  
   st_set_crs("epsg:31983") |> 
-  # filter(lo_tp_lote == "F") |>  # Seleção apenas de lotes fiscais
   filter(st_centroid(geometry) |> st_covered_by(eixos.buffersimples) |> as.logical()) |> 
   mutate(lo_lote = ifelse(lo_lote == "0000", paste("CD", lo_condomi, sep = ""), lo_lote),
          lo_lote = ifelse(lo_tp_lote != "F", paste(lo_tp_lote, lo_lote, sep = ""), lo_lote)) |>  
@@ -135,7 +132,6 @@ remove(IPTU, lotes)
 
 
 ```{r "dados/censo", cache = TRUE}
-# Censo ----- 
 censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |> 
   filter(CD_GEOCODM == "3550308") |> 
   st_transform("epsg:31983") |> 
@@ -144,14 +140,14 @@ censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |>
               select(id_setor = Cod_setor, moradores = V002) |> 
               mutate(id_setor = as.character(id_setor)),
             by = join_by(id_setor)) |> 
-  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-100)) |> as.logical()) |> 
+  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-200)) |> as.logical()) |> 
   mutate(ano = 2010)
 
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
   filter(CD_MUN == "3550308") |> 
   st_transform("epsg:31983")  |>
   select(id_setor = CD_SETOR, moradores = v0001) |> 
-  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-100)) |> as.logical()) |> 
+  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-200)) |> as.logical()) |> 
   mutate(ano = 2022)
 
 censo <- bind_rows(list(censo2010, censo2022)) |> 
@@ -164,9 +160,11 @@ saveRDS(censo2022, "rdata/censo2022.rds")
 remove(censo2010, censo2022)
 ```
 
-```{r "dados/areas_uso", cache = TRUE}
+# Tratamento dos dados
 
-censo.areas <- censo |> 
+```{r "dados/areas-uso", cache = TRUE}
+
+areas.uso <- censo |> 
   st_intersection(IPTU.lote) |> 
   group_by(id_setor, tipo_lote, uso_predominante, posPDE = ano_construcao > 2014) |> 
   summarize(area = st_union(geometry) |> st_area() |> as.numeric()) |> 
@@ -178,9 +176,9 @@ censo.areas <- censo |>
               pivot_longer(area, names_to = "uso_predominante", values_to = "area") |> 
               mutate(uso_predominante = NA)) 
 
-saveRDS(censo.areas, "rdata/censo-areas.rds")
+saveRDS(areas.uso, "rdata/areas-uso.rds")
 
-censo.areas |> 
+areas.uso |> 
   group_by(tipo_lote, uso_predominante, posPDE) |> 
   summarize(area = sum(area)) |> 
   ungroup() |> 
@@ -226,7 +224,7 @@ ggsave("output/area_setor.pdf", width = 10, height = 5)
 
 
 ```{r "dados/censo-areas", cache = TRUE}
-censo <- censo.areas |> 
+censo.areas <- areas.uso |> 
   mutate(posPDE = ifelse(posPDE, "posPDE", "prePDE"), 
          uso_predominante = case_when(tipo_lote != "F" ~ NA,
                                       uso_predominante == "residencial" ~ "residencial",
@@ -245,63 +243,36 @@ censo <- censo.areas |>
          area_residencial = area_residencial / area_lote,
          area_residencial_novo_percent = area_residencial_posPDE / area_lote,
          area_lote = area_lote / area) |> 
-  select(id_setor, ano, moradores, area_lote, area_residencial, area_residencial_novo_percent, geometry)
+  left_join(censo |> 
+              st_set_geometry("geometry") |> 
+              st_intersection(eixos |> st_union()) |> 
+              mutate(area_eixo = as.numeric(st_area(geometry))) |> 
+              st_drop_geometry() |> 
+              select(id_setor, area_eixo_total = area_eixo)) |> 
+  mutate(area_eixo = replace_na(area_eixo_total, 0) / (area),
+         area_eixo_lote = replace_na(area_eixo_total, 0) / (area * area_lote)) |> 
+  select(id_setor, ano, moradores, area_lote, area_residencial, area_residencial_novo_percent, area_eixo, area_eixo_lote, geometry)
 
-saveRDS(censo, "rdata/censo-areas.rds")
-
+saveRDS(censo.areas, "rdata/censo-areas.rds")
 ```
 
 
-
-```{r "dados/censo_intersec", cache = TRUE}
-censo <- censo |> 
-  st_intersection(IPTU.lote |> st_union()) |> 
-  as_tibble() |> 
-  mutate(area_cut = st_area(geometry),
-         geometria_residencial = geometry) |> 
-  st_set_geometry("geometria_residencial") |> 
-  st_intersection(IPTU.lote |> filter(residencial == 1) |> st_union()) |> 
-  mutate(area_cut_residencial = st_area(geometria_residencial))
-
-censo
-```
-
-# Preparação dados
-
-```{r "dados/distancias", cache = TRUE}
-# load("C:/git/TCC/l.RData")
-
-# Cálculo distâncias -----
-censo <- censo |> 
-  mutate(centroid = st_centroid(geometria_residencial),
+```{r "dados/censo-distancias", cache = TRUE}
+censo.distancias <- censo.areas |> 
+  mutate(centroid = st_centroid(geometry),
          posicao_centroide = ifelse(centroid |> 
                                       st_intersects(eixos.miolo |> st_union()) |> 
                                       as.logical() |> 
                                       replace_na(0), 
                                     "eixo", "fora"),
-         distancia = as.numeric(st_distance(centroid, eixos.contorno)[,1])) |> 
-  as_tibble() |> 
-  left_join(censo |> 
-              st_set_geometry("geometry") |> 
-              st_intersection(eixos |> st_union()) |> 
-              select(id_setor, geometry_eixo = geometry) |> 
-              as_tibble()) |> 
-  left_join(censo |> 
-              st_set_geometry("geometria_residencial") |> 
-              st_intersection(eixos |> st_union()) |> 
-              select(id_setor, geometry_eixo_residencial = geometria_residencial) |> 
-              as_tibble()) |> 
-  mutate(area_eixo = st_area(geometry_eixo),
-         area_eixo_residencial = st_area(geometry_eixo_residencial),
-         percent_eixo = as.numeric(area_eixo / area_cut),
-         percent_eixo_residencial = as.numeric(area_eixo_residencial / area_cut_residencial))
+         distancia = as.numeric(st_distance(centroid, eixos.contorno)[,1]))
 
 
+saveRDS(censo.distancias, "rdata/censo-distancias.rds")
 
-censo |> 
-  st_drop_geometry() |> 
-  pivot_longer(percent_eixo:percent_eixo_residencial, values_to = "percent_eixo") |> 
-  ggplot(aes(x = posicao_centroide, y = percent_eixo, fill = name)) +
+censo.distancias |>
+  st_drop_geometry() |>
+  ggplot(aes(x = posicao_centroide, y = area_eixo_lote)) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = .0, ymax = .05, fill = "darkred", alpha = .1) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = .95, ymax = 1, fill = "darkgreen", alpha = .1) +
   geom_violin() +
@@ -309,563 +280,10 @@ censo |>
   geom_hline(yintercept = .95, linetype = "dotted") +
   geom_hline(yintercept = .05, linetype = "dotted") +
   theme_bw() +
+  ylim(c(0,1)) +
   labs(x = "Região mais próxima ao centroide", y = "Percentual da área em eixo")
 
 ```
-
-
-```{r "dados/grupos", cache = TRUE}
-# Definição dos grupos -----
-censo <- censo |> 
-  mutate(grupo = case_when(posicao_centroide == "eixo" & percent_eixo_residencial >= .95 ~ "Tratamento",
-                           posicao_centroide == "fora" & percent_eixo_residencial <=  .05 ~ "Controle",
-                           .default = "Descartado"),
-         distancia = ifelse(grupo == "Controle", -distancia, distancia),
-         densidade_residencial = moradores / as.numeric(area_cut_residencial),
-         densidade = moradores / as.numeric(area_cut))
-
-
-# distancia = case_when(grupo == "Tratamento" ~ as.numeric(st_distance(geometry |> st_buffer(-20), zonas |> filter(!eixo))[,1]),
-#                                grupo == "Controle" ~  -as.numeric(st_distance(geometry |> st_buffer(-20), zonas |> filter( eixo))[,1]),
-#                                .default = NA)
-
-(list(
-  "Recorte no formato dos lotes" = censo |>
-    filter(ano == 2022) |>
-    st_set_geometry("geometry"),
-  # "Recorte apenas residencial" = censo |> 
-  #   filter(ano == 2022) |> 
-  #   st_set_geometry("geometria_residencial") |> 
-  #   st_simplify(dTolerance = 10),
-  "Centroide" = censo |> filter(ano == 2022) |> st_set_geometry("centroid")) |> 
-  mapview(zcol = "grupo") + mapview(eixos.contorno)) |> 
-  mapshot(url = "output/mapview/grupos.html")
-
-
-# (mapview(censo |> filter(ano == 2022) |> st_set_geometry("geometry"), zcol = "grupo") + 
-#   mapview(censo |> filter(ano == 2022) |> st_set_geometry("geometria_residencial"), zcol = "grupo") +
-#   mapview(censo |> filter(ano == 2022) |> st_set_geometry("centroid"), zcol = "grupo") +
-#   mapview(eixos.contorno)) |> 
-#   mapshot(url = "output/mapview/grupos.html")
-```
-
-
-```{r}
-
-censo <- censo |> 
-   mutate(percent_area_cut = area_cut / area,
-          percent_residencial = area_cut_residencial / area_cut)
-censo |> 
-  st_drop_geometry() |> 
-  filter(grupo != "Descartado") |> 
-  pivot_longer(percent_area_cut:percent_residencial, values_to = "percent_area") |> 
-  ggplot(aes(x = factor(posicao_centroide), y = as.numeric(percent_area), fill = name)) +
-  annotate("rect", xmin = 0.5, xmax = 1, ymin = .5, ymax = 1, fill = "darkred", alpha = .1) +
-  annotate("rect", xmin = 1.5, xmax = 2, ymin = .5, ymax = 1, fill = "darkred", alpha = .1) +
-  # annotate("rect", xmin = 1, xmax = 1.5, ymin = .25, ymax = 1, fill = "darkgreen", alpha = .1) +
-  # annotate("rect", xmin = 2, xmax = 2.5, ymin = .25, ymax = 1, fill = "darkgreen", alpha = .1) +
-  geom_hline(yintercept = .5, linetype = "dotted") +
-  # geom_hline(yintercept = .25, linetype = "dotted") +
-  geom_violin() +
-  facet_wrap(~ano) +
-  theme_classic()
-```
-```{r}
-# Mesmo procedimento para IPTU ----
-IPTU.lote <- IPTU.lote |> 
-  mutate(centroid = st_centroid(geometry),
-         posicao_centroide = ifelse(centroid |> 
-                                      st_intersects(eixos.miolo |> st_union()) |> 
-                                      as.logical() |> 
-                                      replace_na(0), 
-                                    "eixo", "fora"),
-         distancia = as.numeric(st_distance(centroid, eixos.contorno)[,1]),
-         grupo = case_when(posicao_centroide == "eixo" ~ "Tratamento",
-                           posicao_centroide == "fora" ~ "Controle",
-                           .default = "Descartado"),
-         distancia = ifelse(grupo == "Controle", -distancia, distancia))
-```
-
-```{r}
-censo <- censo |> 
-  left_join(censo.IPTU |> 
-                group_by(id_setor, posPDE) |> 
-                summarize(area_terreno = sum(area_terreno)) |> 
-                pivot_wider(names_from = posPDE, values_from = area_terreno, id_cols = id_setor) |> 
-                mutate(across(c(pos, pre), ~ replace_na(.x, 0)),
-                       percent_novo = pos / (pos + pre)) |> 
-                select(id_setor, percent_novo))
-```
-
-
-# Análise
-
-```{r}
-# DiD Censo -----
-censo.did <- censo |> 
-  mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(150)) |> as.logical() |> replace_na(FALSE)) |> 
-  filter(intersec)
-
-censo.did |> 
-  st_set_geometry("centroid") |> 
-  mapview() + mapview(eixos.contorno|> st_buffer(100))
-
-```
-
-```{r}
-censo.did |> 
-  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  lm(densidade ~ factor(grupo) * factor(ano), data = _) |> 
-  summary()
-
-censo.did |> 
-  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1, percent_novo > .5) |> 
-  lm(densidade ~ factor(grupo) * factor(ano), data = _) |> 
-  summary()
-
-censo.did |> 
-  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  lm(densidade_residencial ~ factor(grupo) * factor(ano), data = _) |> 
-  summary()
-
-censo.did |> 
-  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  group_by(grupo, ano) |> 
-  summarize(populacao = sum(moradores, na.rm = T)) |>
-  mutate(ano = paste("a", ano, sep = "")) |> 
-  pivot_wider(id_cols = grupo, names_from = ano, values_from = populacao) |> 
-  mutate(mudanca = (a2022 / a2010) - 1)
-
-
-censo.did |> 
-  filter(grupo != "Descartado", as.numeric(percent_area_cut) > .6, as.numeric(percent_residencial) > .5) |> 
-  lm(densidade_residencial ~ factor(grupo) * factor(ano) * percent_novo, data = _) |> 
-  summary()
-
-```
-
-
-
-
-Análise de densidade de observações perto do cutoff, analisa se há diferença de densidade no controle e tratamento. 
-Hipótese nula: Não há diferença entre os grupos. Caso a hipótese seja rejeitada, há problemas.
-
-```{r "analise/densidade", cache = TRUE}
-# Balanceamento RDD censo -----
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2022, grupo != "Descartado", abs(distancia) < 600, 
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  drop_na() |>
-  (\(df) rddensity(as.numeric(df$distancia)))(df = _) |> 
-  summary()
-
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2010, grupo != "Descartado", abs(distancia) < 600,
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  (\(df) rddensity(as.numeric(df$distancia)))(df = _) |> 
-  summary()
-```
-
-
-
-```{r}
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2022, grupo != "Descartado", abs(distancia) < 600, 
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  drop_na() |> 
-  # mutate(distancia = cut(distancia, breaks = (0:10-5)*20))
-  ggplot(aes(x = distancia, fill = distancia > 0)) +
-  geom_histogram(breaks = (0:60-30)*10)
-```
-
-
-
-```{r "analise/rdplot_censo", cache = TRUE}
-# RDD censo -----
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2022, grupo != "Descartado", abs(distancia) < 600, 
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  drop_na() |>
-  (\(df) rdplot(as.numeric(df$densidade), df$distancia, 
-                binselect = "qs", p = 2))(df = _) 
-
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2010, grupo != "Descartado", abs(distancia) < 600,
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .1) |> 
-  drop_na() |>
-  (\(df) rdplot(as.numeric(df$densidade), df$distancia, 
-                binselect = "qs", p = 2))(df = _)
-```
-
-
-
-
-```{r  "analise/rdrobust_censo", cache = TRUE}
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2022, grupo != "Descartado", percent_novo > .1,
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .25) |>     
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$densidade), df$distancia, 
-                  kernel = "tri", p = 1))(df = _) |> 
-  summary()
-
-censo |> 
-  st_drop_geometry() |>
-  filter(ano == 2010, grupo != "Descartado", percent_novo > .1,
-         as.numeric(percent_area_cut) > .5, as.numeric(percent_residencial) > .25) |>     
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$densidade), df$distancia, 
-                  kernel = "tri", p = 1))(df = _) |> 
-  summary()
-```
-
-
-
-
-
-```{r}
-# IPTU DiD----
-IPTU.did <- IPTU.lote |> 
-  filter(ano_construcao >= 2004, ano_construcao < 2023) |> 
-  mutate(intersec = st_intersects(centroid, eixos.contorno |> st_buffer(150)) |> as.logical() |> replace_na(FALSE),
-         ano_construcao = as.integer(ano_construcao)) |> 
-  filter(intersec)
-
-IPTU.did |> 
-  st_set_geometry("centroid") |> 
-  mapview() + mapview(eixos.contorno|> st_buffer(100))
-```
-
-```{r}
-bind_rows(
-  IPTU.did |> 
-    filter(grupo != "Descartado") |> 
-    drop_na() |> 
-    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Construtiva"),
-  IPTU.did |> 
-    filter(grupo != "Descartado") |> 
-    drop_na() |> 
-    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Habitacional"),
-  IPTU.did |> 
-    filter(grupo != "Descartado") |> 
-    drop_na() |> 
-    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Pavimentos")
-) |> 
-  filter(endsWith(nome, "Tratamento")) |>
-  mutate(ano = str_sub(nome, 27,28), 
-         coef = as.numeric(coef),
-         se = as.numeric(se)) |> 
-  bind_rows(data.frame(ano = "14", coef = 0, se = 0, nome = "", 
-                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"))) |> 
-  ggplot(aes(x = ano, y = coef)) +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = "14", linetype = "dotted") +
-  geom_point() +
-  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
-  facet_grid(rows = "variavel", scales = "free_y") +
-  theme_minimal()
-
-ggsave("output/event_study.pdf", height = 10, width = 7)
-```
-
-
-```{r}
-bind_rows(
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 1) |> 
-    drop_na() |> 
-    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Construtiva"),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 1) |> 
-    drop_na() |> 
-    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Habitacional"),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 1) |> 
-    drop_na() |> 
-    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Pavimentos")
-) |> 
-  filter(endsWith(nome, "Tratamento")) |>
-  mutate(ano = str_sub(nome, 27,28), 
-         coef = as.numeric(coef),
-         se = as.numeric(se)) |> 
-  bind_rows(data.frame(ano = "14", coef = 0, se = 0, nome = "", 
-                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"))) |> 
-  ggplot(aes(x = ano, y = coef)) +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = "14", linetype = "dotted") +
-  geom_point() +
-  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
-  facet_grid(rows = "variavel", scales = "free_y") +
-  theme_minimal()
-
-ggsave("output/event_study.pdf", height = 10, width = 7)
-```
-```{r}
-bind_rows(
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 1) |> 
-    drop_na() |> 
-    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Construtiva", residencial = TRUE),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 1) |> 
-    drop_na() |> 
-    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Habitacional", residencial = TRUE),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 1) |> 
-    drop_na() |> 
-    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Pavimentos", residencial = TRUE),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 0) |> 
-    drop_na() |> 
-    feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Construtiva", residencial = FALSE),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 0) |> 
-    drop_na() |> 
-    feols(densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Densidade Habitacional", residencial = FALSE),
-  IPTU.did |> 
-    filter(grupo != "Descartado", residencial == 0) |> 
-    drop_na() |> 
-    feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), data = _) |> 
-    summary() |> 
-    (\(summ) cbind(summ$coefficients |> names(),
-                       unname(summ$coefficients),
-                       unname(summ$se)) |> as.data.frame() |> 
-       rename("nome" = 1, "coef" = 2, "se" = 3))() |> 
-    mutate(variavel = "Pavimentos", residencial = FALSE)
-) |> 
-  filter(endsWith(nome, "Tratamento")) |>
-  mutate(ano = str_sub(nome, 27,28), 
-         coef = as.numeric(coef),
-         se = as.numeric(se)) |> 
-  bind_rows(data.frame(ano = "14", coef = 0, se = 0, nome = "", 
-                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"),
-                       residencial = 1:6>3)) |> 
-  ggplot(aes(x = ano, y = coef, colour = residencial)) +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = "14", linetype = "dotted") +
-  geom_point() +
-  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
-  facet_grid(rows = "variavel", scales = "free_y") +
-  theme_minimal() +
-  scale_colour_viridis_d(option = "G", begin = .25, end = .75)
-
-ggsave("output/event_study_residencial.pdf", height = 10, width = 7)
-```
-
-
-```{r}
-# Função auxiliar para aplicar modelos e extrair coeficientes
-extrair_coeficientes <- function(data, formula, variavel_nome, residencial) {
-  data %>%
-    feols(formula, data = .) %>%
-    summary() %>%
-    (\(summ) {
-      data.frame(
-        nome = names(summ$coefficients),
-        coef = unname(summ$coefficients),
-        se = unname(summ$se)
-      )
-    })() %>%
-    mutate(variavel = variavel_nome, residencial = residencial)
-}
-
-# Filtragem inicial e aplicação dos modelos
-dados_modelos <- IPTU.did %>%
-  filter(grupo != "Descartado") %>% 
-  drop_na() %>%
-  bind_rows(
-    extrair_coeficientes(., densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Construtiva", residencial = TRUE),
-    extrair_coeficientes(., densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Habitacional", residencial = TRUE),
-    extrair_coeficientes(., pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Pavimentos", residencial = TRUE),
-    extrair_coeficientes(., densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Construtiva", residencial = FALSE),
-    extrair_coeficientes(., densidade_habitacional ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Densidade Habitacional", residencial = FALSE),
-    extrair_coeficientes(., pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), "Pavimentos", residencial = FALSE)
-  )
-
-# Processamento final e ajuste para visualização
-dados_plot <- dados_modelos %>%
-  filter(endsWith(nome, "Tratamento")) %>%
-  mutate(
-    ano = str_sub(nome, 27, 28),
-    coef = as.numeric(coef),
-    se = as.numeric(se)
-  ) %>%
-  bind_rows(data.frame(
-    ano = "14", coef = 0, se = 0, nome = "", 
-    variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"),
-    residencial = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
-  ))
-
-# Plotagem
-ggplot(dados_plot, aes(x = ano, y = coef, colour = residencial)) +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = "14", linetype = "dotted") +
-  geom_point() +
-  geom_errorbar(aes(ymin = coef - 1.96 * se, ymax = coef + 1.96 * se)) +
-  facet_grid(rows = vars(variavel), scales = "free_y") +
-  theme_minimal() +
-  scale_colour_viridis_d(option = "G", begin = .25, end = .75)
-```
-
-
-
-
-```{r}
-IPTU.lote |> 
-  st_drop_geometry() |>
-  ggplot(aes(x = distancia, fill = distancia > 0)) +
-  geom_histogram(breaks = (0:60-30)*10)
-```
-
-
-
-```{r "analise/rdplot_IPTU", cache = TRUE}
-# IPTU RDD ----
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
-  drop_na() |>
-  (\(df) rdplot(as.numeric(df$densidade_construtiva), df$distancia, binselect = "qs"))(df = _) 
-
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
-  drop_na() |>
-  (\(df) rdplot(as.numeric(df$densidade_habitacional), df$distancia, binselect = "qs"))(df = _) 
-
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
-  drop_na() |>
-  (\(df) rdplot(as.numeric(df$pavimentos), df$distancia, binselect = "qs"))(df = _) 
-
-```
-
-```{r "analise/rdrobust_IPTU", cache = TRUE}
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$densidade_construtiva), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
-  summary()
-
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$densidade_habitacional), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
-  summary()
-
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1) |> 
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$pavimentos), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
-  summary()
-  
-```
-
-```{r "analise/rdrobust_IPTU", cache = TRUE}
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1,
-         ano_construcao > 2014) |> 
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$densidade_construtiva), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
-  summary()
-
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1,
-         ano_construcao > 2014) |> 
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$densidade_habitacional), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
-  summary()
-
-IPTU.lote |> 
-  st_drop_geometry() |>
-  filter(grupo != "Descartado", abs(distancia) < 400, residencial == 1,
-         ano_construcao > 2014) |> 
-  drop_na() |>
-  (\(df) rdrobust(as.numeric(df$pavimentos), df$distancia, kernel = "uniform", p = 1))(df = _) |> 
-  summary()
-  
-```
-
-
-
 
 
 
