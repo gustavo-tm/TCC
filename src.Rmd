@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggsankey)
+library(ggnewscale)
 
 library(sf)
 library(mapview)
@@ -251,7 +252,7 @@ censo.areas <- areas.uso |>
               select(id_setor, area_eixo_total = area_eixo)) |> 
   mutate(area_eixo = replace_na(area_eixo_total, 0) / (area),
          area_eixo_lote = replace_na(area_eixo_total, 0) / (area * area_lote)) |> 
-  select(id_setor, ano, moradores, area_lote, area_residencial, area_residencial_novo_percent, area_eixo, area_eixo_lote, geometry)
+  select(id_setor, ano, moradores, area, area_lote, area_residencial, area_residencial_novo_percent, area_eixo, area_eixo_lote, geometry)
 
 saveRDS(censo.areas, "rdata/censo-areas.rds")
 ```
@@ -273,19 +274,113 @@ saveRDS(censo.distancias, "rdata/censo-distancias.rds")
 censo.distancias |>
   st_drop_geometry() |>
   ggplot(aes(x = posicao_centroide, y = area_eixo_lote)) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = .0, ymax = .05, fill = "darkred", alpha = .1) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = .95, ymax = 1, fill = "darkgreen", alpha = .1) +
-  geom_violin() +
-  facet_wrap(~ano) +
-  geom_hline(yintercept = .95, linetype = "dotted") +
+  annotate("rect", xmin = 1.5, xmax = 2.5, ymin = .0, ymax = .05, fill = "darkred", alpha = .1) +
+  annotate("rect", xmin = .5, xmax = 1.5, ymin = .9, ymax = 1, fill = "darkgreen", alpha = .1) +
+  geom_hline(yintercept = .90, linetype = "dotted") +
   geom_hline(yintercept = .05, linetype = "dotted") +
+  geom_violin(lwd = 0.25, stroke = 0) +
+  facet_wrap(~ano) +
   theme_bw() +
-  ylim(c(0,1)) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
   labs(x = "Região mais próxima ao centroide", y = "Percentual da área em eixo")
 
+ggsave("output/percent-eixo.pdf", width = 7, height = 5)
+```
+
+```{r "dados/IPTU-distancias", cache = TRUE}
+IPTU.distancias <- IPTU.lote |>
+  mutate(
+    centroid = st_centroid(geometry),
+    posicao_centroide = ifelse(
+      centroid |>
+        st_intersects(eixos.miolo |> st_union()) |>
+        as.logical() |>
+        replace_na(0),
+      "eixo",
+      "fora"
+    ),
+    distancia = as.numeric(st_distance(centroid, eixos.contorno)[,1])) |> 
+    st_drop_geometry()
+
+
+saveRDS(IPTU.distancias, "rdata/IPTU-distancias.rds")
 ```
 
 
+
+```{r}
+df.IPTU <- IPTU.distancias |> 
+  # filter(tipo_lote == "F", ano_construcao >= 2002, ano_construcao <= 2022) |> 
+  mutate(posPDE = ano_construcao > 2014,
+         residencial = uso_predominante == "residencial",
+         grupo = case_when(posicao_centroide == "eixo" ~ "tratamento",
+                           posicao_centroide == "fora" ~ "controle",
+                           TRUE ~ "descartado"),
+         distancia = case_when(grupo == "controle" ~ -distancia,
+                               grupo == "tratamento" ~ distancia,
+                               TRUE ~ NA)) |> 
+  select(setor, quadra, lote, 
+         distancia, grupo, 
+         pavimentos, densidade_construtiva, densidade_habitacional, 
+         ano_construcao, posPDE, uso_predominante, posPDE) 
+
+
+df.censo <- censo.distancias |>
+  mutate(grupo = case_when(posicao_centroide == "eixo" & area_eixo_lote > .9 ~ "tratamento",
+                           posicao_centroide == "fora" & area_eixo_lote < .05 ~ "controle",
+                           TRUE ~ "descartado")) |> 
+  mutate(densidade = moradores / area,
+         densidade_lote = moradores / (area * area_lote),
+         densidade_residencial = moradores / (area * area_lote * area_residencial)) |> 
+  select(id_setor, ano, grupo, starts_with("densidade"), area_residencial_novo_percent)
+
+
+distrito <- read_sf("dados/distrito/SIRGAS_SHP_distrito.shp") |> 
+  filter(ds_nome == "VILA MARIANA") |> 
+  select()
+
+gg <- ggplot() +
+  # geom_sf(data = df.censo |>
+  #           filter(ano == 2022) |>
+  #           right_join(censo |> select(id_setor) |> st_crop(distrito)),
+  #         aes(geometry = geometry, fill = grupo),
+  #         color = NA) +
+  # geom_sf(data = censo |> filter(ano == 2022) |> st_crop(distrito), fill = NA, colour = "#313638", alpha = .3) +
+  geom_sf(data = df.IPTU |> 
+            right_join(IPTU.lote |> select(setor, quadra, lote) |> st_crop(distrito)) |> 
+            mutate(cor = case_when(grupo == "tratamento" & uso_predominante == "residencial" & posPDE == TRUE  ~ "tratamento residencial novo",
+                                   grupo == "tratamento" & uso_predominante == "residencial" & posPDE == FALSE ~ "tratamento residencial antigo",
+                                   grupo == "tratamento" & uso_predominante != "residencial"                   ~ "tratamento não residencial",
+                                   grupo == "controle" & uso_predominante == "residencial" & posPDE == TRUE    ~ "controle residencial novo",
+                                   grupo == "controle" & uso_predominante == "residencial" & posPDE == FALSE   ~ "controle residencial antigo",
+                                   grupo == "controle" & uso_predominante != "residencial"                     ~ "controle não residencial",
+                                   TRUE ~ "outros")),
+          aes(geometry = geometry, fill = cor),
+          lwd = .1, stroke = 0) + 
+  theme_void() +
+  # scale_fill_brewer() +
+  # scale_fill_manual(name = "Controle", labels = c""
+  #   values = c("outros" = "white",
+  #              "tratamento residencial novo"  = "#1BB6AFFF",
+  #              "tratamento residencial antigo"= "#0076BBFF",
+  #              "tratamento não residencial"   = "#172869FF",
+  #              "controle residencial novo"    = "#FF3200FF",
+  #                              "controle residencial antigo"  = "#E9A17CFF",
+  #                              "controle não residencial"     = "#E9E4A6FF")) +
+   scale_fill_manual(values = c("outros" = "white",
+                               "tratamento residencial novo"  = "#1BB6AFFF",
+                               "tratamento residencial antigo"= "#0076BBFF",
+                               "tratamento não residencial"   = "#172869FF",
+                               "controle residencial novo"    = "#FF3200FF",
+                               "controle residencial antigo"  = "#E9A17CFF",
+                               "controle não residencial"     = "#E9E4A6FF")) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(.85, .8))
+
+
+ggsave("output/mapa-censo.pdf", height = 10, width = 10)
+
+```
 
 
 
