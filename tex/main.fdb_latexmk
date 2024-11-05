@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1730816780.8077 "main.aux" "main.bbl" "main" 1730817654.74249 0
-  "./bibliografia.bib" 1730766093 1108 c2acea56b9cdbe018c0da7f2dc5580a9 ""
+["bibtex main"] 1730845189.51955 "main.aux" "main.bbl" "main" 1730845680.80428 0
+  "./bibliografia.bib" 1730845138 2032 d38af22fcaa0149f8796b7dfa19f0669 ""
   "C:/Users/gusth/AppData/Local/Programs/MiKTeX/bibtex/bib/abntex2/abntex2-options.bib" 1543103229 5396 4eb260dac60f150ae608d45252853090 ""
   "C:/Users/gusth/AppData/Local/Programs/MiKTeX/bibtex/bst/abntex2/abntex2-alf.bst" 1543103230 60064 0819ac8568f9a482510a46e3a8a6f605 ""
-  "main.aux" 1730817653 9102 eba753e5b26bba43eea0d4d1c7c71b0e "pdflatex"
+  "main.aux" 1730845679 14402 875585cf7bb24248b897029fed555939 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1730784298.11758 "main.idx" "main.ind" "main" 1730817654.74205 0
-  "main.idx" 1730817653 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1730784298.11758 "main.idx" "main.ind" "main" 1730845680.80381 0
+  "main.idx" 1730845679 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1730817652.22532 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1730817654.74297 0
+["pdflatex"] 1730845677.95745 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1730845680.80471 0
   "C:/Users/gusth/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1721592552 82686 2381c3433487640bf26aa76a10db7eb2 ""
   "C:/Users/gusth/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1716659646 24240354 82e8f79682626a11b5fe69dad5ca8106 ""
   "C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -321,13 +321,15 @@
   "C:/Users/gusth/AppData/Local/Programs/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
   "appendix.tex" 1730784294 2368 9ccb8829265350f3094ef25db2e8e342 ""
   "c:/git/TCC/tex/main.tex" 1730774828 13006 5c08303904dee6dda083267d56187408 ""
-  "main.aux" 1730817653 9102 eba753e5b26bba43eea0d4d1c7c71b0e "pdflatex"
-  "main.bbl" 1730816781 563 62bb8775cfdc52054bd57d1535a5541f "bibtex main"
-  "main.brf" 1730817653 47 41526b7e83450719272746021f025f44 "pdflatex"
+  "figuras/desenho_proposta.pdf" 1730829367 40312 b8a29fb74732cb486f9baf3637aea06f ""
+  "figuras/micro gabarito.tex" 1723431336 799 ad11b4b962db6aca23d94db756035729 ""
+  "main.aux" 1730845679 14402 875585cf7bb24248b897029fed555939 "pdflatex"
+  "main.bbl" 1730845189 1531 be4663f1dabb3b325e4c85d8407e3816 "bibtex main"
+  "main.brf" 1730845679 300 f7b80ca68531871e950bdcd270c09e5c "pdflatex"
   "main.ind" 1730784298 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
   "main.tex" 1730774828 13006 5c08303904dee6dda083267d56187408 ""
-  "main.toc" 1730817653 2290 526ff148da3f672aa56f5b0319b58015 "pdflatex"
-  "texto.tex" 1730817651 12301 4e0ee0cc77aa2b18f99b2df5a01c90cd ""
+  "main.toc" 1730845679 2860 95a9e06494b3e9ddb2938c8ad52a8622 "pdflatex"
+  "texto.tex" 1730845677 26886 1fab46748ce99962451d6a3bbf96e0fb ""
   (generated)
   "main.aux"
   "main.brf"

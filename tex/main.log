@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.5.25)  5 NOV 2024 11:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.5.25)  5 NOV 2024 19:27
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1296,32 +1296,58 @@ Package babel Info: Importing basic data for english
 
 
 ]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 18.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 19.
  (C:\Users\gusth\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) [7] [8] [9] [10] [11
+) [7] [8]
 
-] [12
+pdfTeX warning: pdflatex (file ./figuras/desenho_proposta.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<figuras/desenho_proposta.pdf, id=114, 794.97pt x 170.79811pt>
+File: figuras/desenho_proposta.pdf Graphic file (type pdf)
+<use figuras/desenho_proposta.pdf>
+Package pdftex.def Info: figuras/desenho_proposta.pdf  used on input line 80.
+(pdftex.def)             Requested size: 455.0pt x 97.75728pt.
+[9] [10 <./figuras/desenho_proposta.pdf>] [11] [12
+
+] (figuras/micro gabarito.tex
+Missing character: There is no . in font nullfont!
+Missing character: There is no 0 in font nullfont!
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no t in font nullfont!
+)
+Overfull \hbox (29.1017pt too wide) in paragraph at lines 29--136
+[][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 29--136
+
+ []
+
+[13] [14] [15
+
+] [16
 
 ]) (main.bbl (main.brf)
 \tf@brf=\write6
 \openout6 = `main.brf'.
 
- [13
+ [17
 
 ]
 bibitemlist
-) (appendix.tex [14
+) (appendix.tex [18
 
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\uppercase' on input line 5.
 
-[15
+[19
 
 
-]) [16
+]) [20
 
 ]
 \tf@toc=\write7
@@ -1335,20 +1361,20 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2020/03/25>
  ***********
 Package rerunfilecheck Info: File `main.brf' has not changed.
-(rerunfilecheck)             Checksum: 41526B7E83450719272746021F025F44;47.
+(rerunfilecheck)             Checksum: F7B80CA68531871E950BDCD270C09E5C;300.
  ) 
 Here is how much of TeX's memory you used:
- 48226 strings out of 474370
- 1101188 string characters out of 5740535
- 1937754 words of memory out of 5000000
- 69544 multiletter control sequences out of 15000+600000
- 620560 words of font info for 237 fonts, out of 8000000 for 9000
+ 48917 strings out of 474370
+ 1118587 string characters out of 5740535
+ 1940754 words of memory out of 5000000
+ 70168 multiletter control sequences out of 15000+600000
+ 622579 words of font info for 266 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,12n,107p,1016b,1040s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,13n,107p,1647b,2441s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/gusth/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (17 pages, 166145 bytes).
+Output written on main.pdf (21 pages, 236775 bytes).
 PDF statistics:
- 274 PDF objects out of 1000 (max. 8388607)
- 55 named destinations out of 1000 (max. 500000)
- 71341 words of extra memory for PDF output out of 74296 (max. 10000000)
+ 375 PDF objects out of 1000 (max. 8388607)
+ 75 named destinations out of 1000 (max. 500000)
+ 71386 words of extra memory for PDF output out of 74296 (max. 10000000)
 

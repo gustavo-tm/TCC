@@ -5,6 +5,25 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{v-1.9.7 }
 
+\bibitem[Brueckner 2011]{brueckner2011lectures}
+\abntrefinfo{Brueckner}{BRUECKNER}{2011}
+{BRUECKNER, J.~K. \textbf{Lectures on urban economics}. [S.l.]: MIT press,
+  2011.}
+
+\bibitem[Fujita 1989]{fujita1989urban}
+\abntrefinfo{Fujita}{FUJITA}{1989}
+{FUJITA, M. \textbf{Urban economic theory}. [S.l.]: Cambridge university press,
+  1989.}
+
+\bibitem[IBGE 2024]{IBGE2024}
+\abntrefinfo{IBGE}{IBGE}{2024}
+{IBGE. \textbf{Censo Demográfico 2022: Malha de Setores Censitários
+  Preliminares}. Rio de Janeiro, Brasil: Instituto Brasileiro de Geografia e
+  Estatística, 2024.
+Acesso em: 2024-06-23.
+Dispon{\'\i}vel em:
+  \url{https://biblioteca.ibge.gov.br/visualizacao/livros/liv102072.pdf}.}
+
 \bibitem[Ibraeva et al. 2020]{Ibraeva2020}
 \abntrefinfo{Ibraeva et al.}{IBRAEVA et al.}{2020}
 {IBRAEVA, A. et al. Transit-oriented development: A review of research
@@ -12,5 +31,10 @@
 \textbf{Transportation Research Part A: Policy and Practice}, Elsevier Ltd,
   v.~132, p. 110--130, 2 2020.
 ISSN 09658564.}
+
+\bibitem[Papageorgiou e Pines 2012]{papageorgiou2012essay}
+\abntrefinfo{Papageorgiou e Pines}{PAPAGEORGIOU; PINES}{2012}
+{PAPAGEORGIOU, Y.~Y.; PINES, D. \textbf{An essay on urban economic theory}.
+  [S.l.]: Springer Science \& Business Media, 2012. v.~1.}
 
 \end{thebibliography}

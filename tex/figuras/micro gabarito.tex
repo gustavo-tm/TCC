@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+
+    \begin{axis}[standard,
+        xtick={0},
+        ytick={.5},
+        xticklabels = {},
+        yticklabels = {$CA_{reg}$},
+        samples=100,
+        xlabel={Distância ao centro ($x$)},
+        ylabel={CA},
+        xmin=0,xmax=2,
+        ymin=.2,ymax=1,
+        y label style={anchor=east},
+        x label style={anchor=north},
+        clip=false
+    ]
+    
+\addplot[domain={0:2}]{.8*e^(-.9*x)+.1} node[pos=1] (point1) {};
+\node [right] at (point1) {\textit{laissez-faire}};
+
+\addplot[domain={(ln(4.8)/1.3):2}]{1.2*e^(-1.3*x)+.25} node[pos=1] (point2) {};
+\node [right] at (point2) {regulado};
+
+\addplot[domain={0:(ln(4.8)/1.3)}]{.5};
+
+\addplot[black, dashed] coordinates {((ln(4.8)/1.3),0) ((ln(4.8)/1.3),.5)};
+
+\end{axis}
+\end{tikzpicture}
