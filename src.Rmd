@@ -68,7 +68,7 @@ list(
   macroareas = read_sf("dados/macroareas/SIRGAS_SHP_MACROAREAS.shp") |> 
     st_set_crs("epsg:31983")) |> 
   mapview(zcol = list(NULL, "tipo", "mc_sigla")) |> 
-  mapshot(url = "output/mapview/eixos.html")
+  mapshot(url = "tex/figuras/mapview/eixos.html")
 ```
 
 
@@ -221,7 +221,7 @@ areas.uso |>
                                                            "posPDE" = "Ano da construção")) +
   theme(legend.position = "none")
 
-ggsave("output/area_setor.pdf", width = 10, height = 5)
+ggsave("tex/figuras/area_setor.pdf", width = 10, height = 5)
 
 ```
 
@@ -286,7 +286,7 @@ censo.distancias |>
   scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
   labs(x = "Região mais próxima ao centroide", y = "Percentual da área em eixo")
 
-ggsave("output/percent-eixo.pdf", width = 7, height = 5)
+ggsave("tex/figuras/percent-eixo.pdf", width = 7, height = 5)
 ```
 
 ```{r "dados/IPTU-distancias", cache = TRUE}
@@ -386,12 +386,12 @@ gg <- ggplot() +
         legend.position.inside = c(.85, .8))
 
 
-ggsave("output/mapa-lotes.pdf", gg, height = 10, width = 10)
-ggsave("output/mapa-lotes-metro.pdf", height = 10, width = 10,
+ggsave("tex/figuras/mapa-lotes.pdf", gg, height = 10, width = 10)
+ggsave("tex/figuras/mapa-lotes-metro.pdf", height = 10, width = 10,
        plot = gg +   
          geom_point(data = metro, aes(x = x, y = y), 
                     size = 8, shape = 15, colour = "white", fill = "white") +
-         geom_image(data = metro, aes(x = x, y = y, image = "output/icone_metro.png"), size = .025) +
+         geom_image(data = metro, aes(x = x, y = y, image = "tex/figuras/icone_metro.png"), size = .025) +
          geom_label(data = metro, aes(x = x, y = y, label = emt_nome), nudge_y = 80, size = 1.5))
 
 gg <- ggplot() +
@@ -417,7 +417,7 @@ gg <- ggplot() +
       legend.position.inside = c(.85, .8))
 
   
-ggsave("output/mapa-censo.pdf", height = 10, width = 10)
+ggsave("tex/figuras/mapa-censo.pdf", height = 10, width = 10)
 
 remove(distrito, metro, gg.dados, gg)
 ```
@@ -439,21 +439,61 @@ modelsummary(list(
   "F" = lm(densidade_residencial ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data),
   "G" = lm(area_residencial ~ factor(grupo) * factor(ano) , data = data)
 ), stars = TRUE, statistic = NULL)
-
 ```
 
 
 ```{r "analise/did-IPTU"}
 data <- df.IPTU |> 
-  filter(abs(distancia) <= 150, grupo != "descartado") |> 
+  filter(abs(distancia) <= 50, grupo != "descartado") |> 
   mutate(residencial = uso_predominante == "residencial")
 
 modelsummary(list(
-  "densidade_construtiva" = lm(densidade_construtiva ~ factor(grupo) * factor(posPDE), data = data),
-  "densidade_habitacional" = lm(densidade_habitacional ~ factor(grupo) * factor(posPDE), data = data),
-  "pavimentos" = lm(pavimentos ~ factor(grupo) * factor(posPDE), data = data), 
+  "densidade_construtiva" = lm(densidade_construtiva ~ factor(grupo) * factor(posPDE), 
+                               data = data |> filter(uso_predominante == "residencial")),
+  "densidade_habitacional" = lm(densidade_habitacional ~ factor(grupo) * factor(posPDE), 
+                                data = data |> filter(uso_predominante == "residencial")),
+  "pavimentos" = lm(pavimentos ~ factor(grupo) * factor(posPDE), 
+                    data = data |> filter(uso_predominante == "residencial")), 
   "residencial" = lm(residencial ~ factor(grupo) * factor(posPDE), data = data)), 
   stars = TRUE, statistic = NULL)
+
+data |> 
+  filter(grupo != "descartado", uso_predominante == "residencial", posPDE) |>     
+  (\(df) rdrobust(as.numeric(df$densidade_construtiva), df$distancia, 
+                  kernel = "uniform", p = 0, h = 50))(df = _) |> 
+  summary()
+
+data |> 
+  filter(grupo != "descartado", uso_predominante == "residencial", posPDE, abs(distancia) < 50) |>     
+  lm(densidade_construtiva ~ factor(grupo), data = _) |> 
+  summary()
+
+```
+
+```{r "analise/did-IPTU-bandas"}
+run_regressions <- function(df, start_roll = 150, end_roll = 10, step = 1) {
+  seq(start_roll, end_roll, by = -step) |>
+    purrr::map_dfr(\(banda) {
+      df |>
+        filter(abs(distancia) <= banda) |>
+        lm(densidade_construtiva ~ factor(grupo) * factor(posPDE), data = _) |>
+        broom::tidy(conf.int = TRUE, conf.level = .99) |>
+        mutate(banda = banda)
+    })
+}
+
+run_regressions(df.IPTU |> filter(grupo != "descartado")) |> 
+  mutate(term = case_when(term == "factor(grupo)tratamento" ~ "Tratamento",
+                          term == "factor(grupo)tratamento:factor(posPDE)TRUE" ~ "Tratamento x Pós PDE",
+                          TRUE ~ NA)) |> 
+  drop_na() |> 
+  ggplot(aes(x = banda, y = estimate, colour = term, fill = term)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .5) +
+  geom_line(lwd = 1) +
+  # scale_colour_viridis_d() +
+  theme_classic() +
+  labs(x = "Bandwidth para a distância", y = "Estimativa do parâmetro", colour = "Parâmetro", fill = "Parâmetro")
 
 ```
 
@@ -516,7 +556,7 @@ bind_rows(
   theme_bw() +
   theme(legend.position = "bottom")
 
-ggsave("output/event-study.pdf", width = 8, height = 6)
+ggsave("tex/figuras/event-study.pdf", width = 8, height = 6)
 ```
 
 
@@ -531,8 +571,7 @@ df.censo |>
                                "descartado" = "#A45E41FF")) +
   theme_classic()
 
-ggsave("output/rdd-balanceamento-censo.pdf", width = 6, height = 4)
-
+ggsave("tex/figuras/rdd-balanceamento-censo.pdf", width = 6, height = 4)
 
 df.censo |>
   filter(ano == 2022, grupo != "descartado", abs(distancia) <= 300) |>
@@ -559,7 +598,7 @@ df.censo |>
                                "descartado" = "#A45E41FF")) +
   theme_classic()
 
-ggsave("output/rdd-balanceamento-censo-filtrado.pdf", width = 6, height = 4)
+ggsave("tex/figuras/rdd-balanceamento-censo-filtrado.pdf", width = 6, height = 4)
 
 df.censo |> 
   filter(ano == 2022, grupo != "descartado", abs(distancia) <= 300, area_residencial_novo_percent > .05) |>
@@ -664,6 +703,7 @@ df.IPTU |>
   summary()
 
 ```
+
 ```{r "analise/rdd-plot-IPTU-posPDE"}
 
 df.IPTU |> 
