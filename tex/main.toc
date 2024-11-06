@@ -13,25 +13,25 @@
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
 \contentsline {chapter}{\chapternumberline {3}\MakeTextUppercase []{Dados}}{15}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Densidade populacional}{15}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Padrões Construtivos}{15}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Regulação}{15}{section.3.3}%
+\contentsline {section}{\numberline {3.2}Padrões Construtivos}{17}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Regulação}{17}{section.3.3}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
-\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Metodologia e Resultados}}{16}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Passo 1: }{16}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Passo 2: }{16}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Passo 3: }{16}{section.4.3}%
+\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Metodologia e Resultados}}{18}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Passo 1: }{18}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Passo 2: }{18}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Passo 3: }{18}{section.4.3}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
-\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Conclusão}}{17}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Resultados principais}{17}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Contribuições para o debate público}{17}{section.5.2}%
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Conclusão}}{19}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Resultados principais}{19}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Contribuições para o debate público}{19}{section.5.2}%
 \vspace {\cftbeforechapterskip }
 \setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
-\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{18}{section*.17}%
+\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{20}{section*.18}%
 \renewcommand *{\cftappendixname }{AP\^ENDICE \space }
 \setlength {\cftpartindent }{\cftlastnumwidth } \setlength {\cftpartnumwidth }{2em}
 \cftinsert {A}
-\contentsline {part}{\uppercase {Ap\^endices}}{19}{section*.18}%
+\contentsline {part}{\uppercase {Ap\^endices}}{21}{section*.19}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
 \setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
 \cftinsert {A}
-\contentsline {appendix}{\chapternumberline {A}\MakeTextUppercase []{Discussões sobre a verticalização}}{20}{appendix.A}%
+\contentsline {appendix}{\chapternumberline {A}\MakeTextUppercase []{Discussões sobre a verticalização}}{22}{appendix.A}%

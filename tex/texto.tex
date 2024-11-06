@@ -151,7 +151,16 @@ Parte da dificuldade de discutir os temas urbanos com dados é a complexidade de
 
 Os dados de densidade populacional, são produzidos pelo Censo demográfico do IBGE, que ocorre a cada 10 anos. O censo de 2020 se atrasou para 2022 por conta da pandemia e os dados começaram a ser divulgados em 2024. Até o momento, o que foi disponibilizado de maneira pública é a malha preliminar do censo. Considerando que o PDE entrou em vigor em 2014, foi utilizado o censo de 2010 como um período pré PDE e o censo de 2022 como periodo pós.
 
-A unidade de observação do censo mais próxima de microdados que pode ser georreferenciada é o setor censitário. Os limites dos setores são construídos de forma que o agente de coleta do censo consiga cobrir o setor inteiro, minimizando os erros de medição e otimizando o processo. A metodologia para a delimitação dos setores censitários leva em consideração diversos fatores, como elementos na paisagem que se constituam em barreiras naturais ou artificiais e dificultam o trabalho do agente, pontos de referência estáveis e de fácil identificação no terreno, limites das estruturas territoriais como bairros e quadras, entre outros \cite{IBGE2024}. Um fator determinante para o tamanho do setor censitário é o número de domicílios a serem entrevistados, que em áreas urbanizadas deve estar entre 250 e 400 para os mais densos e entre 150 e 250 para os menos densos.
+A unidade de observação do censo mais próxima de microdados que pode ser georreferenciada é o setor censitário\footnote{Para estar em conformidade com a Lei Geral de Proteção de Dados (LGPD), é importante proteger a anonimidade dos entrevistados, então deve haver algum tipo de agregação geográfica.}. Os limites dos setores são construídos de forma que o agente de coleta do censo consiga cobrir o setor inteiro, minimizando os erros de medição e otimizando o processo. A metodologia para a delimitação dos setores censitários leva em consideração diversos fatores, como elementos na paisagem que se constituam em barreiras naturais ou artificiais e dificultam o trabalho do agente, pontos de referência estáveis e de fácil identificação no terreno, limites das estruturas territoriais como bairros e quadras, entre outros \cite{IBGE2024}. Um fator determinante para o tamanho do setor censitário é o número de domicílios a serem entrevistados, que em áreas urbanizadas deve estar entre 250 e 400 para os mais densos e entre 150 e 250 para os menos densos.
+
+Segundo o levantamento de 2022, a atual população do município de SP se encontra em 11.451.999 de habitantes, dividios em 4.996.529 de domicílios, dos quais apenas 4.316.336 estão ocupados. Na Figura \ref{fig:populacao} é possível observar quais são as áreas mais densas da cidade. 
+
+\begin{figure}[!h]
+    \centering
+    \caption{Densidade populacional em São Paulo por setor censitário (Censo 2022)}
+    \includegraphics[width = .85\linewidth]{figuras/mapa-densidade.pdf}
+    \label{fig:populacao}
+\end{figure}
 
 
 \section{Padrões Construtivos}
