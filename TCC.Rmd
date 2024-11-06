@@ -11,6 +11,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 library(tidyverse)
 library(ggsankey)
 library(ggimage)
+library(patchwork)
 
 library(sf)
 library(mapview)
@@ -19,7 +20,9 @@ library(units)
 library(rdrobust)
 library(rddensity)
 library(fixest)
+
 library(modelsummary)
+library(gt)
 
 mapviewOptions(basemaps = "CartoDB.Positron")
 setwd("C:/git/TCC")
@@ -69,6 +72,19 @@ list(
     st_set_crs("epsg:31983")) |> 
   mapview(zcol = list(NULL, "tipo", "mc_sigla")) |> 
   mapshot(url = "tex/figuras/mapview/eixos.html")
+
+gg <- ggplot() +
+  geom_sf(aes(geometry = geometry, fill = mc_divisao),
+          data = read_sf("dados/macroareas/SIRGAS_SHP_MACROAREAS.shp") |> 
+            st_set_crs("epsg:31983"), colour = "darkgrey", lwd = .1) +
+  scale_fill_grey("", start = .6, end = .95) +
+  geom_sf(aes(fill = "Região de eixo"), data = eixos.miolo, fill = "darkblue", alpha = .1, colour = "black") +
+  geom_sf(data = eixos, fill = "darkblue", alpha = .3, colour = NA) +
+  theme_void() +
+  theme(legend.position = "inside",
+        legend.position.inside = c(.75, .4))
+
+ggsave("tex/figuras/macroareas-eixos.pdf", gg, width = 10, height = 15)
 ```
 
 
@@ -127,6 +143,23 @@ IPTU.lote <- lotes |>
 saveRDS(IPTU.lote, "rdata/IPTU-lote.rds")
 saveRDS(lotes, "rdata/lotes.rds")
 saveRDS(IPTU, "rdata/IPTU.rds")
+
+gg <- IPTU |> 
+  filter(uso_predominante == "residencial") |> 
+  mutate(cota_parte = 1/densidade_habitacional) |> 
+  filter(cota_parte < 600, densidade_construtiva < 5, pavimentos < 20) |> 
+  select("Cota Parte Obs." = cota_parte, 
+         "CA observado" = densidade_construtiva, 
+         "Pavimentos" = pavimentos) |> 
+  pivot_longer(everything()) |> 
+  ggplot() +
+  geom_histogram(aes(x = value)) +
+  facet_wrap(~ name, scales = "free") +
+  scale_y_continuous(labels = scales::number) +
+  labs(x = "", y = "Frequência") + 
+  theme_classic()
+
+ggsave("tex/figuras/indicadores.pdf", gg, width = 9, height = 3)
 
 remove(IPTU, lotes)
 ```
@@ -471,18 +504,18 @@ data |>
 ```
 
 ```{r "analise/did-IPTU-bandas"}
-run_regressions <- function(df, start_roll = 150, end_roll = 10, step = 1) {
-  seq(start_roll, end_roll, by = -step) |>
-    purrr::map_dfr(\(banda) {
-      df |>
-        filter(abs(distancia) <= banda) |>
-        lm(densidade_construtiva ~ factor(grupo) * factor(posPDE), data = _) |>
-        broom::tidy(conf.int = TRUE, conf.level = .99) |>
-        mutate(banda = banda)
-    })
-}
-
-run_regressions(df.IPTU |> filter(grupo != "descartado")) |> 
+df.IPTU |> 
+  filter(grupo != "descartado") |> 
+  (\(df, start_roll = 150, end_roll = 10, step = 1) {
+    seq(start_roll, end_roll, by = -step) |>
+      purrr::map_dfr(\(banda) {
+        df |>
+          filter(abs(distancia) <= banda) |>
+          lm(densidade_construtiva ~ factor(grupo) * factor(posPDE), data = _) |>
+          broom::tidy(conf.int = TRUE, conf.level = .99) |>
+          mutate(banda = banda)
+      })
+  })(df = _) |> 
   mutate(term = case_when(term == "factor(grupo)tratamento" ~ "Tratamento",
                           term == "factor(grupo)tratamento:factor(posPDE)TRUE" ~ "Tratamento x Pós PDE",
                           TRUE ~ NA)) |> 
@@ -742,7 +775,6 @@ df.IPTU |>
 ```
 
 
-
 ```{r "analise/rdd-reg-IPTU-posPDE"}
 df.IPTU |> 
   filter(grupo != "descartado", uso_predominante == "residencial", posPDE) |>     
@@ -770,3 +802,9 @@ df.IPTU |>
   summary()
 
 ```
+
+# IC
+
+
+
+
