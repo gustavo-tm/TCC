@@ -251,7 +251,68 @@ Na medida que a densidade construtiva aumenta, as unidades habitacionais tendem 
 \section{Da regulação ao padrão construtivo}
 \label{sec:perg2}
 
-O objetivo desta seção é responder: \textbf{A regulação foi capaz de influenciar os padrões construtivos na cidade da maneira esperada?}
+O objetivo desta seção é responder: \textbf{A regulação foi capaz de influenciar os padrões construtivos na cidade da maneira esperada?} Para tanto, foi escolhida também duas abordagens. Ambas são, em sua essência, metodologias de regressão em discontinuidade (RDD\footnote{Do inglês, \textit{Regression Discontinuity Design}}). Essa escolha é ideal por conta da exogeneidade na qual foi definido quais lotes pertenceriam ou não às áreas de eixo perto de sua fronteira. Como comentado na Seção \ref{sec:plano-diretor}, para se tornar uma zona de EETU, o lote deve estar dentro da área de influência do transporte coletivo de alta capacidade. Nesse sentido, os lotes vizinhos aos classificados como dentro da zona de eixo são um controle perfeito, visto que a diferença entre um lote de tratamento e o outro de controle é apenas atravessar a rua. Outras regiões da cidade também tiveram suas regulações alteradas, mas o foco da identificação 
+
+\begin{figure}[h]
+    \centering
+    \caption{Exemplo de separação dos grupos de controle e tratamento na Vila Mariana}
+    \includegraphics[width = \textwidth]{figuras/mapa-lotes-metro.pdf}
+    \label{fig:mapaRDD}
+\end{figure}
+
+Na Figura \ref{fig:mapaRDD} é possível ver um exemplo de classificação dos lotes como controle e tratamento na Vila Mariana, região de eixos ativados por estações de metrô, em uma região de união de duas linhas, a verde e a azul. Um empreendimento é considerado novo caso ele tenha sido terminado de construir depois de 2014, ano de início da vigência do PDE. 
+
+\subsection{Abordagem \textit{diff-in-diff} geográfico (e \textit{event study})}
+
+O \textit{diff-in-diff (DiD)} geográfico é uma categoria de regressão de diferenças em diferenças que leva em consideração a proximidade espacial das observações para a definição dos critérios de controle e tratamento. Neste caso, foram definidos como tratamento todos os lotes residenciais que estão dentro da distância de 50m entre o centroide e a borda do eixo e como controle, a mesma distância, mas para os lotes que estão fora da zona de EETUs. A hipótese de identificação é igual a de um DiD comum: os grupos dois grupos, na ausência do tratamento, precisam apresentar tendências paralelas. 
+
+\input{tabelas/did-IPTU.tex}
+
+A Tabela \ref{tab:did-IPTU} traz os resultados do DiD escolhendo cada componente do padrão construtivo como variável de interesse. Os dados apontam que a introdução dos eixos é reponsável por aumentar em média a densidade construtiva em 0,9, a densidade habitacional em 0,011 domicílios por metro quadrado de terreno e 2,4 pavimentos. O eixo não altera a probabilidade do lote ser ou não residencial, como mostra a quarta coluna da regressão. Além disso, para este recorte de 50m, não há diferença estatísticamente significante entre os grupos de controle e tratamento antes do PDE. Os resultados são robustos às diferentes escolhas para o recorte de proximidade à borda. Na Figura \ref{fig:robustez-did-IPTU} do Apêndice \ref{appendix:figuras} é possível verificar o coeficiente associado ao efeito do tratamento para cada escolha de distância da borda. 
+
+\begin{figure}[h]
+    \centering
+    \caption{\textit{Event study} para os padrões construtivos na fronteira dos eixos}
+    \includegraphics[width = .7\textwidth]{figuras/event-study.pdf}
+    \label{fig:event-study}
+\end{figure}
+
+Para fortalecer a análise e identificar heterogeneidade temporal nos resultados, foi conduzido também um estudo de evento. Os resultados estão apresentados na Figura \ref{fig:event-study}. O \textit{Event study} também aponta para um aumento da densidade construtiva, densidade habitacional e pavimentos depois do PDE, mas o efeito parece se intensificar após 2018. Isso pode ser explicado pelo fato de que os empreendimentos entregues entre 2014 e 2017 em grande parte ainda seguiam a regulação do PDE de 2002. Além disso, foram observadas tendências paralelas no período pré PDE, indicando que de fato os grupos são comparáveis e o critério escolhido para separação dos grupos é exógeno. Por fim, um resultado surpreendente é de que os eixos parecem ter afetado apenas os empreendimentos residencias.
+
+\subsection{Abordagem de RDD}
+
+Considerando o sucesso da metodologia de assumir como parecidos os grupos que estão próximos da fronteira dos eixos, a estratégia do RDD faz bastante sentido\footnote{Inclusive, o RDD se torna igual à estimação por diferença, quando o grau do polinômio é igual a zero e a \textit{bandwidth} é a mesma.}. A hipótese de identifação do RDD consiste em considerar que no entorno do ponto de corte, as observações imediatamente acima e abaixo do limiar são similares em todas as características observáveis e não observáveis, exceto pela variável de tratamento. Como discutido anteriormente, essa exogeneidade existe, visto que a diferença entre um lote de tratamento e o outro de controle é apenas atravessar a rua.
+
+Entretanto, quando é implementado o RDD, não se observa efeito do tratamento -- este resultado pode ser visto na Figura \ref{fig:rdd-IPTU}. O motivo pelo qual isso acontece, é que como são poucos os lotes que receberam edificação pós PDE (consultar Figura \ref{fig:area-setor}), mesmo que este tenha um efeito significativo, ele é imperceptível quando se considera todos os lotes. O resultado torna-se significativo quando se seleciona apenas os lotes que receberam edificação após 2014. Neste caso, é observado um aumento na densidade construtiva, densidade habitaciona e pavimentos (Figura \ref{fig:rdd-IPTU-posPDE}). 
+
+\begin{figure}[!h]
+    \centering
+
+    \caption{RDD para os padrões construtivos no entorno dos eixos}
+    \includegraphics[width = .85\textwidth]{figuras/rdd-plot-IPTU.pdf}
+    \label{fig:rdd-IPTU}
+
+    \caption{RDD para os padrões construtivos no entorno dos eixos, filtrando por lotes com edificações recentes}
+    \includegraphics[width = .85\textwidth]{figuras/rdd-plot-IPTU-posPDE.pdf}
+    \label{fig:rdd-IPTU-posPDE}
+\end{figure}
+
+
+Na Tabela \ref{tab:rdd-IPTU} é possível observar os resultados do RDD filtrado apenas para lotes com edificações novas e utilizando \textit{kernel} triangular com largura de banda escolhida automaticamente. Os resultados são semelhantes aos encontrados via diferenças em diferenças e os apresentados na Figura \ref{fig:rdd-IPTU-posPDE}, com exceção da probabilidade do lote ser residencial. Como teste placebo, foi replicado o mesmo procedimento, mas considerando o \textit{cutoff} em -100 ao invés de zero. A largura de banda selecionada automaticamente foi menor que 100, o que implica que nesse procedimento houve uma comparação do grupo controle com o próprio grupo controle. O teste placebo não apresentou efeito para os três componentes do padrão construtivo, validando o teste e trazendo mais evidências para a exogeneidade do tratamento na fronteira. Todavia, o coeficiente associado ao lote ser residencial apresentou significância, invalidando a inferência sobre esta variável da Tabela \ref{tab:rdd-IPTU}.
+
+\input{tabelas/rdd-IPTU}
+
+\input{tabelas/rdd-IPTU-placebo}
+
+
+\subsection{Resultados principais}
+
+Os dados mostram que construções nos eixos após o início da vigência do PDE apresentam maior densidade construtiva, densidade habitacional e pavimentos. As evidências apontam também para uma intensificação do efeito do PDE começando a partir de 2018 e alcançando seu ápice nos dados mais recentes, em 2022. Além disso, as mudanças do PDE parecem ter afetado apenas os empreendimentos residenciais, enquanto nos outros usos não se observa uma diferença significativa entre a região de eixo e fora dos eixos.
+
+Entretanto, um resultado que se destaca também é que a mudança causada pelo PDE nos últimos 10 anos não apresentou intensidade e/ou velocidade suficientes para se observar uma divisão territorial clara de eixo e não eixo nos padrões construtivos. Para observar os resultados, é necessário olhar exclusivamente para os novos empreendimentos, que, como representado na Figura \ref{fig:area-setor}, representam menos de 5\% dos empreendimentos.
+
+
+
 
 \section{Da regulação à densidade populacional}
 \label{sec:perg3}

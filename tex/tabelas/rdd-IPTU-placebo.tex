@@ -1,0 +1,22 @@
+\begin{table}[!t]
+\caption{Teste placebo do RDD com o cutoff deslocado 100 metros para fora do eixo} 
+\fontsize{10pt}{12pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccc}
+\toprule
+  & Densidade Construtiva & Densidade Habitacional & Pavimentos & Residencial \\ 
+\midrule\addlinespace[2.5pt]
+Conventional & 0.031 & 0.000 & 0.211 & 0.128** \\ 
+Bias-Corrected & 0.096 & 0.001 & 0.407 & 0.147*** \\ 
+{Robust} & {0.096} & {0.001} & {0.407} & {0.147**} \\ 
+\midrule
+Observações.à.esquerda & 863 & 921 & 890 & 1022 \\ 
+Observações.à.direita & 990 & 1070 & 1027 & 1202 \\ 
+Largura.de.Banda & 76.9 & 82.7 & 79 & 68.1 \\ 
+\bottomrule
+\label{tab:rdd-IPTU-placebo}
+\end{tabular*}
+\begin{minipage}{\linewidth}
++ p < 0.1, * p < 0.05, ** p < 0.01, *** p < 0.001\\
+\end{minipage}
+\end{table}
+

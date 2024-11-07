@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1730988398.2995 "main.aux" "main.bbl" "main" 1730988402.73927 0
+["bibtex main"] 1731006356.28137 "main.aux" "main.bbl" "main" 1731006360.87479 0
   "./bibliografia.bib" 1730949847 3372 ffda1ae248c2244439cdc3576c205c72 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bib/abntex2/abntex2-options.bib" 1543103229 5396 4eb260dac60f150ae608d45252853090 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bst/abntex2/abntex2-alf.bst" 1543103230 60064 0819ac8568f9a482510a46e3a8a6f605 ""
-  "main.aux" 1730988401 25823 86011cb996fc25dba7353edba244319c "pdflatex"
+  "main.aux" 1731006359 30040 f50e91d8e7454be14bc1aedd7e9f0046 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1730949775.93749 "main.idx" "main.ind" "main" 1730988402.73885 0
-  "main.idx" 1730988400 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1731003634.75087 "main.idx" "main.ind" "main" 1731006360.87433 0
+  "main.idx" 1731006358 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1730988398.68471 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1730988402.73981 0
+["pdflatex"] 1731006356.6836 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1731006360.8754 0
   "C:/Users/Gustavo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1730898543 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/Gustavo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1730898412 11986484 2c81025dd9995a931c2a5d2ea1974dc2 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -328,30 +328,38 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
-  "appendix.tex" 1730944302 5887 23d4ce623ab10c3635881c918bc69936 ""
+  "appendix.tex" 1730995096 6151 18dd274c110ca9221721ceb65417c4a8 ""
   "c:/git/TCC/tex/main.tex" 1730898397 13006 5c08303904dee6dda083267d56187408 ""
   "figuras/area_setor.pdf" 1730864942 74902 3e33f91c4751e9b88f19824bbcf22d1e ""
   "figuras/ca_vs_verticalizacao.pdf" 1730864723 14408 1251df2d7e59066e75796ff765dd4d60 ""
   "figuras/desenho.pdf" 1730864723 94752 8c93bf570ef3d6b9cd826ef628ea0fed ""
   "figuras/desenho_proposta.pdf" 1730864942 40312 b8a29fb74732cb486f9baf3637aea06f ""
+  "figuras/did-IPTU-bandas.pdf" 1730995129 11830 834b5c5d11bf29f23c46cc1488fa9584 ""
+  "figuras/event-study.pdf" 1730996482 16475 906e064e129742e64f99ea5b03b09074 ""
   "figuras/indicadores.pdf" 1730900981 5463 3cec7a339e71562b66207149a73cdab2 ""
   "figuras/indicadores_tempo.pdf" 1730864723 11407 faf4b8bfa58960a267399b403805b03d ""
   "figuras/macroareas-eixos.pdf" 1730921399 826330 ff5ce51c1a188db1f4c9ee60b59af7e7 ""
   "figuras/mapa-densidade.pdf" 1730864942 4164172 32f1f0a0f4883ab834fffeca42078da8 ""
+  "figuras/mapa-lotes-metro.pdf" 1730991190 1767869 c8efce0b6fd68b2a8734ba9061c8986e ""
   "figuras/micro gabarito.tex" 1730864943 799 ad11b4b962db6aca23d94db756035729 ""
   "figuras/populacao-distribuicao-raster.pdf" 1730938918 4516 1f3a102f38dc428f5f89e06ab83df27f ""
   "figuras/previsoes.pdf" 1730954370 5829 7d1e5f7b0b6c8c16eb4ed122d6a47489 ""
+  "figuras/rdd-plot-IPTU-posPDE.pdf" 1730992819 34706 016b2c25bd64be502be37796af7615d7 ""
+  "figuras/rdd-plot-IPTU.pdf" 1730992817 38596 3fa52dca272ea705a904f40687aa7012 ""
   "figuras/robustez-regressao1pop.pdf" 1730944140 8902 6862c6627f36b8d960c5d723673b2a01 ""
   "figuras/tree_area_construida.pdf" 1730864723 6799 29ac744b6b7bb8a670c9b66b19dcf8d7 ""
-  "main.aux" 1730988401 25823 86011cb996fc25dba7353edba244319c "pdflatex"
-  "main.bbl" 1730988398 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
-  "main.brf" 1730988401 564 6d8dc892cae3f96b16702f01ebb077df "pdflatex"
-  "main.ind" 1730949776 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
+  "main.aux" 1731006359 30040 f50e91d8e7454be14bc1aedd7e9f0046 "pdflatex"
+  "main.bbl" 1731006356 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
+  "main.brf" 1731006359 564 d07315059bf8a354e9da640ccb7c6399 "pdflatex"
+  "main.ind" 1731003634 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
   "main.tex" 1730898397 13006 5c08303904dee6dda083267d56187408 ""
-  "main.toc" 1730988401 4315 ca4004c845fca37d6852f7e9591432f3 "pdflatex"
+  "main.toc" 1731006359 4635 0899f6ac26566cb7ef7453973e90f1b4 "pdflatex"
   "tabelas/dados.tex" 1730904014 1024 6491eac93c5b72a019c210e81f3e4423 ""
+  "tabelas/did-IPTU.tex" 1730996617 899 1c94cba3c28d93a61a1881f2ee763559 ""
+  "tabelas/rdd-IPTU-placebo.tex" 1731003849 827 756225338731dce0d34477c8b9fc0729 ""
+  "tabelas/rdd-IPTU.tex" 1731005595 821 b4361b5443167ac628327e5fdca68a51 ""
   "tabelas/regressao-1.tex" 1730946741 1067 9a5a0839734e17f9361beec3e25379dc ""
-  "texto.tex" 1730988393 44305 28f0365d76f872729df4601bca200393 ""
+  "texto.tex" 1731006351 52429 45407bb4e8765978d556c4b1cbf14a11 ""
   (generated)
   "main.aux"
   "main.brf"
