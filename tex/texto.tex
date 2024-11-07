@@ -224,14 +224,14 @@ Apesar de contraintuitivo, o resultado apresenta uma interpretação razoável. 
 
 \subsection{Abordagem de \textit{machine learning}}
 
-Na abordagem de \textit{macinhe learning}, foi construído um modelo de \textit{random forest} \cite{wright2015ranger}. Uma das principais vantagens dessa técnica é que não exige a especificação de uma forma funcional, pois o próprio modelo seleciona as variáveis mais importantes e ajusta uma regressão não linear. Outro benefício do \textit{random forest} é sua capacidade de avaliar a importância relativa das variáveis, algo que não é diretamente testável em uma regressão linear.
+Na abordagem de \textit{macinhe learning}, foi construído um modelo de \textit{random forest} \cite{wright2015ranger}. Uma das principais vantagens dessa técnica é que não exige a especificação de uma forma funcional, pois o próprio modelo seleciona as variáveis mais importantes e ajusta uma regressão não linear. Outro benefício da \textit{random forest} é sua capacidade de avaliar a importância relativa das variáveis, algo que não é diretamente testável em uma regressão linear.
 
 
 Para desenvolver o modelo de floresta de regressão, a base de dados foi dividida em conjuntos de treino e teste, prevenindo overfitting, ou seja, garantindo que o modelo aprenda padrões em vez de simplesmente memorizar os dados. Foram geradas 100 mil árvores com base nas células que apresentam um espectro de irregularidade entre 40\% e 60\%. Para avaliar a performance do modelo, foi replicada a regressão da Tabela \ref{tab:regressao-1} (Coluna C) com o método \textit{random forest}. Observou-se um $R^2$ de 81,9\% na base de teste, indicando um ganho significativo em poder explicativo. Esse ganho decorre exclusivamente da capacidade do modelo de capturar relações não lineares entre as variáveis, visto que os dados de entrada são os mesmos da regressão.
 
 Para identificar quais variáveis são mais relevantes no modelo, foi aplicado um procedimento de permutação, no qual se introduz ruído nas variáveis explicativas para avaliar o impacto disso no erro do modelo \cite{breiman2001random, Nembrini2018}. Esse método permite quantificar a importância de cada variável para explicar a variável dependente. Como resultado, a \textit{random forest} identificou a densidade habitacional como a mais importante, seguida pela densidade construtiva e por fim a verticalização. Estes resultados são condizentes com os achados apresentados na Tabela \ref{tab:regressao-1}.
 
-Com base na \textit{random forest} construída, também é possível simular a população de uma determinada região, com base em seus padrões construtivos. Para fins ilustrativos, foi considerada uma célula do raster, que possui largura de 800m. Nessa célula hipotético, a depender do CA, cota parte e verticalização observados, pode-se estimar a população que o habitaria. Na Figura \ref{fig:previsoes} é possível analisar os resultados. Em linha com os resultados até o momento, uma cota parte baixa parece ser o fator mais importante para obter uma densidade alta, principalmente se aliada à um CA alto. Um número maior de pavimentos, como já comentado, na maioria das situações está associado à uma densidade mais baixa, dado que a densidade construtiva e habitacional se mantenha a mesma.
+Com base na \textit{random forest} construída, também é possível simular a população de uma determinada região, com base em seus padrões construtivos. Para fins ilustrativos, foi considerada uma célula do raster, que possui largura de 800m. Nessa célula hipotética, a depender do CA, cota parte e verticalização observados, pode-se estimar a população que a habitaria. Na Figura \ref{fig:previsoes} é possível analisar os resultados. Em linha com que foi distuctido até então, uma cota parte baixa parece ser o fator mais importante para obter uma densidade alta, principalmente se aliada à um CA alto. Um número maior de pavimentos, como já comentado, na maioria das situações está associado à uma densidade mais baixa ou igual, caso a densidade construtiva e habitacional se mantenha as mesmas.
 
 \begin{figure}[h]
     \centering
@@ -242,9 +242,16 @@ Com base na \textit{random forest} construída, também é possível simular a p
 
 \subsection{Resultados principais}
 
+Apesar das diferenças metodológicas, ambas as abordagens convergem para um resultado comum: a densidade habitacional é o componente do padrão construtivo mais importante para definir a densidade populacional. Esse achado é intuitivo, pois a quantidade de domicílios desempenha um papel central na determinação do número de habitantes. A densidade construtiva e o número de pavimentos, dados uma densidade habitacional e pavimentos constantes, podem ser vistos como modificadores do perfil desses domicílios.
+
+Na medida que a densidade construtiva aumenta, as unidades habitacionais tendem a ser mais espaçosas, o que acomoda mais moradores em média. No caso da verticalização, com a densidade construtiva e habitacional fixas, qualquer aumento nos pavimentos exige uma redução na taxa de ocupação do terreno (conforme discutido na Seção \ref{sec:perg2} e no Apêndice \ref{appendix:verticalizacao}), resultando em edifícios com maiores recuos. Os dados sugerem que o mesmo número de unidades habitacionais e de área construída, quando inseridos em empreendimentos mais verticais, apresentam menos moradores em média. 
+
+À luz dos resultados apresentados, a discussão sobre os instrumentos instituídos pelo PDE tomam um novo rumo. Os dados mostram que a verticalização, que foi incentivada nas zonas de eixos, não é uma aliada do adensamento, por vezes inclusive trabalhando no sentido contrário. O efeito da densidade construtiva foi em grande parte obstruído pelo potencial que a densidade habitacional tem de gerar densidade. Nesse sentido, se o PDE almeja definir quais regiões da cidade devem apresentar maior ou menor densidade, seria mais efetivo focar na cota parte e permitir um CA e gabarito suficientes para a construção das unidades habitacionais\footnote{Uma cota parte de 20 significa que, com o CA básico, cada unidade habitacional apresentará 20 metros quadrados. Estas mesmas unidades com um CA de 4 podem apresentar em média 80$m^2$. Todavia, é impossível atingir um CA 4 com menos de 4 pavimentos. Inclusive, quando há recuos obrigatórios, é necessário um número de pavimentos maior do que o CA para que seja possível construir todos os metros quadrados de área}.  
 
 \section{Da regulação ao padrão construtivo}
 \label{sec:perg2}
+
+O objetivo desta seção é responder: \textbf{A regulação foi capaz de influenciar os padrões construtivos na cidade da maneira esperada?}
 
 \section{Da regulação à densidade populacional}
 \label{sec:perg3}
