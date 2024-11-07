@@ -808,3 +808,282 @@ df.IPTU |>
 
 
 
+```{r "dados/raster-create", cache = T}
+# geoms.IPTU <- IPTU.lote %>% 
+#   filter(! st_is_empty(geometry)) %>% 
+#   st_as_sf() %>% 
+#   mutate(area = st_area(geometry) %>% as.numeric()) %>% 
+#   select(id = setor, area, unidades, area_construida, area_ocupada, area_terreno)
+# 
+# geoms.censo <- censo %>% 
+#   mutate(area = st_area(geometry) %>% as.numeric()) %>% 
+#   select(id = id_setor_censitario, area, populacao = v0001, domicilios = v0002, domicilios_ocupados = v0007)
+# 
+# bbox <- st_bbox(geoms.censo)
+# 
+# raster <- raster::raster(xmn = bbox["xmin"], xmx = bbox["xmax"], ymn = bbox["ymin"], ymx = bbox["ymax"],
+#             res = 800, crs = st_crs(geoms.censo)$proj4string, vals = NA)
+```
+
+
+```{r "dados/raster-extract", cache = T}
+# result.IPTU <- exact_extract(raster, geoms.IPTU, include_xy = T, 
+#                              include_cols = c("id", "area", "unidades", "area_construida", "area_ocupada",
+#                                               "area_terreno"), 
+#                              force_df = T, coverage_area = T, progress = F) %>% 
+#   bind_rows %>% 
+#   mutate(percent_intersect = coverage_area / area,
+#          across(unidades:area_terreno, ~ .x * percent_intersect)) %>% 
+#   group_by(x, y) %>% 
+#   summarize(unidades = sum(unidades),
+#             area_ocupada = sum(area_ocupada),
+#             area_construida = sum(area_construida),
+#             area_terreno = sum(area_terreno)) %>% 
+#   ungroup() %>% 
+#   mutate(cota_parte = area_terreno / unidades,
+#          cota_parte_inversa = unidades / area_terreno,
+#          CA = area_construida / area_terreno,
+#          verticalizacao = area_construida / area_ocupada)
+# 
+# result.censo <- exact_extract(raster, geoms.censo, include_xy = T, 
+#                         include_cols = c("id", "area", "populacao", "domicilios", "domicilios_ocupados"), 
+#                         force_df = T, coverage_area = T, progress = F) %>% 
+#   bind_rows %>% 
+#   mutate(percent_intersect = coverage_area / area,
+#          across(c(area, populacao, domicilios, domicilios_ocupados), ~ .x * percent_intersect)) %>% 
+#   group_by(x, y) %>% 
+#   summarize(populacao = sum(populacao),
+#             area = sum(area),
+#             domicilios = sum(domicilios),
+#             domicilios_ocupados = sum(domicilios_ocupados))
+# 
+# result <- full_join(result.IPTU, result.censo) %>% 
+#   mutate(espectro_irregularidade = unidades / (unidades + domicilios),
+#          densidade_residencial = populacao / area_terreno,
+#          densidade_total = populacao / area)
+# 
+# result %>% 
+#   modelsummary::datasummary_skim()
+```
+
+```{r}
+result |> filter(populacao > 0) |> summarize(media = mean(populacao), mediana = median(populacao), sd = sd(populacao))
+
+result |> 
+  filter(populacao > 0) |> 
+  ggplot(aes(x = populacao)) + 
+  geom_histogram() +
+  theme_classic() +
+  labs(x = "População da célula do raster", y = "Frequência")
+
+ggsave("tex/figuras/populacao-distribuicao-raster.pdf", width = 7, height = 4)
+```
+
+
+```{r}
+result |>
+  filter(populacao > 0) |> 
+  mutate(densidade_total = densidade_total * 10^6,
+         densidade_residencial = densidade_residencial * 10^6,
+         cota_parte_inversa = cota_parte_inversa * 10 ^ 6) |> 
+  select(densidade_construtiva = CA, 
+         densidade_habitacional = cota_parte_inversa, 
+         verticalizacao,
+         densidade_populacional = densidade_total,
+         espectro_irregularidade,
+         everything()) |> 
+  (\(df) {
+    list("(A) Nível" = df |> 
+           filter(abs(espectro_irregularidade - .5) <= .05) |>
+           lm(populacao ~ unidades + area_construida + verticalizacao, data = _) |> 
+           summary(),
+         "(B) Log" = df |> 
+           filter(abs(espectro_irregularidade - .5) <= .05) |>
+           lm(log(populacao) ~unidades + area_construida + verticalizacao, data = _) |> 
+           summary(),
+         "(C) Nível" = df |> 
+           filter(abs(espectro_irregularidade - .5) <= .05) |>
+           lm(densidade_populacional ~ densidade_construtiva + densidade_habitacional + verticalizacao, data = _) |> 
+           summary(),
+         "(D) Log" = df |> 
+           filter(abs(espectro_irregularidade - .5) <= .05) |>
+           lm(log(densidade_populacional) ~ densidade_construtiva + densidade_habitacional + verticalizacao, data = _) |> 
+           summary())
+  })(df = _) |> 
+  modelsummary(statistic = NULL, stars = TRUE, fmt = 3, output = "gt", gof_omit = "RMSE",
+               coef_rename = coef_rename(c("Intercepto", "Unidades", "Área construída (m2)", "Verticalização", 
+                                           "Densidade construtiva", "Densidade habitacional"),
+                                         titlecase = FALSE)) |> 
+  tab_spanner("y = População", columns = 2:3) |> 
+  tab_spanner("y = Densidade", columns = 4:5) |> 
+  tab_caption("Resultados da regressão, para espectro de irregularidade entre 45 e 55%") |> 
+  gtsave("tex/tabelas/regressao-1.tex")
+
+```
+
+
+```{r}
+result |> 
+  filter(populacao > 0) |>
+  mutate(densidade_total = densidade_total * 10^6) |> 
+  # select(densidade_construtiva = CA, 
+  #        densidade_habitacional = cota_parte_inversa, 
+  #        verticalizacao,
+  #        densidade_populacional = densidade_total,
+  #        espectro_irregularidade) |> 
+  (\(df, start_roll = .2, end_roll = .01, step = .01) {
+    seq(start_roll, end_roll, by = -step) |>
+      purrr::map_dfr(\(banda) {
+        bind_rows(
+          df |>
+            filter(abs(espectro_irregularidade - .5) <= banda) |>
+            lm(populacao ~ unidades + area_construida + verticalizacao, data = _) |>
+            broom::tidy(conf.int = TRUE, conf.level = .95) |>
+            mutate(banda = banda, forma = "linear"),
+          df |>
+            filter(abs(espectro_irregularidade - .5) <= banda) |>
+            lm(log(populacao) ~ unidades + area_construida + verticalizacao, data = _) |>
+            broom::tidy(conf.int = TRUE, conf.level = .99) |>
+            mutate(banda = banda, forma = "log")
+        )
+        
+      })
+  })(df = _) |> 
+  drop_na() |> 
+  # filter(term != "(Intercept)") |> 
+  ggplot(aes(x = banda, y = estimate, colour = term, fill = term)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .5) +
+  geom_line(lwd = 1) +
+  ggh4x::facet_grid2(cols = vars(forma), rows = vars(term), scale = "free", independent = "y") +
+  scale_colour_viridis_d() +
+  scale_fill_viridis_d() +
+  theme_classic() +
+  scale_x_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::number) +
+  labs(x = "Bandwidth do recorte do espectro de irregularidade", y = "Estimativa do parâmetro", colour = "Parâmetro", fill = "Parâmetro")
+
+ggsave("tex/figuras/robustez-regressao1pop.pdf", width = 10, height = 7)
+```
+
+```{r}
+result |> 
+  filter(populacao > 0) |>
+  mutate(densidade_total = densidade_total * 10^6) |> 
+  select(densidade_construtiva = CA,
+         densidade_habitacional = cota_parte_inversa,
+         verticalizacao,
+         densidade_populacional = densidade_total,
+         espectro_irregularidade,
+         everything()) |>
+  (\(df, start_roll = .2, end_roll = .01, step = .01) {
+    seq(start_roll, end_roll, by = -step) |>
+      purrr::map_dfr(\(banda) {
+        bind_rows(
+          df |>
+            filter(abs(espectro_irregularidade - .5) <= banda) |>
+            lm(densidade_populacional ~ densidade_construtiva + densidade_habitacional + verticalizacao, data = _) |>
+            broom::tidy(conf.int = TRUE, conf.level = .95) |>
+            mutate(banda = banda, forma = "linear"),
+          df |>
+            filter(abs(espectro_irregularidade - .5) <= banda) |>
+            lm(log(densidade_populacional) ~ densidade_construtiva + densidade_habitacional + verticalizacao, data = _) |>
+            broom::tidy(conf.int = TRUE, conf.level = .99) |>
+            mutate(banda = banda, forma = "log")
+        )
+        
+      })
+  })(df = _) |> 
+  drop_na() |> 
+  # filter(term != "(Intercept)") |> 
+  ggplot(aes(x = banda, y = estimate, colour = term, fill = term)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .5) +
+  geom_line(lwd = 1) +
+  ggh4x::facet_grid2(cols = vars(forma), rows = vars(term), scale = "free", independent = "y") +
+  scale_colour_viridis_d() +
+  scale_fill_viridis_d() +
+  theme_classic() +
+  scale_x_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::number) +
+  labs(x = "Bandwidth do recorte do espectro de irregularidade", y = "Estimativa do parâmetro", colour = "Parâmetro", fill = "Parâmetro")
+```
+
+
+
+```{r}
+split <- rsample::initial_split(result %>% 
+                                  drop_na() %>% 
+                                  filter(area > max(area) * .99) %>% 
+                                  select(-c(densidade_residencial, populacao, area, 
+                                            cota_parte_inversa, x, y)),
+                                prop = 0.8)
+train <- rsample::training(split)
+test <- rsample::testing(split)
+
+# rf_model <- ranger::ranger(densidade_total ~ ., 
+#                            data = train, num.trees = 100000, importance = "permutation")
+# rf_preds <- predict(rf_model, data = test)$predictions
+
+rf_model_restrito <- ranger::ranger(densidade_total ~ CA + cota_parte + verticalizacao + espectro_irregularidade, 
+                                    data = train, num.trees = 200000)
+
+# rf_preds_restrito <- predict(rf_model_restrito, data = test)$predictions
+
+lm_model_restrito <- lm(logdensidade_total ~ CA + cota_parte + verticalizacao, 
+                                    data = result |> filter(abs(espectro_irregularidade - .5) < .05))
+
+lm_model_restrito |> summary()
+```
+
+```{r}
+df <- tibble()
+for (cota_parte in (4:15) ^2){
+  for (CA in seq(0, 8, by = 1)){
+    for (verticalizacao in c(8, 12)){
+      df <- df |> 
+        bind_rows(tibble(cota_parte = cota_parte, CA = CA, verticalizacao = verticalizacao))
+    }
+  }
+}
+
+df |> 
+  mutate(preds = predict(lm_model_restrito,
+                           newdata = tibble(CA = CA,
+                                       cota_parte = cota_parte,
+                                       verticalizacao = verticalizacao)) |> as.numeric(),
+         preds = cut(preds * 640000, breaks = 0:10 * 2000, dig.lab = 6),
+         verticalizacao = paste(verticalizacao, "pavimentos") |> 
+           factor(levels = c("8 pavimentos", "12 pavimentos"))) |> 
+  ggplot(aes(x = CA, y = cota_parte, fill = preds)) +
+  geom_tile() +
+  facet_wrap(~verticalizacao, dir = "h") +
+  scale_fill_viridis_d() +
+  scale_y_sqrt(breaks = c(10, 20, 40, 80, 160, 320)) +
+  theme_classic() +
+  labs(fill = "População Prevista", x = "Coeficiente de Aproveitamento (CA)",
+       y = "Cota Parte")
+
+df |> 
+  mutate(preds = predict(rf_model_restrito,
+                           data = tibble(CA = CA,
+                                       cota_parte = cota_parte,
+                                       verticalizacao = verticalizacao,
+                                       espectro_irregularidade = .5)) |> 
+           ranger::predictions(),
+         preds = cut(preds * 640000, breaks = 0:10 * 2000, dig.lab = 6),
+         verticalizacao = paste(verticalizacao, "pavimentos") |> 
+           factor(levels = c("8 pavimentos", "12 pavimentos"))) |> 
+  ggplot(aes(x = CA, y = cota_parte, fill = preds)) +
+  geom_tile() +
+  facet_wrap(~verticalizacao, dir = "h") +
+  scale_fill_viridis_d() +
+  scale_y_sqrt(breaks = c(10, 20, 40, 80, 160, 320)) +
+  theme_classic() +
+  labs(fill = "População Prevista", x = "Coeficiente de Aproveitamento (CA)",
+       y = "Cota Parte")
+
+ggsave("tex/figuras/previsoes.pdf", width = 9, height = 4.25)
+
+```
+

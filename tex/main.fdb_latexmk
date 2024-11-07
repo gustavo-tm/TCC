@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1730921039.38218 "main.aux" "main.bbl" "main" 1730921403.0911 0
-  "./bibliografia.bib" 1730901703 2518 a0e1b97ae79927120f3265932b6b9bb8 ""
+["bibtex main"] 1730955541.71653 "main.aux" "main.bbl" "main" 1730955585.43726 0
+  "./bibliografia.bib" 1730949847 3372 ffda1ae248c2244439cdc3576c205c72 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bib/abntex2/abntex2-options.bib" 1543103229 5396 4eb260dac60f150ae608d45252853090 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bst/abntex2/abntex2-alf.bst" 1543103230 60064 0819ac8568f9a482510a46e3a8a6f605 ""
-  "main.aux" 1730921401 22038 e2dbc97df12950bcdb92992659cf893c "pdflatex"
+  "main.aux" 1730955584 25823 179d69e154f3353146c29f92b54185cd "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1730903890.12209 "main.idx" "main.ind" "main" 1730921403.09067 0
-  "main.idx" 1730921400 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1730949775.93749 "main.idx" "main.ind" "main" 1730955585.43686 0
+  "main.idx" 1730955583 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1730921399.30461 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1730921403.09165 0
+["pdflatex"] 1730955581.53496 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1730955585.43781 0
   "C:/Users/Gustavo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1730898543 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/Gustavo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1730898412 11986484 2c81025dd9995a931c2a5d2ea1974dc2 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -22,6 +22,8 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/helvetic/phvb8t.tfm" 1136783054 6628 34c39492c0adc454c1c199922bba8363 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/helvetic/phvr8r.tfm" 1136783054 4712 9ef4d7d106579d4b136e1529e1a4533c ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/helvetic/phvr8t.tfm" 1136783054 7040 b2bd27e2bfe6f6948cbc3239cae7444f ""
+  "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/helvetic/phvro8r.tfm" 1136783054 4964 f223217e5e1f85fa3742fb0480aba9e8 ""
+  "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/helvetic/phvro8t.tfm" 1136783054 7292 d408122871055bbc541d7280c154e210 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/times/ptmb8c.tfm" 1136783054 1340 d2f6275bc4fa3f07e3bc50aae2c71eab ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/times/ptmb8r.tfm" 1136783054 4524 6bce29db5bc272ba5f332261583fee9c ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/tfm/adobe/times/ptmb8t.tfm" 1136783054 6880 f19b8995b61c334d78fc734065f6b4d4 ""
@@ -59,11 +61,13 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1247596667 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb" 1136864148 35941 adef23a721dd8354a4a2bf4434f1c484 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb" 1136864148 44648 23115b2a545ebfe2c526c3ca99db8b95 ""
+  "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb" 1136864148 48169 065450055814ce4dfc30f7922d24ab30 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb" 1136864148 44729 fea0975e20ec51c992338362f05f1146 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb" 1136864148 46026 687528a208fbfc1f00832bb96cccebbb ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb" 1136864148 45458 504e2b06fa82109d168c7a0afb09e145 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/vf/adobe/helvetic/phvb8t.vf" 1136783054 2340 0efed6a948c3c37d870e4e7ddb85c7c3 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/vf/adobe/helvetic/phvr8t.vf" 1136783054 2344 44ff28c9ef2fc97180cd884f900fee71 ""
+  "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/vf/adobe/helvetic/phvro8t.vf" 1136783054 2348 717f0e01beff9c30c0df4945e471886f ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/vf/adobe/times/ptmb8c.vf" 1136783054 3556 f148a8ed6ef01fed553027171e4f9b22 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/vf/adobe/times/ptmb8t.vf" 1136783054 2340 df9c920cc5688ebbf16a93f45ce7bdd3 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/vf/adobe/times/ptmr8c.vf" 1136783054 3556 8a9a6dcbcd146ef985683f677f4758a6 ""
@@ -322,7 +326,7 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
-  "appendix.tex" 1730906977 5347 765be6c22786667fb67bcbfb4e752d16 ""
+  "appendix.tex" 1730944302 5887 23d4ce623ab10c3635881c918bc69936 ""
   "c:/git/TCC/tex/main.tex" 1730898397 13006 5c08303904dee6dda083267d56187408 ""
   "figuras/area_setor.pdf" 1730864942 74902 3e33f91c4751e9b88f19824bbcf22d1e ""
   "figuras/ca_vs_verticalizacao.pdf" 1730864723 14408 1251df2d7e59066e75796ff765dd4d60 ""
@@ -333,15 +337,19 @@
   "figuras/macroareas-eixos.pdf" 1730921399 826330 ff5ce51c1a188db1f4c9ee60b59af7e7 ""
   "figuras/mapa-densidade.pdf" 1730864942 4164172 32f1f0a0f4883ab834fffeca42078da8 ""
   "figuras/micro gabarito.tex" 1730864943 799 ad11b4b962db6aca23d94db756035729 ""
+  "figuras/populacao-distribuicao-raster.pdf" 1730938918 4516 1f3a102f38dc428f5f89e06ab83df27f ""
+  "figuras/previsoes.pdf" 1730954370 5829 7d1e5f7b0b6c8c16eb4ed122d6a47489 ""
+  "figuras/robustez-regressao1pop.pdf" 1730944140 8902 6862c6627f36b8d960c5d723673b2a01 ""
   "figuras/tree_area_construida.pdf" 1730864723 6799 29ac744b6b7bb8a670c9b66b19dcf8d7 ""
-  "main.aux" 1730921401 22038 e2dbc97df12950bcdb92992659cf893c "pdflatex"
-  "main.bbl" 1730921039 2083 d7a34f7cb3bddea53173306fe0cde39e "bibtex main"
-  "main.brf" 1730921401 354 2e3667f30087f203bf3d015cead95a40 "pdflatex"
-  "main.ind" 1730903890 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
+  "main.aux" 1730955584 25823 179d69e154f3353146c29f92b54185cd "pdflatex"
+  "main.bbl" 1730955541 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
+  "main.brf" 1730955584 564 6d8dc892cae3f96b16702f01ebb077df "pdflatex"
+  "main.ind" 1730949776 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
   "main.tex" 1730898397 13006 5c08303904dee6dda083267d56187408 ""
-  "main.toc" 1730921401 4012 89fc2b409302dfc95b662b9e809d584e "pdflatex"
+  "main.toc" 1730955584 4315 ca4004c845fca37d6852f7e9591432f3 "pdflatex"
   "tabelas/dados.tex" 1730904014 1024 6491eac93c5b72a019c210e81f3e4423 ""
-  "texto.tex" 1730921357 34335 083c3063f32b228e3747a418ddb15665 ""
+  "tabelas/regressao-1.tex" 1730946741 1067 9a5a0839734e17f9361beec3e25379dc ""
+  "texto.tex" 1730955580 41912 21212078c22783a39c6b022eb3ca433f ""
   (generated)
   "main.aux"
   "main.brf"
