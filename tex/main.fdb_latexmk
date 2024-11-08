@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1731006356.28137 "main.aux" "main.bbl" "main" 1731006360.87479 0
+["bibtex main"] 1731079856.99596 "main.aux" "main.bbl" "main" 1731079887.2854 0
   "./bibliografia.bib" 1730949847 3372 ffda1ae248c2244439cdc3576c205c72 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bib/abntex2/abntex2-options.bib" 1543103229 5396 4eb260dac60f150ae608d45252853090 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bst/abntex2/abntex2-alf.bst" 1543103230 60064 0819ac8568f9a482510a46e3a8a6f605 ""
-  "main.aux" 1731006359 30040 f50e91d8e7454be14bc1aedd7e9f0046 "pdflatex"
+  "main.aux" 1731079886 32238 a8133c19078ce9acc15d67f513592e6b "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1731003634.75087 "main.idx" "main.ind" "main" 1731006360.87433 0
-  "main.idx" 1731006358 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1731078025.06791 "main.idx" "main.ind" "main" 1731079887.28495 0
+  "main.idx" 1731079884 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1731006356.6836 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1731006360.8754 0
+["pdflatex"] 1731079883.21516 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1731079887.28598 0
   "C:/Users/Gustavo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1730898543 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/Gustavo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1730898412 11986484 2c81025dd9995a931c2a5d2ea1974dc2 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -57,6 +57,7 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1247596667 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb" 1247596667 36741 0ee9e374ec3e30da87cdfb0ea3575226 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1247596666 35469 dcf3a5f2fc1862f5952e3ee5eb1d98c4 ""
+  "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1247596667 35752 024fb6c41858982481f6968b5fc26508 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1247596667 32722 d7379af29a190c3f453aba36302ff5a9 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1247596667 32762 7fee39e011c23b3589931effd97b9702 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1247596667 32726 39f0f9e62e84beb801509898a605dbd5 ""
@@ -329,7 +330,7 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
   "appendix.tex" 1730995096 6151 18dd274c110ca9221721ceb65417c4a8 ""
-  "c:/git/TCC/tex/main.tex" 1730898397 13006 5c08303904dee6dda083267d56187408 ""
+  "c:/git/TCC/tex/main.tex" 1731036354 13038 cd31425fea2cc8f86e1fd43cfad7a8f3 ""
   "figuras/area_setor.pdf" 1730864942 74902 3e33f91c4751e9b88f19824bbcf22d1e ""
   "figuras/ca_vs_verticalizacao.pdf" 1730864723 14408 1251df2d7e59066e75796ff765dd4d60 ""
   "figuras/desenho.pdf" 1730864723 94752 8c93bf570ef3d6b9cd826ef628ea0fed ""
@@ -344,22 +345,25 @@
   "figuras/micro gabarito.tex" 1730864943 799 ad11b4b962db6aca23d94db756035729 ""
   "figuras/populacao-distribuicao-raster.pdf" 1730938918 4516 1f3a102f38dc428f5f89e06ab83df27f ""
   "figuras/previsoes.pdf" 1730954370 5829 7d1e5f7b0b6c8c16eb4ed122d6a47489 ""
+  "figuras/rdd-balanceamento-censo.pdf" 1731074892 5302 a7c3aa839d2b9dc6cec666a9f3f8cc05 ""
   "figuras/rdd-plot-IPTU-posPDE.pdf" 1730992819 34706 016b2c25bd64be502be37796af7615d7 ""
   "figuras/rdd-plot-IPTU.pdf" 1730992817 38596 3fa52dca272ea705a904f40687aa7012 ""
   "figuras/robustez-regressao1pop.pdf" 1730944140 8902 6862c6627f36b8d960c5d723673b2a01 ""
   "figuras/tree_area_construida.pdf" 1730864723 6799 29ac744b6b7bb8a670c9b66b19dcf8d7 ""
-  "main.aux" 1731006359 30040 f50e91d8e7454be14bc1aedd7e9f0046 "pdflatex"
-  "main.bbl" 1731006356 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
-  "main.brf" 1731006359 564 d07315059bf8a354e9da640ccb7c6399 "pdflatex"
-  "main.ind" 1731003634 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
-  "main.tex" 1730898397 13006 5c08303904dee6dda083267d56187408 ""
-  "main.toc" 1731006359 4635 0899f6ac26566cb7ef7453973e90f1b4 "pdflatex"
+  "main.aux" 1731079886 32238 a8133c19078ce9acc15d67f513592e6b "pdflatex"
+  "main.bbl" 1731079857 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
+  "main.brf" 1731079886 564 f26e647f7a36a6f12b93f1d42b8025fd "pdflatex"
+  "main.ind" 1731078025 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
+  "main.tex" 1731036354 13038 cd31425fea2cc8f86e1fd43cfad7a8f3 ""
+  "main.toc" 1731079886 4862 65e1da67edd695431bf2e0118586dff4 "pdflatex"
   "tabelas/dados.tex" 1730904014 1024 6491eac93c5b72a019c210e81f3e4423 ""
   "tabelas/did-IPTU.tex" 1730996617 899 1c94cba3c28d93a61a1881f2ee763559 ""
+  "tabelas/did-censo-interpret.tex" 1731079882 1533 dbe9cad686ca26eb9cdbd54ab23d8c92 ""
+  "tabelas/did-censo.tex" 1731075610 792 8e2e6678199f4df6ed82945d456c5e6b ""
   "tabelas/rdd-IPTU-placebo.tex" 1731003849 827 756225338731dce0d34477c8b9fc0729 ""
   "tabelas/rdd-IPTU.tex" 1731005595 821 b4361b5443167ac628327e5fdca68a51 ""
   "tabelas/regressao-1.tex" 1730946741 1067 9a5a0839734e17f9361beec3e25379dc ""
-  "texto.tex" 1731006351 52429 45407bb4e8765978d556c4b1cbf14a11 ""
+  "texto.tex" 1731079852 55537 1fca5a1250c6d4c4223d3f932d40f4e2 ""
   (generated)
   "main.aux"
   "main.brf"

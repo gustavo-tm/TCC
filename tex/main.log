@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.6)  7 NOV 2024 16:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.6)  8 NOV 2024 12:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1146,7 +1146,7 @@ Package: anyfontsize 2007/11/22 anyfontsize.sty by pts
 \c@defi1=\count433
 \c@ex1=\count434
 \c@prop1=\count435
-Package hyperref Info: Option `colorlinks' set `true' on input line 203.
+Package hyperref Info: Option `colorlinks' set `true' on input line 204.
 \main@idxfile=\write5
 \openout5 = `main.idx'.
 
@@ -1155,25 +1155,25 @@ Writing index file main.idx
 (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 246.
-LaTeX Font Info:    ... okay on input line 246.
-Package hyperref Info: Link coloring ON on input line 246.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 247.
+LaTeX Font Info:    ... okay on input line 247.
+Package hyperref Info: Link coloring ON on input line 247.
 \myptabbox=\box94
 \myptabboxwidth=\skip275
  (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
@@ -1196,40 +1196,40 @@ Package caption Info: longtable package is loaded.
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
-LaTeX Info: Redefining \microtypecontext on input line 246.
-Package microtype Info: Applying patch `item' on input line 246.
-Package microtype Info: Applying patch `toc' on input line 246.
-Package microtype Info: Applying patch `eqnum' on input line 246.
-Package microtype Info: Applying patch `footnote' on input line 246.
-Package microtype Info: Applying patch `verbatim' on input line 246.
+LaTeX Info: Redefining \microtypecontext on input line 247.
+Package microtype Info: Applying patch `item' on input line 247.
+Package microtype Info: Applying patch `toc' on input line 247.
+Package microtype Info: Applying patch `eqnum' on input line 247.
+Package microtype Info: Applying patch `footnote' on input line 247.
+Package microtype Info: Applying patch `verbatim' on input line 247.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 246.
+LaTeX Info: Redefining \showhyphens on input line 247.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
  (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-ptm.cfg
 File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 )
-LaTeX Info: Redefining \celsius on input line 246.
-Package gensymb Info: Faking symbols for \degree and \celsius on input line 246.
+LaTeX Info: Redefining \celsius on input line 247.
+Package gensymb Info: Faking symbols for \degree and \celsius on input line 247.
 
 
 Package gensymb Warning: Not defining \perthousand.
 
-LaTeX Info: Redefining \ohm on input line 246.
-Package gensymb Info: Using \Omega for \ohm on input line 246.
+LaTeX Info: Redefining \ohm on input line 247.
+Package gensymb Info: Using \Omega for \ohm on input line 247.
 
 Package gensymb Warning: Not defining \micro.
 
 (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\translations-basic-dictionary-brazil.trsl
 File: translations-basic-dictionary-brazil.trsl (brazil translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `brazil'. on input line 246.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `brazil'. on input line 247.
 
 Package pgfplots notification 'compat/show suggested version=true': document has been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
@@ -1242,7 +1242,7 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 ))
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 258.
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 259.
  (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1phv.fd
 File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
 )
@@ -1257,13 +1257,13 @@ Package microtype Info: Loading generic protrusion settings for font family
 {C:/Users/Gustavo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}] (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 260.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 261.
  (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 260.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 261.
  (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
@@ -1274,18 +1274,18 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.260 
+l.261 
        [1
 
 
 
 ]
-Overfull \hbox (16.12639pt too wide) in paragraph at lines 275--277
+Overfull \hbox (16.12639pt too wide) in paragraph at lines 276--278
 []  [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 275--277
+Underfull \hbox (badness 10000) in paragraph at lines 276--278
 
  []
 
@@ -1312,8 +1312,8 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
 [5
 
 ]
-Overfull \hbox (3.80185pt too wide) in paragraph at lines 52--52
- [][] [][][]\T1/phv/b/n/12 (-20) METODOLOGIA DE CRU-ZA-MENTO GE-O-GRÁ-FICO 
+Overfull \hbox (3.80185pt too wide) in paragraph at lines 54--54
+ [][] []\T1/phv/b/n/12 (-20) METODOLOGIA DE CRU-ZA-MENTO GE-O-GRÁ-FICO 
  []
 
 )
@@ -1334,7 +1334,7 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 [9]
 
 pdfTeX warning: pdflatex (file ./figuras/desenho_proposta.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figuras/desenho_proposta.pdf, id=140, 794.97pt x 170.79811pt>
+<figuras/desenho_proposta.pdf, id=80, 794.97pt x 170.79811pt>
 File: figuras/desenho_proposta.pdf Graphic file (type pdf)
 <use figuras/desenho_proposta.pdf>
 Package pdftex.def Info: figuras/desenho_proposta.pdf  used on input line 82.
@@ -1370,7 +1370,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 29--132
 [14]
 
 [15]
-<figuras/indicadores.pdf, id=223, 650.43pt x 216.81pt>
+<figuras/indicadores.pdf, id=176, 650.43pt x 216.81pt>
 File: figuras/indicadores.pdf Graphic file (type pdf)
 <use figuras/indicadores.pdf>
 Package pdftex.def Info: figuras/indicadores.pdf  used on input line 154.
@@ -1389,7 +1389,7 @@ Overfull \hbox (2.49722pt too wide) in paragraph at lines 6--18
 )
 
 [18]
-<figuras/area_setor.pdf, id=266, 722.7pt x 361.35pt>
+<figuras/area_setor.pdf, id=224, 722.7pt x 361.35pt>
 File: figuras/area_setor.pdf Graphic file (type pdf)
 <use figuras/area_setor.pdf>
 Package pdftex.def Info: figuras/area_setor.pdf  used on input line 191.
@@ -1413,7 +1413,7 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <14.4> not available
 
 
 [22]
-<figuras/previsoes.pdf, id=324, 650.43pt x 307.1475pt>
+<figuras/previsoes.pdf, id=286, 650.43pt x 307.1475pt>
 File: figuras/previsoes.pdf Graphic file (type pdf)
 <use figuras/previsoes.pdf>
 Package pdftex.def Info: figuras/previsoes.pdf  used on input line 239.
@@ -1421,7 +1421,7 @@ Package pdftex.def Info: figuras/previsoes.pdf  used on input line 239.
 
 
 [23 <./figuras/previsoes.pdf>]
-<figuras/mapa-lotes-metro.pdf, id=342, 650.43pt x 578.16pt>
+<figuras/mapa-lotes-metro.pdf, id=304, 650.43pt x 578.16pt>
 File: figuras/mapa-lotes-metro.pdf Graphic file (type pdf)
 <use figuras/mapa-lotes-metro.pdf>
 Package pdftex.def Info: figuras/mapa-lotes-metro.pdf  used on input line 259.
@@ -1440,7 +1440,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 21--22
 )
 
 [25 <./figuras/mapa-lotes-metro.pdf>]
-<figuras/event-study.pdf, id=376, 361.35pt x 433.62pt>
+<figuras/event-study.pdf, id=340, 361.35pt x 433.62pt>
 File: figuras/event-study.pdf Graphic file (type pdf)
 <use figuras/event-study.pdf>
 Package pdftex.def Info: figuras/event-study.pdf  used on input line 276.
@@ -1452,12 +1452,12 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 [26]
-<figuras/rdd-plot-IPTU.pdf, id=390, 578.16pt x 433.62pt>
+<figuras/rdd-plot-IPTU.pdf, id=355, 578.16pt x 433.62pt>
 File: figuras/rdd-plot-IPTU.pdf Graphic file (type pdf)
 <use figuras/rdd-plot-IPTU.pdf>
 Package pdftex.def Info: figuras/rdd-plot-IPTU.pdf  used on input line 292.
 (pdftex.def)             Requested size: 386.75278pt x 290.06073pt.
-<figuras/rdd-plot-IPTU-posPDE.pdf, id=391, 578.16pt x 433.62pt>
+<figuras/rdd-plot-IPTU-posPDE.pdf, id=356, 578.16pt x 433.62pt>
 File: figuras/rdd-plot-IPTU-posPDE.pdf Graphic file (type pdf)
 <use figuras/rdd-plot-IPTU-posPDE.pdf>
 Package pdftex.def Info: figuras/rdd-plot-IPTU-posPDE.pdf  used on input line 296.
@@ -1483,20 +1483,51 @@ Underfull \hbox (badness 10000) in paragraph at lines 19--20
 )
 
 [29]
+<figuras/rdd-balanceamento-censo.pdf, id=401, 505.89pt x 289.08pt>
+File: figuras/rdd-balanceamento-censo.pdf Graphic file (type pdf)
+<use figuras/rdd-balanceamento-censo.pdf>
+Package pdftex.def Info: figuras/rdd-balanceamento-censo.pdf  used on input line 327.
+(pdftex.def)             Requested size: 386.75278pt x 221.00432pt.
 
-[30]) (main.bbl (main.brf)
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[30]
+
+[31 <./figuras/rdd-balanceamento-censo.pdf>] (tabelas/did-censo.tex
+Underfull \hbox (badness 10000) in paragraph at lines 22--23
+
+ []
+
+) (tabelas/did-censo-interpret.tex
+Overfull \hbox (3.75833pt too wide) in paragraph at lines 13--14
+[]|\T1/ptm/b/n/10.95 (-20) Estimativa|  
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+)
+
+[32
+
+]
+
+[33]) (main.bbl (main.brf)
 \tf@brf=\write6
 \openout6 = `main.brf'.
 
 
 
-[31
+[34
 
 ]
 bibitemlist
 ) (appendix.tex
 
-[32
+[35
 
 ]
 
@@ -1505,68 +1536,68 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 
 
-[33
+[36
 
 
 ]
 
 pdfTeX warning: pdflatex (file ./figuras/desenho.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figuras/desenho.pdf, id=452, 963.6pt x 542.025pt>
+<figuras/desenho.pdf, id=457, 963.6pt x 542.025pt>
 File: figuras/desenho.pdf Graphic file (type pdf)
 <use figuras/desenho.pdf>
 Package pdftex.def Info: figuras/desenho.pdf  used on input line 14.
 (pdftex.def)             Requested size: 455.0pt x 255.93448pt.
 
 
-[34
+[37
 
  <./figuras/desenho.pdf>]
-<figuras/ca_vs_verticalizacao.pdf, id=492, 542.025pt x 361.35pt>
+<figuras/ca_vs_verticalizacao.pdf, id=497, 542.025pt x 361.35pt>
 File: figuras/ca_vs_verticalizacao.pdf Graphic file (type pdf)
 <use figuras/ca_vs_verticalizacao.pdf>
 Package pdftex.def Info: figuras/ca_vs_verticalizacao.pdf  used on input line 28.
 (pdftex.def)             Requested size: 455.0pt x 303.34447pt.
 
 
-[35 <./figuras/ca_vs_verticalizacao.pdf>]
+[38 <./figuras/ca_vs_verticalizacao.pdf>]
 
-[36
-
-]
-
-[37
+[39
 
 ]
 
-[38
+[40
 
 ]
-<figuras/indicadores_tempo.pdf, id=520, 397.485pt x 433.62pt>
+
+[41
+
+]
+<figuras/indicadores_tempo.pdf, id=524, 397.485pt x 433.62pt>
 File: figuras/indicadores_tempo.pdf Graphic file (type pdf)
 <use figuras/indicadores_tempo.pdf>
 Package pdftex.def Info: figuras/indicadores_tempo.pdf  used on input line 48.
 (pdftex.def)             Requested size: 341.25pt x 372.28398pt.
 
 
-[39
+[42
 
  <./figuras/indicadores_tempo.pdf>]
-<figuras/tree_area_construida.pdf, id=531, 487.8225pt x 361.35pt>
+<figuras/tree_area_construida.pdf, id=536, 487.8225pt x 361.35pt>
 File: figuras/tree_area_construida.pdf Graphic file (type pdf)
 <use figuras/tree_area_construida.pdf>
 Package pdftex.def Info: figuras/tree_area_construida.pdf  used on input line 60.
 (pdftex.def)             Requested size: 364.00139pt x 269.63339pt.
 
 
-[40
+[43
 
  <./figuras/tree_area_construida.pdf>]
-<figuras/mapa-densidade.pdf, id=553, 505.89pt x 867.24pt>
+<figuras/mapa-densidade.pdf, id=558, 505.89pt x 867.24pt>
 File: figuras/mapa-densidade.pdf Graphic file (type pdf)
 <use figuras/mapa-densidade.pdf>
 Package pdftex.def Info: figuras/mapa-densidade.pdf  used on input line 73.
 (pdftex.def)             Requested size: 386.75278pt x 663.013pt.
-<figuras/macroareas-eixos.pdf, id=554, 722.7pt x 1084.05pt>
+<figuras/macroareas-eixos.pdf, id=559, 722.7pt x 1084.05pt>
 File: figuras/macroareas-eixos.pdf Graphic file (type pdf)
 <use figuras/macroareas-eixos.pdf>
 Package pdftex.def Info: figuras/macroareas-eixos.pdf  used on input line 81.
@@ -1577,39 +1608,39 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 
-[41
+[44
 
  <./figuras/mapa-densidade.pdf>]
 
-[42 <./figuras/macroareas-eixos.pdf>]
-<figuras/populacao-distribuicao-raster.pdf, id=578, 505.89pt x 289.08pt>
+[45 <./figuras/macroareas-eixos.pdf>]
+<figuras/populacao-distribuicao-raster.pdf, id=582, 505.89pt x 289.08pt>
 File: figuras/populacao-distribuicao-raster.pdf Graphic file (type pdf)
 <use figuras/populacao-distribuicao-raster.pdf>
 Package pdftex.def Info: figuras/populacao-distribuicao-raster.pdf  used on input line 90.
 (pdftex.def)             Requested size: 386.75278pt x 221.00432pt.
 
 
-[43
+[46
 
  <./figuras/populacao-distribuicao-raster.pdf>]
-<figuras/robustez-regressao1pop.pdf, id=588, 722.7pt x 505.89pt>
+<figuras/robustez-regressao1pop.pdf, id=592, 722.7pt x 505.89pt>
 File: figuras/robustez-regressao1pop.pdf Graphic file (type pdf)
 <use figuras/robustez-regressao1pop.pdf>
 Package pdftex.def Info: figuras/robustez-regressao1pop.pdf  used on input line 99.
 (pdftex.def)             Requested size: 455.0pt x 318.50395pt.
 
 
-[44
+[47
 
  <./figuras/robustez-regressao1pop.pdf>]
-<figuras/did-IPTU-bandas.pdf, id=601, 578.16pt x 289.08pt>
+<figuras/did-IPTU-bandas.pdf, id=605, 578.16pt x 289.08pt>
 File: figuras/did-IPTU-bandas.pdf Graphic file (type pdf)
 <use figuras/did-IPTU-bandas.pdf>
 Package pdftex.def Info: figuras/did-IPTU-bandas.pdf  used on input line 108.
 (pdftex.def)             Requested size: 455.0pt x 227.49731pt.
 )
 
-[45
+[48
 
  <./figuras/did-IPTU-bandas.pdf>]
 \tf@toc=\write7
@@ -1623,20 +1654,20 @@ LaTeX2e <2024-11-01>
 L3 programming layer <2020/03/25>
  ***********
 Package rerunfilecheck Info: File `main.brf' has not changed.
-(rerunfilecheck)             Checksum: D07315059BF8A354E9DA640CCB7C6399;564.
+(rerunfilecheck)             Checksum: F26E647F7A36A6F12B93F1D42B8025FD;564.
  ) 
 Here is how much of TeX's memory you used:
- 49517 strings out of 473701
- 1131834 string characters out of 5718465
- 1736960 words of memory out of 5000000
- 71254 multiletter control sequences out of 15000+600000
- 641018 words of font info for 335 fonts, out of 8000000 for 9000
+ 49569 strings out of 473701
+ 1132920 string characters out of 5718465
+ 1741078 words of memory out of 5000000
+ 71273 multiletter control sequences out of 15000+600000
+ 641593 words of font info for 344 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,13n,107p,1647b,2441s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (46 pages, 7414294 bytes).
+<C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (49 pages, 7442537 bytes).
 PDF statistics:
- 810 PDF objects out of 1000 (max. 8388607)
- 141 named destinations out of 1000 (max. 500000)
- 92538 words of extra memory for PDF output out of 106986 (max. 10000000)
+ 828 PDF objects out of 1000 (max. 8388607)
+ 155 named destinations out of 1000 (max. 500000)
+ 92559 words of extra memory for PDF output out of 106986 (max. 10000000)
 

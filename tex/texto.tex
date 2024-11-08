@@ -63,7 +63,7 @@ Um detalhe importante de se pontuar é que há uma relação de identidade entre
 
 \subsection*{Cota Parte}
 
-A cota parte, por sua vez, não é um instrumento comum de se observar em planos diretores e pode ser considerada uma medida relativamente experimental -- diferentemente do CA e gabarito que são instrumentos consolidados. Este instrumento é responsável por regulamentar a \textbf{densidade habitacional}. Sabendo-se a cota parte ($Q$) e a área do terreno ($A_t$), é possível identificar o número mínimo de unidades habitacionais ($N_{min}$) que o lote deve apresentar, seguindo a equação \ref{eq:cotaparte} a seguir. 
+A cota parte, por sua vez, não é um instrumento comum de se observar em planos diretores e pode ser considerada uma medida relativamente experimental -- diferentemente do CA e gabarito que são instrumentos consolidados. Este instrumento é responsável por regulamentar a \textbf{densidade habitacional}. Sabendo-se a cota parte ($Q$) e a área do terreno ($A_t$), é possível identificar o número mínimo de unidades habitacionais ($N_{min}$) que o lote deve apresentar, seguindo a Equação \ref{eq:cotaparte} a seguir. 
 
 \begin{equation}
     N_{min} = \frac{\text{CA}_{\text{utilizado}}}{\text{CA}_{max}}\cdot \frac{A_t}{Q}
@@ -312,10 +312,46 @@ Os dados mostram que construções nos eixos após o início da vigência do PDE
 Entretanto, um resultado que se destaca também é que a mudança causada pelo PDE nos últimos 10 anos não apresentou intensidade e/ou velocidade suficientes para se observar uma divisão territorial clara de eixo e não eixo nos padrões construtivos. Para observar os resultados, é necessário olhar exclusivamente para os novos empreendimentos, que, como representado na Figura \ref{fig:area-setor}, representam menos de 5\% dos empreendimentos.
 
 
-
-
 \section{Da regulação à densidade populacional}
 \label{sec:perg3}
+
+O objetivo desta seção é responder: \textbf{A regulação foi capaz de influenciar a densidade populacional na cidade?} Como comentado na Seção \ref{sec:perg1}, a densidade habitacional é o componente mais importante para determinar a densidade populacional, e segundo os resultados apresentados na Seção \ref{sec:perg2} os eixos causaram um aumento da densidade habitacional. Dessa forma, a hipótese que mais faz sentido é que a densidade populacional nos eixos aumentou. Para testar esta hipótese foi realizado um procedimento parecido com o apresentado na Seção \ref{sec:perg2}, mas trocando a variável resposta por densidade populacional.
+
+A principal diferença é que, no caso da densidade, a unidade de observação (setor censitário) é geograficamente muito maior do que os lotes. Assim, é comum que um setor censitário próximo à fronteira ocupe tanto áreas do grupo de controle quanto do grupo de tratamento, o que exige sua exclusão da análise. No entanto, a ocorrência desse fenômeno é tão frequente que, nas proximidades imediatas da fronteira, há um número insuficiente de unidades para realizar a análise usando RDD. Esse fenômeno é ilustrado na Figura \ref{fig:rdd-densidade-censo}. 
+
+Além disso, há um viés de sobrevivência, no qual apenas setores censitários pequenos, com menor probabilidade de estarem em ambos os lados da fronteira, permanecem próximos à borda após aplicar o critério de exclusão\footnote{No caso do setor censitário, é considerado de tratamento quando seu centroide está na região de eixo e mais de 95\% de sua área está nessa área. O controle é definido pela presença do centroide fora do eixo e menos de 5\% de área de eixo. Qualquer setor censitário que não cumpre com algum dos critérios é excluído}. O problema com esses setores é que, como discutido na Seção \ref{sec:dadosCenso}, quanto menor o setor censitário, maior tende a ser sua densidade, o que faz com que a densidade média na fronteira aumente de forma atípica tanto no grupo de controle quanto no de tratamento. Esses fatores inviabilizam a análise via RDD.
+
+\begin{figure}[!h]
+    \centering
+    \caption{Número de observações por grupo em função da distância à fronteira do eixo}
+    \includegraphics[width = .85\textwidth]{figuras/rdd-balanceamento-censo.pdf}
+    \label{fig:rdd-densidade-censo}
+\end{figure}
+
+\clearpage
+\subsection{Abordagem via diferenças em diferenças com efeito heterogêneo}
+
+
+\input{tabelas/did-censo.tex}
+
+\begin{equation}
+    Y = \beta_0 + \beta_1P + \beta_2T + \beta_3Q + \beta_4PT + \beta_5PQ + \beta_6TQ + \beta_7PQT
+\end{equation}
+
+\begin{align}
+    &\frac{\partial E(Y|T=t,P=p,Q=0)}{\partial T} = \beta_2 + \beta_4p\\
+    &E(Y|T=1,P=1,Q=0) - E(Y|T=1,P=0,Q=0)= \beta_4\\\notag\\\notag\\
+    &\frac{\partial E(Y|T=t,P=p,Q=q)}{\partial T} = \beta_2 + \beta_4p + \beta_6q + \beta_7pq\\
+    &[E(Y|T=1,P=1,Q=q) - E(Y|T=1,P=0,Q=q)]= \beta_4 + \beta_7q
+\end{align}
+
+
+
+\input{tabelas/did-censo-interpret.tex}
+%tab:did-censo-interpret
+
+\subsection{Resultados principais}
+
 
 \chapter{Conclusão}
 \label{chp:conclusao}

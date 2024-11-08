@@ -671,6 +671,18 @@ INPUT .\tabelas\rdd-IPTU-placebo.tex
 INPUT .\tabelas\rdd-IPTU-placebo.tex
 INPUT .\tabelas\rdd-IPTU-placebo.tex
 INPUT tabelas\rdd-IPTU-placebo.tex
+INPUT .\figuras\rdd-balanceamento-censo.pdf
+INPUT .\figuras\rdd-balanceamento-censo.pdf
+INPUT .\figuras\rdd-balanceamento-censo.pdf
+INPUT .\figuras\rdd-balanceamento-censo.pdf
+INPUT .\figuras\rdd-balanceamento-censo.pdf
+INPUT .\figuras\rdd-balanceamento-censo.pdf
+INPUT .\tabelas\did-censo.tex
+INPUT .\tabelas\did-censo.tex
+INPUT tabelas\did-censo.tex
+INPUT .\tabelas\did-censo-interpret.tex
+INPUT .\tabelas\did-censo-interpret.tex
+INPUT tabelas\did-censo-interpret.tex
 INPUT .\main.bbl
 INPUT .\main.bbl
 INPUT main.bbl
@@ -753,6 +765,8 @@ INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts
 INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmmi12.pfb
 INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmmi8.pfb
 INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmmi8.pfb
+INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmr10.pfb
+INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmr10.pfb
 INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmr12.pfb
 INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmr12.pfb
 INPUT C:\Users\Gustavo\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmr7.pfb

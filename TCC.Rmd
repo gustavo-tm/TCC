@@ -342,6 +342,8 @@ IPTU.distancias <- readRDS("rdata/IPTU-distancias.rds")
 censo.distancias <- readRDS("rdata/censo-distancias.rds")
 IPTU.lote <- readRDS("rdata/IPTU-lote.rds")
 censo <- readRDS("rdata/censo.rds")
+df.censo <- readRDS("rdata/censo-final.rds")
+df.IPTU <- readRDS("rdata/IPTU-final.rds")
 ```
 
 
@@ -458,20 +460,129 @@ remove(distrito, metro, gg.dados, gg)
 #Análise
 
 ```{r "analise/did-censo"}
-banda <- 100
+banda <- 150
 
 data <- df.censo |> 
-  filter(abs(distancia) <= banda, grupo != "descartado")
+  ungroup() |> 
+  filter(abs(distancia) <= banda, grupo != "descartado") |> 
+  drop_na()
+
+data |> filter(grupo == "tratamento", ano == 2010) |> summarize(med = mean(densidade))
 
 modelsummary(list(
-  "A" = lm(densidade ~ factor(grupo) * factor(ano), data = data),
-  "B" = lm(densidade_lote ~ factor(grupo) * factor(ano), data = data),
-  "C" = lm(densidade_residencial ~ factor(grupo) * factor(ano), data = data),
-  "D" = lm(densidade ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data),
-  "E" = lm(densidade_lote ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data),
-  "F" = lm(densidade_residencial ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data),
-  "G" = lm(area_residencial ~ factor(grupo) * factor(ano) , data = data)
-), stars = TRUE, statistic = NULL)
+  "(A)" = lm(densidade ~ factor(grupo) * factor(ano), data = data),
+  "(B)" = lm(densidade ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = data)),
+  stars = TRUE, statistic = NULL,
+  coef_map = c("(Intercept)" = "Intercepto",
+               "factor(grupo)tratamento" = "T (Grupo de tratamento)",
+               "factor(ano)2022" = "P (Período pós PDE)",
+               "area_residencial_novo_percent" = "Q (Percentual residencial novo)",
+               "factor(grupo)tratamento:factor(ano)2022" = "T x P",
+               "factor(grupo)tratamento:area_residencial_novo_percent" = "T x Q",
+               "factor(ano)2022:area_residencial_novo_percent" = "P x Q",
+               "factor(grupo)tratamento:factor(ano)2022:area_residencial_novo_percent" = "T x P x Q"),
+  gof_omit = "AIC|BIC|Log.Lik.|RMSE") 
+  tab_caption("Resultado diff-in-diff do Censo, para setores censitários em um raio de 150m dos eixos") |> 
+  gtsave("tex/tabelas/did-censo.tex")
+
+beta_0 <- 0.045
+beta_1 <- -0.011
+beta_2 <- 0.003
+beta_3 <- 0.103
+beta_4 <- -0.005
+beta_5 <- -0.043
+beta_6 <- -0.164
+beta_7 <- 0.160
+
+q <- .6
+
+
+#cenário1
+(beta_0 + beta_2) * 10^6
+
+#cenário2
+(beta_0 + beta_2 + q*beta_3 + q*beta_6) * 10^6
+
+#cenário3
+(beta_0 + beta_1 + beta_2 + beta_4) * 10^6
+
+#cenário4
+(beta_0 + beta_1 + beta_2 + q*beta_3 + beta_4 + q*beta_5 + q*beta_6 + q*beta_7) * 10^6
+
+#cenário5
+(beta_0 + beta_1 + q*beta_3 + q*beta_5) * 10^6
+
+
+#antes do tratamento no grupo tratamento
+(0.054 -0.003)
+
+#antes do tratamento no grupo tratamento com predios novos
+(0.054 -0.003 + 0.211 * .6)
+
+#depois do tratamento no grupo tratamento sem predios novos
+(0.054 -0.003 -0.015)
+
+#depois do tratamento no grupo tratamento com predios novos
+(0.054 -0.003 -0.015)
+
+#depois do tratamento no grupo controle com predios novos
+
+
+(0.045 + 0.003) * 10^6
+(0.160 * .6 -0.005) * 10^6
+0.103 * .6 * 10^6
+gg <- df.censo |> 
+  filter(grupo != "descartado") |> 
+  (\(df, start_roll = 150, end_roll = 40, step = 5) {
+    seq(start_roll, end_roll, by = -step) |>
+      purrr::map_dfr(\(banda) {
+        df |>
+          filter(abs(distancia) <= banda) |>
+          lm(densidade ~ factor(grupo) * factor(ano) * area_residencial_novo_percent, data = _) |>
+          broom::tidy(conf.int = TRUE, conf.level = .95) |>
+          mutate(banda = banda)
+      })
+  })(df = _) |> 
+  drop_na() |> 
+  ggplot(aes(x = banda, y = estimate, colour = term, fill = term)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .5) +
+  geom_line(lwd = 1) +
+  # scale_colour_viridis_d() +
+  theme_classic() +
+  labs(x = "Bandwidth para a distância", y = "Estimativa do parâmetro", colour = "Parâmetro", fill = "Parâmetro")
+
+ggsave("tex/figuras/did-censo-bandas.pdf", width = 8, height = 4)
+
+
+df.censo |> 
+  filter(grupo != "descartado") |> 
+  (\(df, start_roll = 200, end_roll = 20, step = 5) {
+    seq(start_roll, end_roll, by = -step) |>
+      purrr::map_dfr(\(banda) {
+        df |>
+          filter(abs(distancia) <= banda) |>
+          lm(densidade ~ factor(grupo) * factor(ano), data = _) |>
+          broom::tidy(conf.int = TRUE, conf.level = .99) |>
+          mutate(banda = banda)
+      })
+  })(df = _) |> 
+  mutate(term = case_when(term == "factor(grupo)tratamento" ~ "Tratamento",
+                          term == "factor(grupo)tratamento:factor(ano)2022" ~ "Tratamento x Pós PDE",
+                          term == "factor(ano)2022" ~ "Pós PDE",
+                          TRUE ~ NA)) |> 
+  drop_na() |> 
+  ggplot(aes(x = banda, y = estimate, colour = term, fill = term)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .5) +
+  geom_line(lwd = 1) +
+  # scale_colour_viridis_d() +
+  theme_classic() +
+  labs(x = "Bandwidth para a distância", y = "Estimativa do parâmetro", colour = "Parâmetro", fill = "Parâmetro")
+
+ggsave("tex/figuras/did-censo-bandas.pdf", width = 8, height = 4)
+
+
 ```
 
 
@@ -625,16 +736,18 @@ glance.rdrobust <- function(object, ...){
 
 ```{r "analise/rdd-plot-censo"}
 df.censo |> 
+  drop_na() |> 
   ggplot(aes(x = distancia, fill = factor(grupo, levels = c("descartado", "controle", "tratamento")))) +
-  geom_histogram(breaks = (0:40-20)*20, colour = "#313638") +
+  geom_histogram(breaks = (0:30-15)*20, colour = "#313638") +
   geom_vline(xintercept = 0, linetype = "dotted") +
   labs(x = "Distância à fronteira do eixo", y = "Frequência", fill = "Grupo") +
   scale_fill_manual(values = c("controle" = "#89973DFF",
                                "tratamento" = "#E8B92FFF",
                                "descartado" = "#A45E41FF")) +
+  scale_x_continuous(breaks = (0:8 - 4) * 60, labels = function(x) abs(x)) +
   theme_classic()
 
-ggsave("tex/figuras/rdd-balanceamento-censo.pdf", width = 6, height = 4)
+ggsave("tex/figuras/rdd-balanceamento-censo.pdf", width = 7, height = 4)
 
 df.censo |>
   filter(ano == 2022, grupo != "descartado", abs(distancia) <= 300) |>

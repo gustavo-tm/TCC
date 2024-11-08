@@ -1,0 +1,41 @@
+\begin{table}[h!]
+    \centering
+    \caption{Estimativas do modelo para cada cenário}
+
+    {\small
+    \begin{tabular}{
+        >{\raggedright\arraybackslash}p{0.2\linewidth} 
+        >{\raggedright\arraybackslash}p{0.35\linewidth} 
+        >{\raggedright\arraybackslash}p{0.2\linewidth} 
+        >{\raggedright\arraybackslash}p{0.1\linewidth} 
+        }
+        % \toprule
+        \textbf{Cenário} & \textbf{Esperança} & \textbf{Coeficientes} & \textbf{Estimativa} \\
+        \midrule
+        Antes do tratamento no grupo tratamento sem prédios novos & 
+        $E(Y|T = 1, P = 0, Q = 0)$ &
+        $\beta_0 + \beta_2$ & 
+        ?\\
+        Antes do tratamento no grupo tratamento com predios novos & 
+        $E(Y|T = 1, P = 0, Q = 60\%)$ & 
+        $\beta_0 + \beta_2 + 0,6\beta_3 + 0,6\beta_6$ & 
+        ? \\
+        Depois do tratamento no grupo tratamento sem predios novos & 
+        $E(Y|T = 1, P = 1, Q = 0)$ &
+        $\beta_0 + \beta_1 + \beta_2 + \beta_4$& 
+        ? \\
+        Depois do tratamento no grupo tratamento com predios novos &
+        $E(Y|T = 1, P = 1, Q = 60\%)$ &
+        $\beta_0 + \beta_1 + \beta_2 + 0,6\beta_3 + \beta_4 + 0,6\beta_5 + 0,6\beta_6 + 0,6\beta_7$ & 
+        ? \\
+        Depois do tratamento no grupo controle com predios novos & 
+        $E(Y|T = 0, P = 1, Q = 60\%)$ &
+        $\beta_0 + \beta_1 + 0,6\beta_3 + 0,6\beta_5$& 
+        ? \\
+
+        
+        \bottomrule
+    \end{tabular}
+    }
+    \label{tab:did-censo-interpret}
+\end{table}
