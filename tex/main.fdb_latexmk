@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1731079856.99596 "main.aux" "main.bbl" "main" 1731079887.2854 0
+["bibtex main"] 1731109590.57206 "main.aux" "main.bbl" "main" 1731109594.78835 0
   "./bibliografia.bib" 1730949847 3372 ffda1ae248c2244439cdc3576c205c72 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bib/abntex2/abntex2-options.bib" 1543103229 5396 4eb260dac60f150ae608d45252853090 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bst/abntex2/abntex2-alf.bst" 1543103230 60064 0819ac8568f9a482510a46e3a8a6f605 ""
-  "main.aux" 1731079886 32238 a8133c19078ce9acc15d67f513592e6b "pdflatex"
+  "main.aux" 1731109593 33253 9df8ccdb012a98aae661c666e4a2eaa1 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1731078025.06791 "main.idx" "main.ind" "main" 1731079887.28495 0
-  "main.idx" 1731079884 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1731109382.14984 "main.idx" "main.ind" "main" 1731109594.78792 0
+  "main.idx" 1731109592 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1731079883.21516 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1731079887.28598 0
+["pdflatex"] 1731109590.86411 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1731109594.78895 0
   "C:/Users/Gustavo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1730898543 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/Gustavo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1730898412 11986484 2c81025dd9995a931c2a5d2ea1974dc2 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -62,6 +62,7 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1247596667 32762 7fee39e011c23b3589931effd97b9702 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1247596667 32726 39f0f9e62e84beb801509898a605dbd5 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1247596667 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1247596673 34694 870c211f62cb72718a00e353f14f254d ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb" 1136864148 35941 adef23a721dd8354a4a2bf4434f1c484 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb" 1136864148 44648 23115b2a545ebfe2c526c3ca99db8b95 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb" 1136864148 48169 065450055814ce4dfc30f7922d24ab30 ""
@@ -335,13 +336,14 @@
   "figuras/ca_vs_verticalizacao.pdf" 1730864723 14408 1251df2d7e59066e75796ff765dd4d60 ""
   "figuras/desenho.pdf" 1730864723 94752 8c93bf570ef3d6b9cd826ef628ea0fed ""
   "figuras/desenho_proposta.pdf" 1730864942 40312 b8a29fb74732cb486f9baf3637aea06f ""
+  "figuras/desenho_proposta_modificado.pdf" 1731083053 19162 60672cb6d19143b56795a72c40bfca65 ""
   "figuras/did-IPTU-bandas.pdf" 1730995129 11830 834b5c5d11bf29f23c46cc1488fa9584 ""
-  "figuras/event-study.pdf" 1730996482 16475 906e064e129742e64f99ea5b03b09074 ""
+  "figuras/event-study.pdf" 1731109585 16438 55748fed85d8a63d6c0f81d6131d28ca ""
   "figuras/indicadores.pdf" 1730900981 5463 3cec7a339e71562b66207149a73cdab2 ""
   "figuras/indicadores_tempo.pdf" 1730864723 11407 faf4b8bfa58960a267399b403805b03d ""
   "figuras/macroareas-eixos.pdf" 1730921399 826330 ff5ce51c1a188db1f4c9ee60b59af7e7 ""
   "figuras/mapa-densidade.pdf" 1730864942 4164172 32f1f0a0f4883ab834fffeca42078da8 ""
-  "figuras/mapa-lotes-metro.pdf" 1730991190 1767869 c8efce0b6fd68b2a8734ba9061c8986e ""
+  "figuras/mapa-lotes-metro.pdf" 1731109377 1771027 3544f03daf8e2fee17b71aad3f08bdbf ""
   "figuras/micro gabarito.tex" 1730864943 799 ad11b4b962db6aca23d94db756035729 ""
   "figuras/populacao-distribuicao-raster.pdf" 1730938918 4516 1f3a102f38dc428f5f89e06ab83df27f ""
   "figuras/previsoes.pdf" 1730954370 5829 7d1e5f7b0b6c8c16eb4ed122d6a47489 ""
@@ -350,20 +352,20 @@
   "figuras/rdd-plot-IPTU.pdf" 1730992817 38596 3fa52dca272ea705a904f40687aa7012 ""
   "figuras/robustez-regressao1pop.pdf" 1730944140 8902 6862c6627f36b8d960c5d723673b2a01 ""
   "figuras/tree_area_construida.pdf" 1730864723 6799 29ac744b6b7bb8a670c9b66b19dcf8d7 ""
-  "main.aux" 1731079886 32238 a8133c19078ce9acc15d67f513592e6b "pdflatex"
-  "main.bbl" 1731079857 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
-  "main.brf" 1731079886 564 f26e647f7a36a6f12b93f1d42b8025fd "pdflatex"
-  "main.ind" 1731078025 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
+  "main.aux" 1731109593 33253 9df8ccdb012a98aae661c666e4a2eaa1 "pdflatex"
+  "main.bbl" 1731109590 2850 bc2f28bd818856e553392c485783c329 "bibtex main"
+  "main.brf" 1731109593 564 123db131ef5260031127b692597da140 "pdflatex"
+  "main.ind" 1731109382 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
   "main.tex" 1731036354 13038 cd31425fea2cc8f86e1fd43cfad7a8f3 ""
-  "main.toc" 1731079886 4862 65e1da67edd695431bf2e0118586dff4 "pdflatex"
+  "main.toc" 1731109593 4862 3898f2363de045c7a310374e1e8b9070 "pdflatex"
   "tabelas/dados.tex" 1730904014 1024 6491eac93c5b72a019c210e81f3e4423 ""
   "tabelas/did-IPTU.tex" 1730996617 899 1c94cba3c28d93a61a1881f2ee763559 ""
-  "tabelas/did-censo-interpret.tex" 1731079882 1533 dbe9cad686ca26eb9cdbd54ab23d8c92 ""
-  "tabelas/did-censo.tex" 1731075610 792 8e2e6678199f4df6ed82945d456c5e6b ""
+  "tabelas/did-censo-interpret.tex" 1731109057 1488 a524d7175c4d2da0ea3882afe98a151b ""
+  "tabelas/did-censo.tex" 1731108904 830 d6f6cb4a16ffbc8dce59289c4848b63c ""
   "tabelas/rdd-IPTU-placebo.tex" 1731003849 827 756225338731dce0d34477c8b9fc0729 ""
   "tabelas/rdd-IPTU.tex" 1731005595 821 b4361b5443167ac628327e5fdca68a51 ""
-  "tabelas/regressao-1.tex" 1730946741 1067 9a5a0839734e17f9361beec3e25379dc ""
-  "texto.tex" 1731079852 55537 1fca5a1250c6d4c4223d3f932d40f4e2 ""
+  "tabelas/regressao-1.tex" 1731109193 1081 1c1f98d1f3d887e0a0305f936aed08d5 ""
+  "texto.tex" 1731109587 58560 aa1b1158a4e87858e6d946199877428c ""
   (generated)
   "main.aux"
   "main.brf"

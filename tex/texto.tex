@@ -256,7 +256,7 @@ O objetivo desta seção é responder: \textbf{A regulação foi capaz de influe
 \begin{figure}[h]
     \centering
     \caption{Exemplo de separação dos grupos de controle e tratamento na Vila Mariana}
-    \includegraphics[width = \textwidth]{figuras/mapa-lotes-metro.pdf}
+    \includegraphics[width = .9\textwidth]{figuras/mapa-lotes-metro.pdf}
     \label{fig:mapaRDD}
 \end{figure}
 
@@ -270,7 +270,7 @@ O \textit{diff-in-diff (DiD)} geográfico é uma categoria de regressão de dife
 
 A Tabela \ref{tab:did-IPTU} traz os resultados do DiD escolhendo cada componente do padrão construtivo como variável de interesse. Os dados apontam que a introdução dos eixos é reponsável por aumentar em média a densidade construtiva em 0,9, a densidade habitacional em 0,011 domicílios por metro quadrado de terreno e 2,4 pavimentos. O eixo não altera a probabilidade do lote ser ou não residencial, como mostra a quarta coluna da regressão. Além disso, para este recorte de 50m, não há diferença estatísticamente significante entre os grupos de controle e tratamento antes do PDE. Os resultados são robustos às diferentes escolhas para o recorte de proximidade à borda. Na Figura \ref{fig:robustez-did-IPTU} do Apêndice \ref{appendix:figuras} é possível verificar o coeficiente associado ao efeito do tratamento para cada escolha de distância da borda. 
 
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
     \caption{\textit{Event study} para os padrões construtivos na fronteira dos eixos}
     \includegraphics[width = .7\textwidth]{figuras/event-study.pdf}
@@ -324,27 +324,44 @@ Além disso, há um viés de sobrevivência, no qual apenas setores censitários
 \begin{figure}[!h]
     \centering
     \caption{Número de observações por grupo em função da distância à fronteira do eixo}
-    \includegraphics[width = .85\textwidth]{figuras/rdd-balanceamento-censo.pdf}
+    \includegraphics[width = .75\textwidth]{figuras/rdd-balanceamento-censo.pdf}
     \label{fig:rdd-densidade-censo}
 \end{figure}
+
+Porém, antes de fazer as estimações, é importante definir com muita clareza o que é o tratamento. Como avaliado na Seção \ref{sec:perg2}, mesmo que os padrões construtivos tenham mudado, apenas um número seleto de lotes foram recentemente edificados. Nesse sentido, se o tratamento for o recebimento uma nova regulação, os setores censitários que não contém lotes com edificações recentes apresentarão, em teoria, efeito zero. Como estes setores censitários são a grande maioria, é possível que o efeito de receber prédios novos com a regulação nova seja ofuscado -- esta relação pode ser observada na Figura \ref{fig:proposta-mod}. Portanto, é necessário identificar efeitos heterogêneos do tratamento, com relação à quão recentes são as edificações no setor censitário.
+
+\begin{figure}[!h]
+    \centering
+    \caption{Identificação do efeito do tratamento (Figura \ref{fig:diagrama} modificada)}
+    \includegraphics[width = \textwidth]{figuras/desenho_proposta_modificado.pdf}
+    \label{fig:proposta-mod}
+\end{figure}
+
+
 
 \clearpage
 \subsection{Abordagem via diferenças em diferenças com efeito heterogêneo}
 
+Apesar da impossibilidade de conduzir a análise via RDD, o sucesso da abordagem por \textit{diff-in-diff} nas seções anteriores é um forte indicativo de que para a densidade populacional essa abordagem também é adequada. Na Equação \ref{eq:did} está representada a fórmula da regressão, na qual $Y$ representa a densidade populacional, $P$ o período pós tratamento, $T$ o grupo de tratamento e $Q$ a proporção da área do setor censitário que recebeu novas edificações durante o período de análise\footnote{Para os dados do censo de 2022, o período em que as edificações são consideradas novas as é entre 2014 e 2022. Para o censo de 2010, o período foi considerado 2002 até 2010.}.
 
-\input{tabelas/did-censo.tex}
+No modelo, o $\beta_1$ representa a diferença de densidade entre 2022 e 2010. O $\beta_2$ captura a diferença de densidade entre o grupo de tratamento e de controle na ausência do tratamento. O $\beta_3$ é o efeito que novas edificações apresentam na densidade. A primeira interação, cujo coeficiente é o $\beta_4$, captura o efeito do tratamento caso nenhuma nova edificação seja construída\footnote{Este coeficiente, em teoria, deve ser zero, visto que com nenhuma edificação nova, ninguém pode ser afetado pelo tratamento}, como demonstrado na Equação \ref{eq:did-b4}. O $\beta_5$ qualifica as diferença entre o efeito de qualificações em 2022 e 2010 na densidade populacional. Analogamente, o $\beta_6$ faz o mesmo, mas entre o grupo controle e tratamento na ausência do tratamento. Por fim, o $\beta_7$ é o parâmetro de interesse, que captura o efeito do tratamento, a depender da proporção da área do setor censitário que recebeu novas edificações, como demonstrado na Equação \ref{eq:did-b7}.
+
 
 \begin{equation}
-    Y = \beta_0 + \beta_1P + \beta_2T + \beta_3Q + \beta_4PT + \beta_5PQ + \beta_6TQ + \beta_7PQT
+    \mathbb{E}(Y|P,T,Q) = \beta_0 + \beta_1P + \beta_2T + \beta_3Q + \beta_4PT + \beta_5PQ + \beta_6TQ + \beta_7PQT
+    \label{eq:did}
 \end{equation}
 
 \begin{align}
-    &\frac{\partial E(Y|T=t,P=p,Q=0)}{\partial T} = \beta_2 + \beta_4p\\
-    &E(Y|T=1,P=1,Q=0) - E(Y|T=1,P=0,Q=0)= \beta_4\\\notag\\\notag\\
-    &\frac{\partial E(Y|T=t,P=p,Q=q)}{\partial T} = \beta_2 + \beta_4p + \beta_6q + \beta_7pq\\
-    &[E(Y|T=1,P=1,Q=q) - E(Y|T=1,P=0,Q=q)]= \beta_4 + \beta_7q
+    &\frac{\partial E(Y|T=t,P=p,Q=0)}{\partial T} = \beta_2 + \beta_4p\\\label{eq:did-b4}
+    &\mathbb{E}(Y|T=1,P=1,Q=0) - \mathbb{E}(Y|T=1,P=0,Q=0)= \beta_4\\\nonumber\\\nonumber\\
+    &\frac{\partial E(Y|T=t,P=p,Q=q)}{\partial T} = \beta_2 + \beta_4p + \beta_6q + \beta_7pq\\\label{eq:did-b7}
+    &[\mathbb{E}(Y|T=1,P=1,Q=q) - \mathbb{E}(Y|T=1,P=0,Q=q)]= \beta_4 + \beta_7q
 \end{align}
 
+Os resultados das estimações podem ser consultados na Tabela \ref{tab:did-censo}
+
+\input{tabelas/did-censo.tex}
 
 
 \input{tabelas/did-censo-interpret.tex}

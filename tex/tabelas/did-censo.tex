@@ -1,24 +1,26 @@
 \begin{table}[!t]
-\caption{Resultado diff-in-diff do Censo, para setores censitários em um raio de 150m dos eixos} 
+\caption{Resultado diff-in-diff do Censo, para setores censitários em um raio de 100m dos eixos} 
+\centering
 \fontsize{12.0pt}{14.4pt}\selectfont
-\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcc}
-\toprule
+\begin{tabular*}{.7\linewidth}{@{\extracolsep{\fill}}lcc}
   & (A) & (B) \\ 
 \midrule\addlinespace[2.5pt]
-Intercepto & 0.047*** & 0.045*** \\ 
-T (Grupo de tratamento) & 0.000 & 0.003 \\ 
-P (Período pós PDE) & -0.010*** & -0.011*** \\ 
-Q (Percentual residencial novo) &  & 0.103** \\ 
-T x P & -0.002 & -0.005 \\ 
-T x Q &  & -0.164** \\ 
-P x Q &  & -0.043 \\ 
-{T x P x Q} & {} & {0.160**} \\ 
-Num.Obs. & 4435 & 4435 \\ 
-R2 & 0.008 & 0.028 \\ 
-R2 Adj. & 0.007 & 0.027 \\ 
+Intercepto & 0.057*** & 0.050*** \\ 
+T (Grupo de tratamento) & -0.003 & 0.000 \\ 
+P (Período pós PDE) & -0.015*** & -0.011** \\ 
+Q (Percentual residencial novo) &  & 0.108*** \\ 
+T x P & -0.001 & -0.004 \\ 
+T x Q &  & -0.055* \\ 
+P x Q &  & -0.045* \\ 
+{T x P x Q} & {} & {0.043} \\ 
+\midrule
+Num.Obs. & 3217 & 3217 \\ 
+R2 & 0.013 & 0.040 \\ 
+R2 Adj. & 0.012 & 0.037 \\ 
 \bottomrule
+\label{tab:did-censo}
 \end{tabular*}
-\begin{minipage}{\linewidth}
+\begin{minipage}{.7\linewidth}
 + p < 0.1, * p < 0.05, ** p < 0.01, *** p < 0.001\\
 \end{minipage}
 \end{table}
