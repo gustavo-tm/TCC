@@ -328,7 +328,10 @@ Além disso, há um viés de sobrevivência, no qual apenas setores censitários
     \label{fig:rdd-densidade-censo}
 \end{figure}
 
-Porém, antes de fazer as estimações, é importante definir com muita clareza o que é o tratamento. Como avaliado na Seção \ref{sec:perg2}, mesmo que os padrões construtivos tenham mudado, apenas um número seleto de lotes foram recentemente edificados. Nesse sentido, se o tratamento for o recebimento uma nova regulação, os setores censitários que não contém lotes com edificações recentes apresentarão, em teoria, efeito zero. Como estes setores censitários são a grande maioria, é possível que o efeito de receber prédios novos com a regulação nova seja ofuscado -- esta relação pode ser observada na Figura \ref{fig:proposta-mod}. Portanto, é necessário identificar efeitos heterogêneos do tratamento, com relação à quão recentes são as edificações no setor censitário.
+Porém, antes de fazer as estimações, é importante definir com muita clareza o que é o tratamento. Como avaliado na Seção \ref{sec:perg2}, mesmo que os padrões construtivos dos novos empreendimentos tenham mudado, apenas um número seleto de lotes foram recentemente edificados. Nesse sentido, em grande parte das regiões de tratamento não será observado o efeito do tratamento
+
+
+Nesse sentido, se o tratamento for o recebimento uma nova regulação, os setores censitários que não contém lotes com edificações recentes apresentarão, em teoria, efeito zero. Como estes setores censitários são a grande maioria, é possível que o efeito de receber prédios novos com a regulação nova seja ofuscado -- esta relação pode ser observada na Figura \ref{fig:proposta-mod}. Portanto, é necessário identificar efeitos heterogêneos do tratamento, com relação à quão recentes são as edificações no setor censitário.
 
 \begin{figure}[!h]
     \centering
@@ -353,11 +356,16 @@ No modelo, o $\beta_1$ representa a diferença de densidade entre 2022 e 2010. O
 \end{equation}
 
 \begin{align}
-    &\frac{\partial E(Y|T=t,P=p,Q=0)}{\partial T} = \beta_2 + \beta_4p\\\label{eq:did-b4}
+    &\frac{\partial E(Y|T,P,Q=0)}{\partial T} = \beta_2 + \beta_4P\\\label{eq:did-b4}
     &\mathbb{E}(Y|T=1,P=1,Q=0) - \mathbb{E}(Y|T=1,P=0,Q=0)= \beta_4\\\nonumber\\\nonumber\\
-    &\frac{\partial E(Y|T=t,P=p,Q=q)}{\partial T} = \beta_2 + \beta_4p + \beta_6q + \beta_7pq\\\label{eq:did-b7}
+    &\frac{\partial E(Y|T,P,Q)}{\partial T} = \beta_2 + \beta_4P + \beta_6Q + \beta_7PQ\\\label{eq:did-b7}
     &[\mathbb{E}(Y|T=1,P=1,Q=q) - \mathbb{E}(Y|T=1,P=0,Q=q)]= \beta_4 + \beta_7q
+    &\frac{\partial E(Y|T,P,Q)}{\partial Q} = \beta_3 + \beta_5P + \beta_6T + \beta_7TP    
 \end{align}
+
+\begin{equation}
+    \frac{\partial E(Y|T,P,Q)}{\partial Q} = \beta_3 + \beta_5P + \beta_6T + \beta_7TP
+\end{equation}  
 
 Os resultados das estimações podem ser consultados na Tabela \ref{tab:did-censo}
 

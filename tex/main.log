@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.6)  8 NOV 2024 20:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.6)  10 NOV 2024 01:40
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1433,12 +1433,20 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 [24] (tabelas/did-IPTU.tex
-Underfull \hbox (badness 10000) in paragraph at lines 21--22
+Overfull \hbox (35.3392pt too wide) in alignment at lines 4--16
+[] [] [] [] [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18--19
 
  []
 
 )
-<figuras/event-study.pdf, id=320, 361.35pt x 397.485pt>
+
+LaTeX Warning: Reference `tab:did-IPTU' on page 25 undefined on input line 271.
+
+<figuras/event-study.pdf, id=319, 361.35pt x 397.485pt>
 File: figuras/event-study.pdf Graphic file (type pdf)
 <use figuras/event-study.pdf>
 Package pdftex.def Info: figuras/event-study.pdf  used on input line 276.
@@ -1448,12 +1456,12 @@ Package pdftex.def Info: figuras/event-study.pdf  used on input line 276.
 [25 <./figuras/mapa-lotes-metro.pdf>]
 
 [26 <./figuras/event-study.pdf>]
-<figuras/rdd-plot-IPTU.pdf, id=361, 578.16pt x 433.62pt>
+<figuras/rdd-plot-IPTU.pdf, id=360, 578.16pt x 433.62pt>
 File: figuras/rdd-plot-IPTU.pdf Graphic file (type pdf)
 <use figuras/rdd-plot-IPTU.pdf>
 Package pdftex.def Info: figuras/rdd-plot-IPTU.pdf  used on input line 292.
 (pdftex.def)             Requested size: 386.75278pt x 290.06073pt.
-<figuras/rdd-plot-IPTU-posPDE.pdf, id=362, 578.16pt x 433.62pt>
+<figuras/rdd-plot-IPTU-posPDE.pdf, id=361, 578.16pt x 433.62pt>
 File: figuras/rdd-plot-IPTU-posPDE.pdf Graphic file (type pdf)
 <use figuras/rdd-plot-IPTU-posPDE.pdf>
 Package pdftex.def Info: figuras/rdd-plot-IPTU-posPDE.pdf  used on input line 296.
@@ -1479,32 +1487,45 @@ Underfull \hbox (badness 10000) in paragraph at lines 19--20
 [28 <./figuras/rdd-plot-IPTU.pdf> <./figuras/rdd-plot-IPTU-posPDE.pdf>]
 
 [29]
-<figuras/rdd-balanceamento-censo.pdf, id=401, 505.89pt x 289.08pt>
+<figuras/rdd-balanceamento-censo.pdf, id=400, 505.89pt x 289.08pt>
 File: figuras/rdd-balanceamento-censo.pdf Graphic file (type pdf)
 <use figuras/rdd-balanceamento-censo.pdf>
 Package pdftex.def Info: figuras/rdd-balanceamento-censo.pdf  used on input line 327.
 (pdftex.def)             Requested size: 341.25pt x 195.00148pt.
 
 
-[30 <./figuras/rdd-balanceamento-censo.pdf>]
-
 pdfTeX warning: pdflatex (file ./figuras/desenho_proposta_modificado.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figuras/desenho_proposta_modificado.pdf, id=418, 794.97pt x 170.79811pt>
+<figuras/desenho_proposta_modificado.pdf, id=405, 794.97pt x 256.07669pt>
 File: figuras/desenho_proposta_modificado.pdf Graphic file (type pdf)
 <use figuras/desenho_proposta_modificado.pdf>
-Package pdftex.def Info: figuras/desenho_proposta_modificado.pdf  used on input line 336.
-(pdftex.def)             Requested size: 455.0pt x 97.75728pt.
+Package pdftex.def Info: figuras/desenho_proposta_modificado.pdf  used on input line 339.
+(pdftex.def)             Requested size: 455.0pt x 146.56697pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-[31 <./figuras/desenho_proposta_modificado.pdf>] (tabelas/did-censo.tex
-Underfull \hbox (badness 10000) in paragraph at lines 24--25
+
+[30 <./figuras/rdd-balanceamento-censo.pdf>]
+
+[31 <./figuras/desenho_proposta_modificado.pdf>]
+Overfull \hbox (115.76758pt too wide) detected at line 364
+[]
+ []
+
+
+LaTeX Warning: Reference `tab:did-censo' on page 32 undefined on input line 370.
+
+(tabelas/did-censo.tex
+Underfull \hbox (badness 10000) in paragraph at lines 22--23
 
  []
 
 ) (tabelas/did-censo-interpret.tex
-Overfull \hbox (3.75833pt too wide) in paragraph at lines 13--14
-[]|\T1/ptm/b/n/10.95 (-20) Estimativa|  
- []
+
+LaTeX Warning: Reference `tab:did-censo' on page 32 undefined on input line 3.
+
+
+LaTeX Warning: Reference `tab:did-censo' on page 32 undefined on input line 3.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -1542,7 +1563,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 ]
 
 pdfTeX warning: pdflatex (file ./figuras/desenho.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figuras/desenho.pdf, id=484, 963.6pt x 542.025pt>
+<figuras/desenho.pdf, id=480, 963.6pt x 542.025pt>
 File: figuras/desenho.pdf Graphic file (type pdf)
 <use figuras/desenho.pdf>
 Package pdftex.def Info: figuras/desenho.pdf  used on input line 14.
@@ -1552,7 +1573,7 @@ Package pdftex.def Info: figuras/desenho.pdf  used on input line 14.
 [37
 
  <./figuras/desenho.pdf>]
-<figuras/ca_vs_verticalizacao.pdf, id=524, 542.025pt x 361.35pt>
+<figuras/ca_vs_verticalizacao.pdf, id=520, 542.025pt x 361.35pt>
 File: figuras/ca_vs_verticalizacao.pdf Graphic file (type pdf)
 <use figuras/ca_vs_verticalizacao.pdf>
 Package pdftex.def Info: figuras/ca_vs_verticalizacao.pdf  used on input line 28.
@@ -1572,7 +1593,7 @@ Package pdftex.def Info: figuras/ca_vs_verticalizacao.pdf  used on input line 28
 [41
 
 ]
-<figuras/indicadores_tempo.pdf, id=551, 397.485pt x 433.62pt>
+<figuras/indicadores_tempo.pdf, id=547, 397.485pt x 433.62pt>
 File: figuras/indicadores_tempo.pdf Graphic file (type pdf)
 <use figuras/indicadores_tempo.pdf>
 Package pdftex.def Info: figuras/indicadores_tempo.pdf  used on input line 48.
@@ -1582,7 +1603,7 @@ Package pdftex.def Info: figuras/indicadores_tempo.pdf  used on input line 48.
 [42
 
  <./figuras/indicadores_tempo.pdf>]
-<figuras/tree_area_construida.pdf, id=563, 487.8225pt x 361.35pt>
+<figuras/tree_area_construida.pdf, id=559, 487.8225pt x 361.35pt>
 File: figuras/tree_area_construida.pdf Graphic file (type pdf)
 <use figuras/tree_area_construida.pdf>
 Package pdftex.def Info: figuras/tree_area_construida.pdf  used on input line 60.
@@ -1592,12 +1613,12 @@ Package pdftex.def Info: figuras/tree_area_construida.pdf  used on input line 60
 [43
 
  <./figuras/tree_area_construida.pdf>]
-<figuras/mapa-densidade.pdf, id=585, 505.89pt x 867.24pt>
+<figuras/mapa-densidade.pdf, id=581, 505.89pt x 867.24pt>
 File: figuras/mapa-densidade.pdf Graphic file (type pdf)
 <use figuras/mapa-densidade.pdf>
 Package pdftex.def Info: figuras/mapa-densidade.pdf  used on input line 73.
 (pdftex.def)             Requested size: 386.75278pt x 663.013pt.
-<figuras/macroareas-eixos.pdf, id=586, 722.7pt x 1084.05pt>
+<figuras/macroareas-eixos.pdf, id=582, 722.7pt x 1084.05pt>
 File: figuras/macroareas-eixos.pdf Graphic file (type pdf)
 <use figuras/macroareas-eixos.pdf>
 Package pdftex.def Info: figuras/macroareas-eixos.pdf  used on input line 81.
@@ -1613,7 +1634,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
  <./figuras/mapa-densidade.pdf>]
 
 [45 <./figuras/macroareas-eixos.pdf>]
-<figuras/populacao-distribuicao-raster.pdf, id=609, 505.89pt x 289.08pt>
+<figuras/populacao-distribuicao-raster.pdf, id=605, 505.89pt x 289.08pt>
 File: figuras/populacao-distribuicao-raster.pdf Graphic file (type pdf)
 <use figuras/populacao-distribuicao-raster.pdf>
 Package pdftex.def Info: figuras/populacao-distribuicao-raster.pdf  used on input line 90.
@@ -1623,7 +1644,7 @@ Package pdftex.def Info: figuras/populacao-distribuicao-raster.pdf  used on inpu
 [46
 
  <./figuras/populacao-distribuicao-raster.pdf>]
-<figuras/robustez-regressao1pop.pdf, id=619, 722.7pt x 505.89pt>
+<figuras/robustez-regressao1pop.pdf, id=615, 722.7pt x 505.89pt>
 File: figuras/robustez-regressao1pop.pdf Graphic file (type pdf)
 <use figuras/robustez-regressao1pop.pdf>
 Package pdftex.def Info: figuras/robustez-regressao1pop.pdf  used on input line 99.
@@ -1633,7 +1654,7 @@ Package pdftex.def Info: figuras/robustez-regressao1pop.pdf  used on input line 
 [47
 
  <./figuras/robustez-regressao1pop.pdf>]
-<figuras/did-IPTU-bandas.pdf, id=632, 578.16pt x 289.08pt>
+<figuras/did-IPTU-bandas.pdf, id=628, 578.16pt x 289.08pt>
 File: figuras/did-IPTU-bandas.pdf Graphic file (type pdf)
 <use figuras/did-IPTU-bandas.pdf>
 Package pdftex.def Info: figuras/did-IPTU-bandas.pdf  used on input line 108.
@@ -1653,21 +1674,25 @@ enddocument/afterlastpage: lastpage setting LastPage.
 LaTeX2e <2024-11-01>
 L3 programming layer <2020/03/25>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `main.brf' has not changed.
 (rerunfilecheck)             Checksum: 123DB131EF5260031127B692597DA140;564.
  ) 
 Here is how much of TeX's memory you used:
- 49587 strings out of 473701
- 1133396 string characters out of 5718465
- 1742675 words of memory out of 5000000
- 71285 multiletter control sequences out of 15000+600000
- 641723 words of font info for 346 fonts, out of 8000000 for 9000
+ 49588 strings out of 473701
+ 1133421 string characters out of 5718465
+ 1746556 words of memory out of 5000000
+ 71286 multiletter control sequences out of 15000+600000
+ 641660 words of font info for 345 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,13n,107p,1647b,2441s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (49 pages, 7467378 bytes).
+Output written on main.pdf (49 pages, 7463274 bytes).
 PDF statistics:
- 860 PDF objects out of 1000 (max. 8388607)
- 158 named destinations out of 1000 (max. 500000)
+ 856 PDF objects out of 1000 (max. 8388607)
+ 159 named destinations out of 1000 (max. 500000)
  92564 words of extra memory for PDF output out of 106986 (max. 10000000)
 

@@ -25,8 +25,8 @@
 \contentsline {section}{\numberline {4.2}Da regulação ao padrão construtivo}{24}{section.4.2}%
 \contentsline {subsection}{\numberline {4.2.1}Abordagem \textit {diff-in-diff} geográfico (e \textit {event study})}{25}{subsection.4.2.1}%
 \contentsline {subsection}{\numberline {4.2.2}Abordagem de RDD}{27}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Resultados principais}{29}{subsection.4.2.3}%
-\contentsline {section}{\numberline {4.3}Da regulação à densidade populacional}{30}{section.4.3}%
+\contentsline {subsection}{\numberline {4.2.3}Resultados principais}{27}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Da regulação à densidade populacional}{29}{section.4.3}%
 \contentsline {subsection}{\numberline {4.3.1}Abordagem via diferenças em diferenças com efeito heterogêneo}{32}{subsection.4.3.1}%
 \contentsline {subsection}{\numberline {4.3.2}Resultados principais}{32}{subsection.4.3.2}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }

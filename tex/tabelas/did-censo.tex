@@ -1,26 +1,24 @@
 \begin{table}[!t]
 \caption{Resultado diff-in-diff do Censo, para setores censitários em um raio de 100m dos eixos} 
-\centering
 \fontsize{12.0pt}{14.4pt}\selectfont
-\begin{tabular*}{.7\linewidth}{@{\extracolsep{\fill}}lcc}
-  & (A) & (B) \\ 
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccc}
+\toprule
+  & (A) & (B) & (B)  & (B)   \\ 
 \midrule\addlinespace[2.5pt]
-Intercepto & 0.057*** & 0.050*** \\ 
-T (Grupo de tratamento) & -0.003 & 0.000 \\ 
-P (Período pós PDE) & -0.015*** & -0.011** \\ 
-Q (Percentual residencial novo) &  & 0.108*** \\ 
-T x P & -0.001 & -0.004 \\ 
-T x Q &  & -0.055* \\ 
-P x Q &  & -0.045* \\ 
-{T x P x Q} & {} & {0.043} \\ 
-\midrule
-Num.Obs. & 3217 & 3217 \\ 
-R2 & 0.013 & 0.040 \\ 
-R2 Adj. & 0.012 & 0.037 \\ 
+Intercepto & 0.057*** & 0.055*** & 533.359*** & 192.072*** \\ 
+T (Grupo de tratamento) & -0.004 & -0.006 & -22.741+ & 8.449+ \\ 
+P (Período pós PDE) & -0.016*** & -0.015*** & -193.710*** & -27.108*** \\ 
+Q (Percentual residencial novo) &  & 0.054* & 0.029 & -2.989 \\ 
+T x P & 0.000 & 0.002 & -6.418 & -6.807 \\ 
+T x Q &  & 0.016 & -84.899 & -39.625 \\ 
+P x Q &  & 0.015 & -46.080 & 48.249 \\ 
+{T x P x Q} & {} & {-0.036} & {187.922} & {57.080} \\ 
+Num.Obs. & 3225 & 3225 & 3225 & 3225 \\ 
+R2 & 0.013 & 0.028 & 0.171 & 0.032 \\ 
+R2 Adj. & 0.013 & 0.026 & 0.169 & 0.030 \\ 
 \bottomrule
-\label{tab:did-censo}
 \end{tabular*}
-\begin{minipage}{.7\linewidth}
+\begin{minipage}{\linewidth}
 + p < 0.1, * p < 0.05, ** p < 0.01, *** p < 0.001\\
 \end{minipage}
 \end{table}
