@@ -5,6 +5,13 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{v-1.9.7 }
 
+\bibitem[Anagol, Ferreira e Rexer 2021]{Anagol2021}
+\abntrefinfo{Anagol, Ferreira e Rexer}{ANAGOL; FERREIRA; REXER}{2021}
+{ANAGOL, S.; FERREIRA, F.~V.; REXER, J.~M. Estimating the economic value of
+  zoning reform.
+2021.
+Working paper.}
+
 \bibitem[Breiman 2001]{breiman2001random}
 \abntrefinfo{Breiman}{BREIMAN}{2001}
 {BREIMAN, L. Random forests.
@@ -15,10 +22,41 @@
 {BRUECKNER, J.~K. \textbf{Lectures on urban economics}. [S.l.]: MIT press,
   2011.}
 
+\bibitem[Cattaneo, Idrobo e Titiunik 2019]{Cattaneo2019}
+\abntrefinfo{Cattaneo, Idrobo e Titiunik}{CATTANEO; IDROBO; TITIUNIK}{2019}
+{CATTANEO, M.~D.; IDROBO, N.; TITIUNIK, R. A practical introduction to
+  regression discontinuity designs.
+Cambridge University Press, 11 2019.}
+
+\bibitem[Cattaneo, Idrobo e Titiunik 2024]{Cattaneo2024}
+\abntrefinfo{Cattaneo, Idrobo e Titiunik}{CATTANEO; IDROBO; TITIUNIK}{2024}
+{CATTANEO, M.~D.; IDROBO, N.; TITIUNIK, R. A practical introduction to
+  regression discontinuity designs - extensions.
+Cambridge University Press, 4 2024.}
+
+\bibitem[Costa, Silva e Alves 2023]{nt1}
+\abntrefinfo{Costa, Silva e Alves}{COSTA; SILVA; ALVES}{2023a}
+{COSTA, A.~B.; SILVA, J. R.~F. da; ALVES, E.~L. Eixo não é tudo igual: Uma
+  análise empírica das heterogeneidades da produção residencial nos eixos
+  de estruturação da transformação urbana em são paulo.
+Insper, 2023.}
+
+\bibitem[Costa, Silva e Alves 2023]{nt2}
+\abntrefinfo{Costa, Silva e Alves}{COSTA; SILVA; ALVES}{2023b}
+{COSTA, A.~B.; SILVA, J. R.~F. da; ALVES, E.~L. Ordenamento territorial e
+  incentivos do pde: Análise da produção habitacional formal em são paulo.
+Insper, 2023.}
+
 \bibitem[Fujita 1989]{fujita1989urban}
 \abntrefinfo{Fujita}{FUJITA}{1989}
-{FUJITA, M. \textbf{Urban economic theory}. [S.l.]: Cambridge university press,
-  1989.}
+{FUJITA, M. Urban economic theory.
+\textbf{Cambridge Books}, Cambridge university press, 1989.}
+
+\bibitem[IBGE 2013]{IBGE2013}
+\abntrefinfo{IBGE}{IBGE}{2013}
+{IBGE. \textbf{Nota técnica}. Rio de Janeiro, Brasil: Instituto Brasileiro de
+  Geografia e Estatística, 2013. Acesso em: 2024-06-23. Dispon{\'\i}vel em:
+  \url{https://www.ibge.gov.br/apps/snig/v1/download/SNIG\_notas\_tecnicas.pdf}.}
 
 \bibitem[IBGE 2024]{IBGE2024}
 \abntrefinfo{IBGE}{IBGE}{2024}
@@ -36,6 +74,12 @@ Dispon{\'\i}vel em:
 \textbf{Transportation Research Part A: Policy and Practice}, Elsevier Ltd,
   v.~132, p. 110--130, 2 2020.
 ISSN 09658564.}
+
+\bibitem[Marques e Minarelli 2023]{Marques2023}
+\abntrefinfo{Marques e Minarelli}{MARQUES; MINARELLI}{2023}
+{MARQUES, E.; MINARELLI, G. Trajectory of the formal housing stock - são
+  paulo, 2000/2020.
+\textbf{Urbe}, Pontificia Universidade Catolica do Parana, 2023.}
 
 \bibitem[{{Município de São Paulo}} 1986]{lei10235_1986}
 \abntrefinfo{{{Município de São Paulo}}}{{{Município de São Paulo}}}{1986}
@@ -58,6 +102,47 @@ ISSN 14602059.}
 \abntrefinfo{Papageorgiou e Pines}{PAPAGEORGIOU; PINES}{2012}
 {PAPAGEORGIOU, Y.~Y.; PINES, D. \textbf{An essay on urban economic theory}.
   [S.l.]: Springer Science \& Business Media, 2012. v.~1.}
+
+\bibitem[SMUL 2021]{IU50}
+\abntrefinfo{SMUL}{SMUL}{2021a}
+{SMUL. \textbf{Adensamento construtivo nos eixos e macroáreas a partir dos
+  dados do IPTU}. São Paulo, SP: Secretaria Municipal de Urbanismo e
+  Licenciamento da prefeitura de São Paulo, 2021.
+Informe Urbano de n° 50.}
+
+\bibitem[SMUL 2021]{PDE:diagnostico}
+\abntrefinfo{SMUL}{SMUL}{2021b}
+{SMUL. \textbf{Plano Diretor SP - Revisão Intermediária 2021: Diagnóstico}.
+  São Paulo, SP: Secretaria Municipal de Urbanismo e Licenciamento da
+  prefeitura de São Paulo, 2021.}
+
+\bibitem[SMUL 2022]{IU52}
+\abntrefinfo{SMUL}{SMUL}{2022a}
+{SMUL. \textbf{Atividade econômica nos Eixos de Estruturação da
+  Transformação Urbana}. São Paulo, SP: Secretaria Municipal de Urbanismo e
+  Licenciamento da prefeitura de São Paulo, 2022.
+Informe Urbano de n° 52.}
+
+\bibitem[SMUL 2022]{IU54}
+\abntrefinfo{SMUL}{SMUL}{2022b}
+{SMUL. \textbf{Emprego formal nas macroáreas do PDE}. São Paulo, SP:
+  Secretaria Municipal de Urbanismo e Licenciamento da prefeitura de São
+  Paulo, 2022.
+Informe Urbano de n° 54.}
+
+\bibitem[SMUL 2022]{IU51}
+\abntrefinfo{SMUL}{SMUL}{2022c}
+{SMUL. \textbf{Projeções populacionais para macroáreas do PDE}. São Paulo,
+  SP: Secretaria Municipal de Urbanismo e Licenciamento da prefeitura de São
+  Paulo, 2022.
+Informe Urbano de n° 51.}
+
+\bibitem[SMUL 2024]{IU66}
+\abntrefinfo{SMUL}{SMUL}{2024}
+{SMUL. \textbf{População e domicílios: o censo de 2022 e as macroáreas do
+  PDE}. São Paulo, SP: Secretaria Municipal de Urbanismo e Licenciamento da
+  prefeitura de São Paulo, 2024.
+Informe Urbano de n° 66.}
 
 \bibitem[Wright e Ziegler 2015]{wright2015ranger}
 \abntrefinfo{Wright e Ziegler}{WRIGHT; ZIEGLER}{2015}

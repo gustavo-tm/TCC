@@ -16,6 +16,8 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
 Database file #1: abntex2-options.bib
 Database file #2: bibliografia.bib
+Warning--entry type for "PDE:diagnostico" isn't style-file defined
+--line 203 of file bibliografia.bib
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
@@ -25,44 +27,45 @@ Reallocating 'global_strs' (item size: 1) to 4000000 items.
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 11 entries,
+You've used 24 entries,
             6714 wiz_defined-function locations,
-            1263 strings with 10995 characters,
-and the built_in function-call counts, 9004 in all, are:
-= -- 876
-> -- 235
-< -- 76
-+ -- 198
-- -- 72
-* -- 577
-:= -- 1228
-add.period$ -- 33
-call.type$ -- 11
-change.case$ -- 89
-chr.to.int$ -- 22
-cite$ -- 9
-duplicate$ -- 550
-empty$ -- 613
-format.name$ -- 340
-if$ -- 2050
-int.to.chr$ -- 1
+            1324 strings with 12736 characters,
+and the built_in function-call counts, 19339 in all, are:
+= -- 1662
+> -- 627
+< -- 146
++ -- 416
+- -- 192
+* -- 1308
+:= -- 2616
+add.period$ -- 80
+call.type$ -- 24
+change.case$ -- 225
+chr.to.int$ -- 31
+cite$ -- 22
+duplicate$ -- 1184
+empty$ -- 1320
+format.name$ -- 898
+if$ -- 4352
+int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 184
-newline$ -- 53
-num.names$ -- 45
-pop$ -- 242
+missing$ -- 416
+newline$ -- 118
+num.names$ -- 110
+pop$ -- 576
 preamble$ -- 1
-purify$ -- 39
+purify$ -- 89
 quote$ -- 0
-skip$ -- 672
+skip$ -- 1346
 stack$ -- 1
-substring$ -- 342
-swap$ -- 227
-text.length$ -- 8
+substring$ -- 626
+swap$ -- 461
+text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 62
+while$ -- 139
 width$ -- 0
-write$ -- 148
+write$ -- 339
+(There was 1 warning)
