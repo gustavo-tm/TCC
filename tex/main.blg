@@ -17,7 +17,7 @@ Reallocating 'wiz_functions' (item size: 4) to 9000 items.
 Database file #1: abntex2-options.bib
 Database file #2: bibliografia.bib
 Warning--entry type for "PDE:diagnostico" isn't style-file defined
---line 203 of file bibliografia.bib
+--line 243 of file bibliografia.bib
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
@@ -27,45 +27,45 @@ Reallocating 'global_strs' (item size: 1) to 4000000 items.
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 24 entries,
+You've used 27 entries,
             6714 wiz_defined-function locations,
-            1324 strings with 12736 characters,
-and the built_in function-call counts, 19339 in all, are:
-= -- 1662
-> -- 627
+            1341 strings with 13400 characters,
+and the built_in function-call counts, 21106 in all, are:
+= -- 1773
+> -- 672
 < -- 146
-+ -- 416
-- -- 192
-* -- 1308
-:= -- 2616
-add.period$ -- 80
-call.type$ -- 24
-change.case$ -- 225
-chr.to.int$ -- 31
-cite$ -- 22
-duplicate$ -- 1184
-empty$ -- 1320
-format.name$ -- 898
-if$ -- 4352
++ -- 431
+- -- 207
+* -- 1422
+:= -- 2865
+add.period$ -- 89
+call.type$ -- 27
+change.case$ -- 246
+chr.to.int$ -- 34
+cite$ -- 25
+duplicate$ -- 1268
+empty$ -- 1509
+format.name$ -- 967
+if$ -- 4778
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 416
-newline$ -- 118
-num.names$ -- 110
-pop$ -- 576
+missing$ -- 467
+newline$ -- 130
+num.names$ -- 125
+pop$ -- 645
 preamble$ -- 1
-purify$ -- 89
+purify$ -- 98
 quote$ -- 0
-skip$ -- 1346
+skip$ -- 1451
 stack$ -- 1
-substring$ -- 626
-swap$ -- 461
+substring$ -- 677
+swap$ -- 500
 text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 139
+while$ -- 157
 width$ -- 0
-write$ -- 339
+write$ -- 381
 (There was 1 warning)

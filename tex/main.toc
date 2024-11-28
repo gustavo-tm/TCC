@@ -22,7 +22,7 @@
 \contentsline {section}{\numberline {4.1}Do padrão construtivo à densidade populacional}{23}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}Abordagem de regressão linear}{24}{subsection.4.1.1}%
 \contentsline {subsection}{\numberline {4.1.2}Abordagem de \textit {machine learning}}{25}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}Resultados principais}{26}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.3}Resultados principais}{27}{subsection.4.1.3}%
 \contentsline {section}{\numberline {4.2}Da regulação ao padrão construtivo}{28}{section.4.2}%
 \contentsline {subsection}{\numberline {4.2.1}Abordagem \textit {diff-in-diff} geográfico (e \textit {event study})}{29}{subsection.4.2.1}%
 \contentsline {subsection}{\numberline {4.2.2}Abordagem de RDD}{30}{subsection.4.2.2}%
