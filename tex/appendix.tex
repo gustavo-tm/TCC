@@ -86,6 +86,37 @@ Observa-se que os setores censitários periféricos apresentam os maiores índic
 
 Na Tabela \ref{tab:top5} estão descritas as 5 células do \textit{raster} que apresentam maior densidade populacional. É interessante observar que 4 das 5 células mais densas da cidade são de territórios de favelas e repletos quase completamente de domicílios que não estão registrados no IPTU. A densidade populacional do município de São Paulo no geral é de 7.529 habitantes por quilômetro quadrado, o que significa que esta célula do \textit{raster} posicionada na região de Paraisópolis apresenta uma densidade quase quatro vezes maior do que o resto da cidade. Outro fator interessante é o número maior de unidades no IPTU na região da Sé, se comparadas com domicílios do censo. Esta é uma das poucas regiões em que o espectro de irregularidade ultrapassa 50\%. Isso pode estar associada a alta taxa de abandono, que dificulta a medição por parte dos entrevistadores -- os dados do Censo indicam que 34,8\% dos domicílios desta célula do \textit{raster} estão desocupados.
 
+\chapter{Verticalização e adensamento nos bairros paulistanos}
+\label{appendix:bairros}
+
+\begin{figure}[!h]
+    \centering
+    \caption{Densidade populacional de padrões construtivos nos bairros paulistanos}
+    \includegraphics[width = \linewidth]{figuras/bairros.pdf}
+    \label{fig:bairros}
+\end{figure}
+
+
+As análises nas Figuras \ref{fig:bairros} e \ref{fig:bairros-mapa} destacam as disparidades entre verticalização e densidade populacional nos bairros de São Paulo. No primeiro caso, bairros como Jardim Paulista, Moema e Pinheiros exemplificam regiões altamente verticalizadas que, paradoxalmente, não apresentam elevada densidade populacional. Por outro lado, bairros periféricos como Capão Redondo possuem alta densidade populacional, mas baixa verticalização, refletindo um padrão de ocupação horizontal e adensamento intenso. Na Figura \ref{fig:bairros}, foram selecionados 40 entre os 96 distritos que apresentam o espectro de irregularidade mais próximo de 50\%, ou seja, os dados do Censo e do IPTU são parecidos. O especial destes bairros é que os dados do IPTU são mais confiáveis.
+
+Na Figura \ref{fig:bairros-mapa}, é possível visualizar em um mapa onde estão os bairros em que a diferença entre a posição no ranqueamento da densidade populacional e da verticalização é maior. Nos bairros vermelhos, nos quais esta distância é muito grande, há presença de verticalização sem adensamento. Na Figura \ref{fig:bairros-mapa-CP}, o mesmo mapa é criado, mas para verificar em quais regiões não se observa que a cota parte é traduzida em densidade populacional. Como a densidade populacional é o fator mais importante para definir a densidade populacional, são raros os casos em que a posição no ranqueamento diverge, e quando acontece, são poucas posições. Ainda assim, nos bairros pintados de vermelhos menos pessoas habitam cada residência, o que pode estar associado à forte presença de apartamentos estúdio, enquanto os azuis apontam para regiões nas quais as residências são ocupadas por núcleos familiares maiores. 
+
+\begin{figure}[!h]
+    \centering
+    \caption{Diferença entre posição da densidade populacional e verticalização no ranqueamento dos bairros}
+    \includegraphics[width = \linewidth]{figuras/bairros-mapa.pdf}
+    \label{fig:bairros-mapa}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \caption{Diferença entre posição da densidade populacional e densidade habitacional no ranqueamento dos bairros}
+    \includegraphics[width = \linewidth]{figuras/bairros-mapa-cotaparte.pdf}
+    \label{fig:bairros-mapa-CP}
+\end{figure}
+
+
+
 
 
 \chapter{Robustez dos resultados}

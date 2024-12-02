@@ -176,17 +176,16 @@ censo2010 <- read_sf("dados/censo/2010/35SEE250GC_SIR.shp") |>
               select(id_setor = Cod_setor, moradores = V002, domicilios = V001) |> 
               mutate(id_setor = as.character(id_setor)),
             by = join_by(id_setor)) |> 
-  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-200)) |> as.logical()) |> 
   mutate(ano = 2010)
 
 censo2022 <- read_sf("dados/censo/2022/SP_Malha_Preliminar_2022.shp") |> 
   filter(CD_MUN == "3550308") |> 
   st_transform("epsg:31983")  |>
   select(id_setor = CD_SETOR, moradores = v0001, domicilios = v0002) |> 
-  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-200)) |> as.logical()) |> 
   mutate(ano = 2022)
 
 censo <- bind_rows(list(censo2010, censo2022)) |> 
+  filter(st_covered_by(st_centroid(geometry), eixos.buffersimples |> st_buffer(-200)) |> as.logical()) |>
   mutate(area = st_area(geometry)) 
 
 saveRDS(censo, "rdata/censo.rds")
@@ -195,6 +194,26 @@ saveRDS(censo2022, "rdata/censo2022.rds")
 
 remove(censo2010, censo2022)
 ```
+
+
+```{r}
+censo |> 
+  mutate(eixo = st_intersects(geometry, st_union(eixos.miolo)) |> as.logical() |> replace_na(FALSE)) |>
+  # filter(st_distance(st_centroid(geometry), eixos.contorno) |> as.numeric() < 100) |> 
+  # st_intersection(eixos) |>
+  # mutate(area_eixo = st_area(geometry),
+  #        percent_eixo = area_eixo / area) |>
+  # mutate(moradores = (st_area(geometry) / area) * moradores) |> 
+  st_drop_geometry() |>
+  # group_by(ano) |>
+  # summarize(moradores_eixo = sum(moradores * percent_eixo, na.rm = T),
+  #           moradores = sum(moradores, na.rm = T))
+  group_by(ano, eixo) |>
+  summarize(moradores = sum(moradores, na.rm = T)) |>
+  mutate(total = sum(moradores))
+
+```
+
 
 # Tratamento dos dados
 
@@ -495,10 +514,10 @@ modelsummary(list(
 ```
 
 ```{r "analise/delta-censo"}
-data |> 
+df.censo |> 
   filter(abs(distancia) <= 50) |> 
   group_by(grupo, ano = paste("a", ano, sep = "")) |> 
-  summarize(moradores = sum(moradores)) |> 
+  summarize(moradores = sum(moradores, na.rm = TRUE)) |> 
   pivot_wider(id_cols = grupo, names_from = ano, values_from = moradores) |> 
   mutate(delta = a2022 - a2010)
 ```
@@ -544,8 +563,7 @@ modelsummary(list(
   "densidade_habitacional" = lm(densidade_habitacional ~ factor(grupo) * factor(posPDE), 
                                 data = data |> filter(uso_predominante == "residencial")),
   "pavimentos" = lm(pavimentos ~ factor(grupo) * factor(posPDE), 
-                    data = data |> filter(uso_predominante == "residencial")), 
-  "residencial" = lm(residencial ~ factor(grupo) * factor(posPDE), data = data)), 
+                    data = data |> filter(uso_predominante == "residencial"))), 
   stars = TRUE, statistic = NULL, gof_omit = c("AIC|BIC|Log.Lik.|RMSE"),
   coef_rename = coef_rename(c("Intercepto", "Tratamento", "Pós PDE", "Tratamento x Pós PDE")), 
   output = "gt") |> 
@@ -625,9 +643,6 @@ bind_rows(
   feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
         data = data |> filter(uso_predominante == "residencial")) |> 
     extrair.coefs() |> mutate(variavel = "Pavimentos", residencial = T),
-  feols(residencial ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
-        data = data) |> 
-    extrair.coefs() |> mutate(variavel = "Residencial", residencial = T),
   
   # Três instrumentos p/ lotes NÃO residenciais
   feols(densidade_construtiva ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
@@ -638,17 +653,14 @@ bind_rows(
     extrair.coefs() |> mutate(variavel = "Densidade Habitacional", residencial = F),
   feols(pavimentos ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
         data = data |> filter(uso_predominante != "residencial")) |> 
-    extrair.coefs() |> mutate(variavel = "Pavimentos", residencial = F),
-  feols(residencial ~ i(factor(ano_construcao), factor(grupo), ref = 2014), 
-        data = data) |> 
-    extrair.coefs() |> mutate(variavel = "Residencial", residencial = T)) |> 
+    extrair.coefs() |> mutate(variavel = "Pavimentos", residencial = F)) |> 
   
   filter(endsWith(nome, "tratamento")) |>
   mutate(ano = str_sub(nome, 27,28), 
          coef = as.numeric(coef),
          se = as.numeric(se)) |> 
-  bind_rows(data.frame(ano = "14", coef = 0, se = 0, residencial = 1:8<=4, 
-                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva", "Residencial"))) |> 
+  bind_rows(data.frame(ano = "14", coef = 0, se = 0, residencial = 1:6<=3, 
+                       variavel = c("Densidade Habitacional", "Pavimentos", "Densidade Construtiva"))) |> 
   ggplot(aes(x = as.numeric(ano) + 2000, y = coef, colour = residencial)) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 2014, linetype = "dotted") +
@@ -665,7 +677,7 @@ bind_rows(
   theme_bw() +
   theme(legend.position = "bottom")
 
-ggsave("tex/figuras/event-study.pdf", width = 7, height = 7)
+ggsave("tex/figuras/event-study.pdf", width = 7, height = 5.5)
 ```
 
 ```{r "analise/delta-IPTU"}
@@ -709,7 +721,7 @@ df.IPTU |>
   scale_fill_manual("Grupo", values = c("tratamento" = "#E8B92FFF", "controle" = "#89973DFF")) +
   labs(x = "Ano da construção", y = "Número de unidades construídas") +
   theme_minimal()
-ggsave("tex/figuras/IPTU-delta-lotes.pdf", width = 8, height = 3.5)
+ggsave("tex/figuras/IPTU-delta-unidades.pdf", width = 8, height = 3.5)
 
 ```
 
@@ -815,16 +827,8 @@ df.IPTU |>
   (\(df) rdplot(as.numeric(df$pavimentos), df$distancia,
                 binselect = "qs", p = 1, col.dots = "black", col.lines = "black")$rdplot + 
      labs(title = "",  x = "Distância",y = "Pavimentos") +
-     theme_minimal())(df = _) +
-
-df.IPTU |>
-  mutate(residencial = uso_predominante == "residencial") |> 
-  filter(grupo != "descartado", abs(distancia) <= 300) |>
-  (\(df) rdplot(as.numeric(df$residencial), df$distancia,
-                binselect = "qs", p = 1, col.dots = "black", col.lines = "black")$rdplot + 
-     labs(title = "",  x = "Distância",y = "Residencial") +
      theme_minimal())(df = _)) |> 
-  ggsave("tex/figuras/rdd-plot-IPTU.pdf", plot = _, width = 8, height = 6)
+  ggsave("tex/figuras/rdd-plot-IPTU.pdf", plot = _, width = 11, height = 3)
 
 
 ```
@@ -842,11 +846,6 @@ list(
   "Pavimentos" = df.IPTU |> 
     filter(grupo != "descartado", uso_predominante == "residencial") |>     
     (\(df) rdrobust(as.numeric(df$pavimentos), df$distancia, 
-                    kernel = "tri", p = 1))(df = _),
-  "Residencial" = df.IPTU |> 
-    mutate(residencial = uso_predominante == "residencial") |> 
-    filter(grupo != "descartado") |>     
-    (\(df) rdrobust(as.numeric(df$residencial), df$distancia, 
                     kernel = "tri", p = 1))(df = _)) |> 
   modelsummary(stars = TRUE, statistic = NULL)
 
@@ -887,16 +886,9 @@ df.IPTU |>
   (\(df) rdplot(as.numeric(df$pavimentos), df$distancia,
                 binselect = "qs", p = 1, col.dots = "black", col.lines = "black")$rdplot + 
      labs(title = "",  x = "Distância",y = "Pavimentos") +
-     theme_minimal())(df = _) +
-
-df.IPTU |>
-  mutate(residencial = uso_predominante == "residencial", posPDE) |> 
-  filter(grupo != "descartado", abs(distancia) <= 300) |>
-  (\(df) rdplot(as.numeric(df$residencial), df$distancia,
-                binselect = "qs", p = 1, col.dots = "black", col.lines = "black")$rdplot + 
-     labs(title = "",  x = "Distância",y = "Residencial") +
      theme_minimal())(df = _)) |> 
-  ggsave("tex/figuras/rdd-plot-IPTU-posPDE.pdf", plot = _, width = 8, height = 6)
+  ggsave("tex/figuras/rdd-plot-IPTU-posPDE.pdf", plot = _, width = 11, height = 3)
+
 
 ```
 
@@ -914,11 +906,6 @@ list(
   "Pavimentos" = df.IPTU |> 
     filter(grupo != "descartado", uso_predominante == "residencial", posPDE) |>     
     (\(df) rdrobust(as.numeric(df$pavimentos), df$distancia, 
-                    kernel = "tri", p = 1))(df = _),
-  "Residencial" = df.IPTU |> 
-    mutate(residencial = uso_predominante == "residencial") |> 
-    filter(grupo != "descartado", posPDE) |>     
-    (\(df) rdrobust(as.numeric(df$residencial), df$distancia, 
                     kernel = "tri", p = 1))(df = _)) |> 
   modelsummary(stars = TRUE, statistic = NULL, output = "gt") |> 
   tab_caption("Resultados do RDD apenas com lotes edificados pós PDE") |> 
@@ -936,11 +923,6 @@ list(
   "Pavimentos" = df.IPTU |> 
     filter(grupo != "descartado", uso_predominante == "residencial", posPDE) |>     
     (\(df) rdrobust(as.numeric(df$pavimentos), df$distancia, 
-                    kernel = "tri", p = 1, c = -100))(df = _),
-  "Residencial" = df.IPTU |> 
-    mutate(residencial = uso_predominante == "residencial") |> 
-    filter(grupo != "descartado", posPDE) |>     
-    (\(df) rdrobust(as.numeric(df$residencial), df$distancia, 
                     kernel = "tri", p = 1, c = -100))(df = _))  |> 
   modelsummary(stars = TRUE, statistic = NULL, output = "gt") |> 
   tab_caption("Teste placebo do RDD com o cutoff deslocado 100 metros para fora do eixo") |> 
