@@ -1,215 +1,215 @@
-% Apêndices
+% Appendices
 \begin{apendicesenv}
 
-\partapendices
-
-\chapter{Discussões sobre a verticalização}
-\label{appendix:verticalizacao}
-
-Assumindo prédios como paralelepípedos, ou seja, todos os andares apresentam a mesma metragem, é possível traçar relações geométricas nas quais a área ocupada é a superfície que representa a base do paralelepípedo, o número de pavimentos sua altura e a área construída seu volume (Figura \ref{fig:desenho}). Nesse sentido, as relações apresentadas na Equação \ref{eq:pavimentos}, que apresenta diferentes formas de calcular a verticalização, ficam mais claras. Na equação, AC representa a área construída; AO, a área o cupada; AT, a área do terreno; CA o coeficiente de aproveitamento e tx\_ocupacao, o percentual da área do terreno que é ocupada. Usando o procedimento apresentado, em regiões que possuem o mesmo CA, quanto menor for a taxa de ocupação do terreno, maior será a verticalização. Analogamente, para dois lotes com a mesma ocupação de terreno, quanto maior for o CA, maior é a verticalização.
-
-\begin{figure}[h]
-    \centering
-    \caption{Representação do prédio como um paralelepípedo}
-    \includegraphics[width = \linewidth]{figuras/desenho.pdf}
-    \label{fig:desenho}
-\end{figure}
-
-\begin{equation}
-    \text{Pavimentos}=\frac{\text{AC}}{\text{AO}}=\frac{\text{AC}}{\text{AT}\cdot\underbrace{\frac{\text{AO}}{\text{AT}}}_\text{tx\_ocup}}=\frac{\text{AC}}{\text{AT}}\div\frac{\text{AO}}{\text{AT}}=\frac{\text{CA}}{\text{tx\_ocup}}
-    \label{eq:pavimentos}
-\end{equation}
+    \partapendices
     
-Dessa forma, o número de pavimentos nunca será maior do que o CA, dado que a taxa de ocupação sempre é um número que varia entre zero e um. Na Figura \ref{fig:ca-vert} é possível observar a relação entre as duas variáveis nos lotes da cidade de São Paulo. Para lotes muito pequenos, as duas medidas geralmente são iguais, visto que geralmente se ocupa 100\% da área do terreno. Na medida em que a verticalização aumenta, é observável que o CA não acompanha este crescimento, o que indica que há uma queda na taxa de ocupação.
-
-\begin{figure}[h]
-    \centering
-    \caption{Relação entre densidade construtiva e verticalização nos lotes de São Paulo}
-    \includegraphics[width = \textwidth]{figuras/ca_vs_verticalizacao.pdf}
-    \label{fig:ca-vert}
-\end{figure}
-
-\chapter{Metodologia de cruzamento geográfico dos dados}
-\label{appendix:cruzamento}
-
-Para combinar dados que estão em níveis de observação geográficos diferentes, é necessário fazer um \textit{join} geográfico. Com isso, é possível identificar todas as geometrias que se interseccionam e escolher um nível para agregá-las. O procedimento decidido nesta pesquisa foi de ponderar pelo percentual da intersecção, dada a necessidade de garantir a precisão dos dados. 
-
-\begin{figure}[h]
-    \centering
-    \caption{Exemplo de recorte de lote}
-    \includegraphics[width = .75\linewidth]{figuras/corte_lote.pdf}
-    \label{fig:corte-lote}
-\end{figure}
-
-Na Figura \ref{fig:corte-lote} é possível observar um caso da metodologia sendo implementada. No exemplo, estão representados os setores censitários de cinza com contorno preto e os lotes em azul e vermelho com linhas tracejadas. O objetivo neste exemplo é agregar os dados no nível do setor censitário. Dessa forma, quando um lote está presente em mais de um setor censitário, ele é destacado em vermelho é calculada a proporção de sua área que está em cada setor censitário.
-
-A partir disso, é possível distribuir seus atributos de maneira ponderada em cada setor censitário. Se um lote foi dividido no meio, por exemplo, metade das suas unidades habitacionais, área construída, área de lote, etc. são alocadas para um setor, e a outra metade no outro. Este procedimento é impreciso, mas com a granularidade disponível dos dados é o melhor que se pode fazer. Outra abordagem possível seria de calcular o centroide dos lotes e atribuí-los de acordo com qual setor censitário recai, porém o viés neste caso seria maior ainda.
-
-Quando a cidade é recortada em um \textit{raster}, na Seção \ref{sec:perg1}, o mesmo procedimento é realizado, mas é feito o \textit{join} geográfico tanto entre os lotes e o \textit{raster}, quanto entre os setores censitários e o \textit{raster}. Dessa forma, ambos ficam no mesmo nível de observação, garantindo o mínimo de viés possível com os dados disponíveis. O resultado dessa abordagem pode ser observado na Figura \ref{fig:rasters}.
-
-\begin{figure}[h]
-    \centering
-    \caption{Resultado do cruzamento dos dados a partir do \textit{raster}}
-    \includegraphics[width = .75\linewidth]{figuras/rasters.pdf}
-    \label{fig:rasters}
-\end{figure}
-
-
-\chapter{Discussões sobre a informalidade}
-\label{appendix:informalidade}
-
-Para identificar regiões de moradia informal, é essencial comparar as bases de dados para avaliar a coerência das informações. A única variável comparável entre as bases é o número de unidades habitacionais, definido como "unidades" nos dados do IPTU e como "domicílios" no Censo, embora essas categorias possuam definições ligeiramente distintas. A disparidade entre o número de domicílios no Censo e o número de unidades no IPTU pode sugerir a presença de moradias irregulares. Assim, foi criado um "índice de irregularidade", obtido pela razão entre o número de unidades e a soma de unidades e domicílios. Quando esse índice se aproxima de 50\%, as bases são consistentes, indicando que o número de unidades do IPTU é semelhante ao de domicílios no Censo. À medida que o índice se aproxima de 0\%, há uma indicação de que o número de domicílios no Censo é superior ao de unidades no IPTU, apontando para possíveis concentrações de habitações informais.
-
-\begin{itemize}
-    \item Definição de domicílios
+    \chapter{Discussions on verticalization}
+    \label{appendix:verticalization}
     
-    \begin{quote}
-        ``Domicílio é o local estruturalmente separado e independente que se destina a servir de habitação a uma ou mais pessoas, ou que esteja sendo utilizado como tal. A separação fica caracterizada quando o local de habitação for limitado por paredes, muros ou cercas e coberto por um teto, permitindo a uma ou mais pessoas, que nele habitam, isolar-se das demais, com a finalidade de dormir, preparar e/ ou consumir seus alimentos e proteger-se do meio ambiente, arcando, total ou parcialmente, com suas despesas de alimentação ou moradia. A independência fica caracterizada quando o local de habitação tem acesso direto, permitindo a seus moradores entrar e sair sem necessidade de passar por locais de moradia de outras pessoas'' \cite{IBGE2013}.
-    \end{quote}
-
-    \item Definição de unidade
+    Assuming buildings are parallelepipeds, i.e. all floors have the same footage, it is possible to draw geometric relationships in which the occupied area is the surface that represents the base of the parallelepiped, the number of floors its height and the built area its volume (Figure \ref{fig:desenho}). In this sense, the relationships presented in Equation \ref{eq:pavimentos}, which presents different ways of calculating verticalization, become clearer. In the equation, AC represents the built-up area; AO, the occupied area; AT, the land area; FAR the utilization coefficient and tx\_occupacao, the percentage of the land area that is occupied. Using the procedure presented, in regions with the same FAR, the lower the land occupation rate, the greater the verticalization. Similarly, for two plots with the same land occupation, the higher the FAR, the greater the verticalization.
     
-    No IPTU é considerado que cada contribuinte do IPTU representa uma unidade. Segundo a definição apresentada junto com os dados no portal do GeoSampa, ``A cada imóvel urbano corresponderá um número de inscrição no Cadastro Imobiliário Fiscal, entendendo-se como imóvel: I - a área de terreno, construído ou não, definida em matrícula do competente Serviço de Registro de Imóveis ou em transcrições ainda vigente''
-\end{itemize}
-
-
-Observa-se que os setores censitários periféricos apresentam os maiores índices de irregularidade, conforme evidenciado pelas tonalidades vermelhas na Figura \ref{fig:balanco-raster}, indicando uma discrepância significativa entre as bases do Censo e do IPTU. Tal padrão sugere uma concentração de moradias informais nessas áreas, onde o número de domicílios captado pelo Censo é substancialmente superior ao de unidades cadastradas no IPTU. Esse comportamento não é observado nas áreas centrais da cidade, onde a consistência entre as bases é maior, refletindo uma menor prevalência de habitações informais. Esse índice de irregularidade, portanto, oferece uma ferramenta analítica para identificar espacialmente regiões com potencial presença de loteamentos irregulares e favelas, revelando a distribuição geográfica da informalidade habitacional em São Paulo.
-
-\begin{figure}[h]
-    \caption{Padrão geográfico da irregularidade em São Paulo}
-    \centering
-    \includegraphics[width = .8\linewidth]{figuras/balanco_raster.pdf}
-    \label{fig:balanco-raster}
-\end{figure}
-
-\input{tabelas/top5.tex}
-
-Na Tabela \ref{tab:top5} estão descritas as 5 células do \textit{raster} que apresentam maior densidade populacional. É interessante observar que 4 das 5 células mais densas da cidade são de territórios de favelas e repletos quase completamente de domicílios que não estão registrados no IPTU. A densidade populacional do município de São Paulo no geral é de 7.529 habitantes por quilômetro quadrado, o que significa que esta célula do \textit{raster} posicionada na região de Paraisópolis apresenta uma densidade quase quatro vezes maior do que o resto da cidade. Outro fator interessante é o número maior de unidades no IPTU na região da Sé, se comparadas com domicílios do censo. Esta é uma das poucas regiões em que o espectro de irregularidade ultrapassa 50\%. Isso pode estar associada a alta taxa de abandono, que dificulta a medição por parte dos entrevistadores -- os dados do Censo indicam que 34,8\% dos domicílios desta célula do \textit{raster} estão desocupados.
-
-\chapter{Verticalização e adensamento nos bairros paulistanos}
-\label{appendix:bairros}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Densidade populacional de padrões construtivos nos bairros paulistanos}
-    \includegraphics[width = \linewidth]{figuras/bairros.pdf}
-    \label{fig:bairros}
-\end{figure}
-
-
-As análises nas Figuras \ref{fig:bairros} e \ref{fig:bairros-mapa} destacam as disparidades entre verticalização e densidade populacional nos bairros de São Paulo. No primeiro caso, bairros como Jardim Paulista, Moema e Pinheiros exemplificam regiões altamente verticalizadas que, paradoxalmente, não apresentam elevada densidade populacional. Por outro lado, bairros periféricos como Capão Redondo possuem alta densidade populacional, mas baixa verticalização, refletindo um padrão de ocupação horizontal e adensamento intenso. Na Figura \ref{fig:bairros}, foram selecionados 40 entre os 96 distritos que apresentam o espectro de irregularidade mais próximo de 50\%, ou seja, os dados do Censo e do IPTU são parecidos. O especial destes bairros é que os dados do IPTU são mais confiáveis.
-
-Na Figura \ref{fig:bairros-mapa}, é possível visualizar em um mapa onde estão os bairros em que a diferença entre a posição no ranqueamento da densidade populacional e da verticalização é maior. Nos bairros vermelhos, nos quais esta distância é muito grande, há presença de verticalização sem adensamento. Na Figura \ref{fig:bairros-mapa-CP}, o mesmo mapa é criado, mas para verificar em quais regiões não se observa que a cota parte é traduzida em densidade populacional. Como a densidade populacional é o fator mais importante para definir a densidade populacional, são raros os casos em que a posição no ranqueamento diverge, e quando acontece, são poucas posições. Ainda assim, nos bairros pintados de vermelhos menos pessoas habitam cada residência, o que pode estar associado à forte presença de apartamentos estúdio, enquanto os azuis apontam para regiões nas quais as residências são ocupadas por núcleos familiares maiores. 
-
-\begin{figure}[!h]
-    \centering
-    \caption{Diferença entre posição da densidade populacional e verticalização no ranqueamento dos bairros}
-    \includegraphics[width = \linewidth]{figuras/bairros-mapa.pdf}
-    \label{fig:bairros-mapa}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Diferença entre posição da densidade populacional e densidade habitacional no ranqueamento dos bairros}
-    \includegraphics[width = \linewidth]{figuras/bairros-mapa-cotaparte.pdf}
-    \label{fig:bairros-mapa-CP}
-\end{figure}
-
-
-
-
-
-\chapter{Robustez dos resultados}
-\label{appendix:robustez}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Robustez dos resultados da regressão para diferentes espectros de irregularidade}
-    \includegraphics[width = \linewidth]{figuras/robustez-regressao1pop.pdf}
-    \label{fig:robustez-reg1}
-\end{figure}
-
-
-\begin{figure}[!h]
-    \centering
-    \caption{Robustez dos resultados do DiD para diferentes recortes de proximidade na análise do IPTU}
-    \includegraphics[width = \linewidth]{figuras/did-IPTU-bandas.pdf}
-    \label{fig:robustez-did-IPTU}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Robustez dos resultados do DiD para diferentes recortes de proximidade na análise do Censo. (Tabela \ref{tab:did-censo}, coluna B e D)}
-    \includegraphics[width = \linewidth]{figuras/did-censo-bandas.pdf}
-    \label{fig:robustez-did-censo}
-\end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\chapter{Outras figuras e tabelas}
-\label{appendix:figuras}
-
-\clearpage
-
-\begin{figure}[h]
-    \centering
-    \caption{Variação no tempo dos padrões construtivos residenciais observados em São Paulo}
-    \includegraphics[width = .75\linewidth]{figuras/indicadores_tempo.pdf}
-    \label{fig:indicadores-tempo}
-\end{figure}
-
-Ao analisar os padrões construtivos ao longo do tempo na Figura \ref{fig:indicadores-tempo}, fica evidente a trajetória de adensamento. Na figura, cada linha representa um quantil dos lotes do IPTU. Ao ordenar as construções no ano 2020 de maneira crescente de CA observado, o empreendimento na posição 80\% dessa fila apresenta um CA observado de 3,8. Este mesmo procedimento nos anos 2000 retornaria um empreendimento com CA observado igual a 1,46. Analogamente, a cota parte observada que em 2020 apresenta o quantil 20\% de meros 21,7 metros quadrados, no ano 2000 apresentaria 100 metros quadrados. Isso evidencia que nos últimos anos São Paulo passou por um forte processo de adensamento.
-
-
-\clearpage
-
-\begin{figure}
-    \centering
-    \caption{Área construída no município de São Paulo por tipo e padrão de uso}
-    \includegraphics[width = .8\linewidth]{figuras/tree_area_construida.pdf}
-    \label{fig:area_construida}
-\end{figure}
-
-Na Figura \ref{fig:area_construida}, é possível observar a distribuição da área construída por tipo e padrão de uso. Em São Paulo, 70\% da área construída é residencial, sendo que o padrão residencial mais comum é o "C". O padrão é uma divisão feita no cálculo do IPTU \cite{lei10235_1986}, para criar descontos do imposto para imóveis com características desejáveis do ponto de vista do planejamento urbano, como maior adensamento, ou para imóveis de pessoas com menor poder aquisitivo. Medidas como metragem, pé direito, vaga de garagem, número de pavimentos, elementos arquitetônicos, materiais de construção, etc., são fatores levados em consideração para determinar o padrão. No caso do "C", ele está no meio da escala de densidade, sendo "A" o mais denso, e "E" o menos. O segundo uso mais comum é o comercial, seguido do industrial e entretenimento. Na categoria de entretenimento, se encontram templos religiosos, clubes, estádios esportivos, cinemas, aeroporto, museu, zoológico, entre outros.
-
-
-
-
-
-
-\begin{figure}[!h]
-    \centering
-    \caption{Regiões de eixos (pintadas em azul)}
-    \includegraphics[width = .85\linewidth]{figuras/macroareas-eixos.pdf}
-    \label{fig:eixos}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[!h]
-    \centering
-    \caption{Distribuição da quantidade de moradores em cada célula do raster}
-    \includegraphics[width = .85\linewidth]{figuras/populacao-distribuicao-raster.pdf}
-    \label{fig:populacao-rasters}
-\end{figure}
-
-
-
-
-
-
-\end{apendicesenv}
+    \begin{figure}[h]
+        \centering
+        \caption{Representation of the building as a parallelepiped}
+        \includegraphics[width = \linewidth]{figuras/desenho.pdf}
+        \label{fig:desenho}
+    \end{figure}
+    
+    \begin{equation}
+        \text{Pavimentos}=\frac{\text{AC}}{\text{AO}}=\frac{\text{AC}}{\text{AT}\cdot\underbrace{\frac{\text{AO}}{\text{AT}}}_\text{tx\_ocup}}=\frac{\text{AC}}{\text{AT}}\div\frac{\text{AO}}{\text{AT}}=\frac{\text{FAR}}{\text{tx\_ocup}}
+        \label{eq:pavimentos}
+    \end{equation}
+        
+    In this way, the number of floors will never be greater than the FAR, since the occupancy rate is always a number that varies between zero and one. Figure \ref{fig:ca-vert} shows the relationship between the two variables on plots in the city of São Paulo. For very small plots, the two measures are generally the same, since 100\% of the land area is usually occupied. As verticalization increases, it can be seen that FAR does not keep up with this growth, which indicates that there is a drop in the occupancy rate.
+    
+    \begin{figure}[h]
+        \centering
+        \caption{Relation between building density and verticalization in São Paulo}
+        \includegraphics[width = \textwidth]{figuras/ca_vs_verticalizacao.pdf}
+        \label{fig:ca-vert}
+    \end{figure}
+    
+    \chapter{Geographic data matching methodology}
+    \label{appendix:cross-referencing}
+    
+    To combine data that is at different geographic observation levels, you need to make a geographic \textit{join}. This makes it possible to identify all the geometries that intersect and choose a level to aggregate them. The procedure decided upon in this research was to weight the percentage of intersection, given the need to guarantee the accuracy of the data.
+    
+    \begin{figure}[h]
+        \centering
+        \caption{Parcel cutting example}
+        \includegraphics[width = .75\linewidth]{figuras/corte_lote.pdf}
+        \label{fig:corte-lote}
+    \end{figure}
+    
+    Figure \ref{fig:corte-lote} shows a case of the methodology being implemented. In the example, the census sectors are represented in gray with a black outline and the plots in blue and red with dashed lines. The aim in this example is to aggregate the data at the census tract level. This way, when a plot is present in more than one census tract, it is highlighted in red and the proportion of its area that is in each census tract is calculated.
+    
+    From this, it is possible to distribute its attributes in a weighted manner in each census sector. If a plot has been divided in half, for example, half of its housing units, built-up area, plot area, etc. are allocated to one sector, and the other half to the other. This procedure is imprecise, but with the granularity of the data available it is the best that can be done. Another possible approach would be to calculate the centroid of the plots and assign them according to which census sector they fall into, but the bias in this case would be even greater.
+    
+    When the city is cut into a \textit{raster}, in Section \ref{sec:perg1}, the same procedure is carried out, but the geographical \textit{join} is made both between the lots and the \textit{raster}, and between the census tracts and the \textit{raster}. In this way, both are at the same level of observation, ensuring the least possible bias with the available data. The result of this approach can be seen in Figure \ref{fig:rasters}.
+    
+    \begin{figure}[h]
+        \centering
+        \caption{Result of cross-referencing data from \textit{raster}}
+        \includegraphics[width = .75\linewidth]{figuras/rasters.pdf}
+        \label{fig:rasters}
+    \end{figure}
     
     
+    \chapter{Discussions on informality}
+    \label{appendix:informality}
+    
+    In order to identify regions of informal housing, it is essential to compare the databases to assess the consistency of the information. The only comparable variable between the databases is the number of housing units, defined as "units" in the IPTU data and as "households" in the Census, although these categories have slightly different definitions. The disparity between the number of households in the Census and the number of units in the IPTU may suggest the presence of irregular housing. Therefore, an "irregularity index" was created, obtained from the ratio between the number of units and the sum of units and households. When this index is close to 50\%, the bases are consistent, indicating that the number of units in the IPTU is similar to the number of households in the Census. As the index approaches 0\%, there is an indication that the number of households in the Census is higher than the number of units in the IPTU, pointing to possible concentrations of informal housing.
+    
+    \begin{itemize}
+        \item Definition of households
+        
+        \begin{quote}
+            ``Domicile is the structurally separate and independent place that is intended to serve as a dwelling for one or more persons, or that is being used as such. Separation is characterized when the dwelling place is limited by walls or fences and covered by a roof, allowing one or more people who live there to isolate themselves from the others, for the purpose of sleeping, preparing and/or consuming their food and protecting themselves from the environment, bearing all or part of their food or living expenses. Independence is characterized when the dwelling place has direct access, allowing its residents to enter and leave without having to pass through other people's dwelling places'' \cite{IBGE2013}.
+        \end{quote}
+    
+        \item Unit definition
+        
+        In the IPTU, each IPTU taxpayer is considered to represent a unit. According to the definition presented together with the data on the GeoSampa portal, ``Each urban property will correspond to an inscription number in the Tax Real Estate Registry, with real estate being understood as: I - the area of land, built or not, defined in the registration of the competent Real Estate Registry Service or in transcripts still in force''.
+    \end{itemize}
+    
+    
+    It can be seen that the peripheral census tracts have the highest irregularity rates, as evidenced by the red tones in Figure \ref{fig:balanco-raster}, indicating a significant discrepancy between the Census and IPTU databases. This pattern suggests a concentration of informal housing in these areas, where the number of households captured by the Census is substantially higher than the number of units registered with the IPTU. This behavior is not observed in the central areas of the city, where the consistency between the bases is greater, reflecting a lower prevalence of informal housing. This irregularity index therefore offers an analytical tool for spatially identifying regions with a potential presence of irregular allotments and slums, revealing the geographical distribution of informal housing in São Paulo.
+    
+    \begin{figure}[h]
+        \caption{Geographic pattern of irregularity in São Paulo}
+        \centering
+        \includegraphics[width = .8\linewidth]{figuras/balanco_raster.pdf}
+        \label{fig:balanco-raster}
+    \end{figure}
+    
+    \input{tabelas/top5.tex}
+    
+    Table \ref{tab:top5} shows the 5 \textit{raster} cells with the highest population density. It's interesting to note that 4 of the 5 densest cells in the city are slum areas and almost entirely full of homes that are not registered with the IPTU. The overall population density of the municipality of São Paulo is 7,529 inhabitants per square kilometer, which means that this \textit{raster} cell positioned in the Paraisópolis region has a density almost four times higher than the rest of the city. Another interesting factor is the higher number of IPTU units in the Sé region, when compared to households in the census. This is one of the few regions where the irregularity spectrum exceeds 50\%. This may be associated with the high abandonment rate, which makes it difficult for interviewers to measure - the Census data indicates that 34.8\% of the households in this \textit{raster} cell are unoccupied.
+    
+    \chapter{Verticalization and densification in São Paulo neighborhoods}
+    \label{appendix:neighborhoods}
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Population density of building patterns in São Paulo neighborhoods}
+        \includegraphics[width = \linewidth]{figuras/bairros.pdf}
+        \label{fig:bairros}
+    \end{figure}
+    
+    
+    The analyses in Figures \ref{fig:bairros} and \ref{fig:bairros-mapa} highlight the disparities between verticalization and population density in São Paulo's neighborhoods. In the first case, neighborhoods such as Jardim Paulista, Moema and Pinheiros exemplify highly vertical regions that, paradoxically, do not have a high population density. On the other hand, peripheral neighbourhoods like Capão Redondo have a high population density but low verticalization, reflecting a pattern of horizontal occupation and intense densification. In Figure \ref{fig:bairros}, 40 of the 96 districts were selected that have the irregularity spectrum closest to 50\%, i.e. the Census and IPTU data are similar. The special thing about these neighborhoods is that the IPTU data is more reliable.
+    
+    In Figure \ref{fig:bairros-mapa}, you can see on a map where the neighborhoods are where the difference between the ranking of population density and verticalization is greatest. In the red neighborhoods, where this gap is very large, there is verticalization without densification. In Figure \ref{fig:bairros-mapa-CP}, the same map is created, but to check in which regions the quota share is not translated into population density. As household density is the most important factor in defining population density, there are few cases in which the position in the ranking differs, and when it does, it is only a few positions. Even so, in the red neighborhoods fewer people live in each home, which may be associated with the strong presence of studio apartments, while the blue ones point to regions where homes are occupied by larger family groups.
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Difference between the position of population density and verticalization in the ranking of neighborhoods}
+        \includegraphics[width = \linewidth]{figuras/bairros-mapa.pdf}
+        \label{fig:bairros-mapa}
+    \end{figure}
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Difference between the position of population density and housing density in the ranking of neighborhoods}
+        \includegraphics[width = \linewidth]{figuras/bairros-mapa-cotaparte.pdf}
+        \label{fig:bairros-mapa-CP}
+    \end{figure}
+    
+    
+    
+    
+    
+    \chapter{Robustness of results}
+    \label{appendix:robustness}
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Robustness of regression results for different irregularity spectra}
+        \includegraphics[width = \linewidth]{figuras/robustez-regressao1pop.pdf}
+        \label{fig:robustez-reg1}
+    \end{figure}
+    
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Robustness of DiD results for different proximity cut-offs in IPTU analysis}
+        \includegraphics[width = \linewidth]{figuras/did-IPTU-bandas.pdf}
+        \label{fig:robustez-did-IPTU}
+    \end{figure}
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Robustness of DiD results for different proximity cut-offs in the Census analysis. (Table \ref{tab:did-censo}, column B and D)}
+        \includegraphics[width = \linewidth]{figuras/did-censo-bandas.pdf}
+        \label{fig:robustez-did-censo}
+    \end{figure}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    \chapter{Other figures and tables}
+    \label{appendix:figures}
+    
+    \clearpage
+    
+    \begin{figure}[h]
+        \centering
+        \caption{Variation over time of residential construction patterns observed in São Paulo}
+        \includegraphics[width = .75\linewidth]{figuras/indicadores_tempo.pdf}
+        \label{fig:indicadores-tempo}
+    \end{figure}
+    
+    By analyzing the construction patterns over time in Figure \ref{fig:indicadores-tempo}, the densification trajectory is evident. In the figure, each line represents a quantile of the IPTU lots. By ordering the buildings in 2020 in ascending order of observed FAR, the development in position 80\% of this row has an observed FAR of 3.8. This same procedure in the year 2000 would return a development with an observed AC of 1.46. Similarly, the observed floor area, which in 2020 had a quantile of 20\% of a mere 21.7 square meters, would have had 100 square meters in 2000. This shows that in recent years São Paulo has undergone a strong densification process.
+    
+    
+    \clearpage
+    
+    \begin{figure}
+        \centering
+        \caption{Built-up area in the municipality of São Paulo by type and use pattern}
+        \includegraphics[width = .8\linewidth]{figuras/tree_area_construida.pdf}
+        \label{fig:area_construida}
+    \end{figure}
+    
+    Figure \ref{fig:area_construida} shows the distribution of the built-up area by type and standard of use. In São Paulo, 70\% of the built area is residential, and the most common residential standard is "C". The standard is a division made in the calculation of the IPTU \cite{lei10235_1986}, to create tax discounts for properties with desirable characteristics from the point of view of urban planning, such as greater densification, or for properties owned by people with lower purchasing power. Measurements such as footage, ceiling height, parking space, number of floors, architectural elements, building materials, etc. are all factors taken into account to determine the standard. In the case of "C", it is in the middle of the density scale, with "A" being the densest and "E" the least. The second most common use is commercial, followed by industrial and entertainment. The entertainment category includes religious temples, clubs, sports stadiums, cinemas, airports, museums and zoos, among others.
+    
+    
+    
+    
+    
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Axis regions (painted in blue)}
+        \includegraphics[width = .85\linewidth]{figuras/macroareas-eixos.pdf}
+        \label{fig:eixos}
+    \end{figure}
+    
+    \clearpage
+    
+    \begin{figure}[!h]
+        \centering
+        \caption{Distribution of the number of residents in each cell of the raster}
+        \includegraphics[width = .85\linewidth]{figuras/populacao-distribuicao-raster.pdf}
+        \label{fig:populacao-rasters}
+    \end{figure}
+    
+    
+    
+    
+    
+    
+    \end{apendicesenv}
+        
+        

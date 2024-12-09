@@ -22,6 +22,7 @@
   openany, 
   oneside, 
   brazil,
+  english
   % draft
 ]{abntex2}
 
@@ -54,7 +55,7 @@
 \usepackage{amsfonts}           % Pacote para fontes e símbolos matemáticos
 \usepackage{lastpage}           % Pacote para tomar a referência da última página
 % Pacotes de citações %
-\usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[brazilian, hyperpageref]{backref}	 % Paginas com as citações na bibl
 \usepackage[alf, abnt-emphasize=bf]{abntex2cite}    % Citações padrão ABNT
 \usepackage{quoting}                                % Pacote para citações
 
@@ -63,6 +64,11 @@
 \usepackage{pgfplots} % Pacote para criação de gráficos
 \usepackage{pdfpages} % Pacote para inclusão de arquivos PDF
 \usepackage{anyfontsize} % Pacote para especificação de tamanhos de fonte arbitrários
+
+\selectlanguage{english}
+% \counterwithout{section}{section}
+% \counterwithout{figure}{chapter}
+% \counterwithout{table}{chapter}
 
 \pgfplotsset{compat=newest}
 \usepgfplotslibrary{statistics}
@@ -225,17 +231,17 @@
 
 
 % Informações de dados para CAPA
-\autor{Gustavo Theil}
-\titulo{Dez anos de plano diretor: Repercussões da regulação urbana na densidade populacional}
+\autor{
+  Gustavo Theil, Adriano Borges Costa
+}
+\titulo{Does Upzoning Always Promote Increased Population Density?}
 \instituicao{
   %
-  Insper Instituto de Ensino e Pesquisa
+  Insper - Instituto de Ensino e Pesquisa
 
-  Ciências Econômicas
   }
-\local{São Paulo - SP}
+\local{São Paulo - SP, Brazil}
 \data{2024}
-\orientador{Adriano Borges Costa}
 
 
 \preambulo{Trabalho de Conclusão de Curso}
@@ -256,111 +262,122 @@
 
 
 % Capa e Folha de Rosto
-\imprimircapa
-\imprimirfolhaderosto
+% \imprimircapa
+% \imprimirfolhaderosto
 
-% Configuração da ficha catalográfica
-\begin{fichacatalografica}
-    \vspace*{15cm} % Posição vertical
-    \hrule % Linha horizontal
-    \begin{center} % Minipage Centralizado
-    \begin{minipage}[c]{12cm} % Largura
+% % Configuração da ficha catalográfica
+% \begin{fichacatalografica}
+%     \vspace*{15cm} % Posição vertical
+%     \hrule % Linha horizontal
+%     \begin{center} % Minipage Centralizado
+%     \begin{minipage}[c]{12cm} % Largura
     
-    \imprimirautor
+%     \imprimirautor
     
-    \hspace{0.5cm} \imprimirtitulo / \imprimirautor. -
-    \imprimirlocal: \imprimirdata
+%     \hspace{0.5cm} \imprimirtitulo / \imprimirautor. -
+%     \imprimirlocal: \imprimirdata
 
-    \hspace{0.5cm} \pageref{LastPage} p.
+%     \hspace{0.5cm} \pageref{LastPage} p.
 
-\hspace{0.5cm}
-\parbox[t]{\textwidth}{\imprimirtipotrabalho: \ \imprimirinstituicao, \imprimirdata.}\\
+% \hspace{0.5cm}
+% \parbox[t]{\textwidth}{\imprimirtipotrabalho: \ \imprimirinstituicao, \imprimirdata.}\\
 
-\hspace{0.5cm} \imprimirorientadorRotulo \ \imprimirorientador
+% \hspace{0.5cm} \imprimirorientadorRotulo \ \imprimirorientador
 
-    \hspace{0.5cm}
-1. Economia Urbana
-2. Política pública
-I. \imprimirautor.
-II. \imprimirtitulo.
-    \end{minipage}
-    \end{center}
-    \hrule
-\end{fichacatalografica}
+%     \hspace{0.5cm}
+% 1. Economia Urbana
+% 2. Política pública
+% I. \imprimirautor.
+% II. \imprimirtitulo.
+%     \end{minipage}
+%     \end{center}
+%     \hrule
+% \end{fichacatalografica}
 
-\clearpage
-% Configuração da folha de aprovação
-\begin{folhadeaprovacao}
+% \clearpage
+% % Configuração da folha de aprovação
+% \begin{folhadeaprovacao}
 
-  \begin{center}
-    {\ABNTEXchapterfont\large\imprimirautor}
+%   \begin{center}
+%     {\ABNTEXchapterfont\large\imprimirautor}
 
-    \vspace*{\fill}\vspace*{\fill}
-    \begin{center}
-      \ABNTEXchapterfont\bfseries\Large\imprimirtitulo
-    \end{center}
-    \vspace*{\fill}
+%     \vspace*{\fill}\vspace*{\fill}
+%     \begin{center}
+%       \ABNTEXchapterfont\bfseries\Large\imprimirtitulo
+%     \end{center}
+%     \vspace*{\fill}
     
-    \hspace{.45\textwidth}
-    \begin{minipage}{.5\textwidth}
-        \imprimirpreambulo
-    \end{minipage}%
-    \vspace*{\fill}
-   \end{center}
+%     \hspace{.45\textwidth}
+%     \begin{minipage}{.5\textwidth}
+%         \imprimirpreambulo
+%     \end{minipage}%
+%     \vspace*{\fill}
+%    \end{center}
         
-    \vspace*{\fill}
+%     \vspace*{\fill}
         
-    \begin{center}
-      \ABNTEXchapterfont\bfseries\large{Banca examinadora}
-    \end{center}
+%     \begin{center}
+%       \ABNTEXchapterfont\bfseries\large{Banca examinadora}
+%     \end{center}
         
-    \vspace*{\fill}
-   %Trabalho aprovado. \imprimirlocal, x de x de x:
+%     \vspace*{\fill}
+%    %Trabalho aprovado. \imprimirlocal, x de x de x:
 
-   \assinatura{\textbf{\imprimirorientador} \\ Orientador} 
-   \assinatura{\textbf{Adriano Dutra Teixeira} \\ Examinador}
-   %\assinatura{\textbf{Professor} \\ Examinador(a)}
-   %\assinatura{\textbf{Professor} \\ Examinador(a)}
-   %\assinatura{\textbf{Professor} \\ Examinador(a)}
+%    \assinatura{\textbf{\imprimirorientador} \\ Orientador} 
+%    \assinatura{\textbf{Adriano Dutra Teixeira} \\ Examinador}
+%    %\assinatura{\textbf{Professor} \\ Examinador(a)}
+%    %\assinatura{\textbf{Professor} \\ Examinador(a)}
+%    %\assinatura{\textbf{Professor} \\ Examinador(a)}
       
-   \begin{center}
-    \vspace*{0.5cm}
-    {\large\imprimirlocal}
-    \par
-    {\large\imprimirdata}
-    \vspace*{1cm}
-  \end{center}
+%    \begin{center}
+%     \vspace*{0.5cm}
+%     {\large\imprimirlocal}
+%     \par
+%     {\large\imprimirdata}
+%     \vspace*{1cm}
+%   \end{center}
   
-\end{folhadeaprovacao}
+% \end{folhadeaprovacao}
 
-\begin{agradecimentos}
+% \begin{agradecimentos}
 
-% vó
+% Primeiramente gostaria de agradecer meus pais, Rê e Lu pelo apoio que tive durante minha trajetória -- sem vocês, nada seria possível. Queria agradecer também aos meus amigos de infância, Marco, Ju e Lu; e à Bia, minha namorada, por serem a melhor companhia do mundo. Agradeço também pelos meus amigos do Insper Data, da turma do cursinho da Anpec e da minha turma da graduação por mostrar como é trabalhar com pessoas brilhantes e gentis. Ao Júlio agradeço também pela colaboração ao longo da graduação e por me inspirar a ser melhor.  
 
-% rinaldo adriano adriano paulo 
-% thomas conti 
-% data
+% Gostaria de agradecer também aos professores Rinaldo Artes e Paulo Cilas Marques por despertarem em mim a paixão por estatística e ciência de dados; e aos professores Thomas Conti e Adriano Dutra Teixeira, que me introduziram ao mundo da microeconomia e microeconometria. Por fim, deixo meu agradecimento ao meu orientador, Adriano Borges Costa, que me ensinou a fazer as perguntas certas, me inspirou a fazer pesquisa em temas que afetam diretamente a vida das pessoas e abriu portas que eu nem imaginava que existiam. 
 
-Primeiramente gostaria de agradecer meus pais, Rê e Lu pelo apoio que tive durante minha trajetória -- sem vocês, nada seria possível. Queria agradecer também aos meus amigos de infância, Marco, Ju e Lu; e à Bia, minha namorada, por serem a melhor companhia do mundo. Agradeço também pelos meus amigos do Insper Data, da turma do cursinho da Anpec e da minha turma da graduação por mostrar como é trabalhar com pessoas brilhantes e gentis. Ao Júlio agradeço também pela colaboração ao longo da graduação e por me inspirar a ser melhor.  
+% \bigskip
+% \raggedleft Dedico este trabalho à minha vó Gilda.
 
-Gostaria de agradecer também aos professores Rinaldo Artes e Paulo Cilas Marques por despertarem em mim a paixão por estatística e ciência de dados; e aos professores Thomas Conti e Adriano Dutra Teixeira, que me introduziram ao mundo da microeconomia e microeconometria. Por fim, deixo meu agradecimento ao meu orientador, Adriano Borges Costa, que me ensinou a fazer as perguntas certas, me inspirou a fazer pesquisa em temas que afetam diretamente a vida das pessoas e abriu portas que eu nem imaginava que existiam. 
-
-\bigskip
-\raggedleft Dedico este trabalho à minha vó Gilda.
-
-\end{agradecimentos}
+% \end{agradecimentos}
 
 
-% Resumo e abstract
-% Resumo em português
-\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
-\begin{resumo}
+% % Resumo e abstract
+% % Resumo em português
+% \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+% \begin{resumo}
 
-Em 2014, entrou em vigor o novo Plano Diretor Estratégico (PDE) de São Paulo, uma lei municipal que orienta o crescimento e o desenvolvimento urbano da cidade. Seu objetivo principal é aproximar moradia e emprego, promovendo o desenvolvimento em áreas servidas por transporte público de alta capacidade. Entretanto, é essencial avaliar se as regulamentações implementadas realmente cumpriram esse propósito de aumentar a densidade populacional e identificar os mecanismos mais influentes nesse processo. A análise, baseada em metodologias como diferença-em-diferenças geográficas, regressão em descontinuidade e \textit{random forest}, indica que o PDE teve êxito ao adensar as regiões almejadas em termos construtivos e, com intensidade moderada, em termos populacionais. Os resultados também sugerem que, entre os instrumentos utilizados, a cota parte foi o mais eficaz no controle da densidade populacional, enquanto a verticalização, quando desacompanhada de densidade construtiva e habitacional, não contribui para o adensamento populacional.
+% Em 2014, entrou em vigor o novo Plano Diretor Estratégico (PDE) de São Paulo, uma lei municipal que orienta o crescimento e o desenvolvimento urbano da cidade. Seu objetivo principal é aproximar moradia e emprego, promovendo o desenvolvimento em áreas servidas por transporte público de alta capacidade. Entretanto, é essencial avaliar se as regulamentações implementadas realmente cumpriram esse propósito de aumentar a densidade populacional e identificar os mecanismos mais influentes nesse processo. A análise, baseada em metodologias como diferença-em-diferenças geográficas, regressão em descontinuidade e \textit{random forest}, indica que o PDE teve êxito ao adensar as regiões almejadas em termos construtivos e, com intensidade moderada, em termos populacionais. Os resultados também sugerem que, entre os instrumentos utilizados, a cota parte foi o mais eficaz no controle da densidade populacional, enquanto a verticalização, quando desacompanhada de densidade construtiva e habitacional, não contribui para o adensamento populacional.
 
-Palavras-chave: Regulação Urbana, Plano Diretor Estratégico (PDE), Políticas Públicas
+% Palavras-chave: Regulação Urbana, Plano Diretor Estratégico (PDE), Políticas Públicas
 
-\end{resumo}
+% \end{resumo}
+
+% \LARGE\bfseries
+
+\maketitle
+
+% \autor{
+%   Gustavo Theil\\
+%   Adriano Borges Costa
+% }
+% \titulo{Does Upzoning Always Promote Increased Population Density?}
+% \instituicao{
+%   %
+%   Insper - Instituto de Ensino e Pesquisa
+
+%   }
+% \local{São Paulo - SP, Brazil}
+% \data{2024}
 
 % Resumo em inglês
 \begin{resumo}[Abstract]
@@ -374,10 +391,10 @@ Palavras-chave: Regulação Urbana, Plano Diretor Estratégico (PDE), Políticas
 \end{resumo}
 
 
-% Insere o sumário automático
-\pdfbookmark[0]{\contentsname}{toc}
-\tableofcontents*
-\cleardoublepage
+% % Insere o sumário automático
+% \pdfbookmark[0]{\contentsname}{toc}
+% \tableofcontents*
+% \cleardoublepage
 
 
 \textual
