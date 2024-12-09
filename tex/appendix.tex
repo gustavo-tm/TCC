@@ -6,7 +6,7 @@
     \chapter{Discussions on verticalization}
     \label{appendix:verticalization}
     
-    Assuming buildings are parallelepipeds, i.e. all floors have the same footage, it is possible to draw geometric relationships in which the occupied area is the surface that represents the base of the parallelepiped, the number of floors its height and the built area its volume (Figure \ref{fig:desenho}). In this sense, the relationships presented in Equation \ref{eq:pavimentos}, which presents different ways of calculating verticalization, become clearer. In the equation, AC represents the built-up area; AO, the occupied area; AT, the land area; FAR the utilization coefficient and tx\_occupacao, the percentage of the land area that is occupied. Using the procedure presented, in regions with the same FAR, the lower the land occupation rate, the greater the verticalization. Similarly, for two plots with the same land occupation, the higher the FAR, the greater the verticalization.
+    Assuming buildings are parallelepipeds, i.e. all floors have the same footage, it is possible to draw geometric relationships in which the occupied area is the surface that represents the base of the parallelepiped, the number of floors its height and the built area its volume (Figure \ref{fig:desenho}). In this sense, the relationships presented in Equation \ref{eq:pavimentos}, which presents different ways of calculating verticalization, become clearer. In the equation, BA represents the built area; CA, the covered area; LS, the lot size; FAR the utilization coefficient and tx\_occupacao, the building coverage. Using the procedure presented, in regions with the same FAR, the lower the land occupation rate, the greater the verticalization. Similarly, for two plots with the same land occupation, the higher the FAR, the greater the verticalization.
     
     \begin{figure}[h]
         \centering
@@ -16,11 +16,11 @@
     \end{figure}
     
     \begin{equation}
-        \text{Pavimentos}=\frac{\text{AC}}{\text{AO}}=\frac{\text{AC}}{\text{AT}\cdot\underbrace{\frac{\text{AO}}{\text{AT}}}_\text{tx\_ocup}}=\frac{\text{AC}}{\text{AT}}\div\frac{\text{AO}}{\text{AT}}=\frac{\text{FAR}}{\text{tx\_ocup}}
+        \text{Storeys}=\frac{\text{BA}}{\text{CA}}=\frac{\text{BA}}{\text{LS}\cdot\underbrace{\frac{\text{CA}}{\text{LS}}}_\text{tx\_ocup}}=\frac{\text{BA}}{\text{LS}}\div\frac{\text{CA}}{\text{LS}}=\frac{\text{FAR}}{\text{tx\_ocup}}
         \label{eq:pavimentos}
     \end{equation}
         
-    In this way, the number of floors will never be greater than the FAR, since the occupancy rate is always a number that varies between zero and one. Figure \ref{fig:ca-vert} shows the relationship between the two variables on plots in the city of São Paulo. For very small plots, the two measures are generally the same, since 100\% of the land area is usually occupied. As verticalization increases, it can be seen that FAR does not keep up with this growth, which indicates that there is a drop in the occupancy rate.
+    In this way, the number of floors will never be greater than the FAR, since the building coverage is always a number that varies between zero and one. Figure \ref{fig:ca-vert} shows the relationship between the two variables on plots in the city of São Paulo. For very small plots, the two measures are generally the same, since 100\% of the land area is usually occupied. As verticalization increases, it can be seen that FAR does not keep up with this growth, which indicates that there is a drop in the building coverage.
     
     \begin{figure}[h]
         \centering
