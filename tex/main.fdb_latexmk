@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1733787259.86014 "main.aux" "main.bbl" "main" 1733787356.82919 0
+["bibtex main"] 1733787259.86014 "main.aux" "main.bbl" "main" 1733793823.09971 0
   "./bibliografia.bib" 1732805095 8022 3e60876cb51220804b279354d154df0a ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bib/abntex2/abntex2-options.bib" 1543103229 5396 4eb260dac60f150ae608d45252853090 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/bibtex/bst/abntex2/abntex2-alf.bst" 1543103230 60064 0819ac8568f9a482510a46e3a8a6f605 ""
-  "main.aux" 1733787355 40202 b19831b75882809f319896716ada521f "pdflatex"
+  "main.aux" 1733793821 40202 b19831b75882809f319896716ada521f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1733776322.91164 "main.idx" "main.ind" "main" 1733787356.82872 0
-  "main.idx" 1733787353 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1733776322.91164 "main.idx" "main.ind" "main" 1733793823.0992 0
+  "main.idx" 1733793818 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1733787351.35796 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1733787356.82985 0
+["pdflatex"] 1733793816.85762 "c:/git/TCC/tex/main.tex" "main.pdf" "main" 1733793823.10033 0
   "C:/Users/Gustavo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1733775818 193929 75cc9abf9cbaf5b26e9ed2b8612c11a6 ""
   "C:/Users/Gustavo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1730898412 11986484 2c81025dd9995a931c2a5d2ea1974dc2 ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -334,7 +334,7 @@
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xkeyval/xkeyval.sty" 1656236919 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
   "C:/Users/Gustavo/AppData/Local/Programs/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
   "appendix.tex" 1733787009 16017 d5d618f8a989ba1be0dddd826f6d3872 ""
-  "c:/git/TCC/tex/main.tex" 1733787350 16997 ac65416324350b18b3a5d8a736d8cdbd ""
+  "c:/git/TCC/tex/main.tex" 1733793815 17050 cdf1f207643030212309a429f6cd28da ""
   "figuras/IPTU-delta-lotes.pdf" 1733764758 5073 aac73f627c8dcd5316f6a7462c24ce84 ""
   "figuras/IPTU-delta-unidades.pdf" 1733764763 5060 4197584edcd80f41eed78d578683789e ""
   "figuras/area_setor.pdf" 1733755624 137545 bd16e378e63371e12da5b024ad6921e5 ""
@@ -363,11 +363,11 @@
   "figuras/rdd-plot-IPTU.pdf" 1733765008 28749 bb6be5cd5cc5916eb3e522059fa8b8b3 ""
   "figuras/robustez-regressao1pop.pdf" 1733787004 8850 f9bc7b8ff878ed23176ce8148fe27e74 ""
   "figuras/tree_area_construida.pdf" 1730864723 6799 29ac744b6b7bb8a670c9b66b19dcf8d7 ""
-  "main.aux" 1733787355 40202 b19831b75882809f319896716ada521f "pdflatex"
+  "main.aux" 1733793821 40202 b19831b75882809f319896716ada521f "pdflatex"
   "main.bbl" 1733787260 7581 54b82f974fc739fa3b4677fca0f509bd "bibtex main"
-  "main.brf" 1733787355 1475 79f8219bffc68b0761b21333d5378334 "pdflatex"
+  "main.brf" 1733793821 1475 79f8219bffc68b0761b21333d5378334 "pdflatex"
   "main.ind" 1733776323 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
-  "main.tex" 1733787350 16997 ac65416324350b18b3a5d8a736d8cdbd ""
+  "main.tex" 1733793815 17050 cdf1f207643030212309a429f6cd28da ""
   "tabelas/censo-descritiva-fronteira.tex" 1733771745 685 9ffa0171ec79a858626862b501a51bc8 ""
   "tabelas/censo-descritiva.tex" 1733765700 683 36859cc32cb67f48ed8e581eabb40151 ""
   "tabelas/dados.tex" 1733765735 992 d4950960878443a31b52ac3841380524 ""
